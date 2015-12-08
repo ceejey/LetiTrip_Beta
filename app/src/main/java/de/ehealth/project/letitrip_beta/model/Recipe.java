@@ -6,6 +6,6 @@ package de.ehealth.project.letitrip_beta.model;
 public class Recipe {
 
     public Recipe(){
-        Integer test = 1;
+        Integer test = 4;
     }
 }

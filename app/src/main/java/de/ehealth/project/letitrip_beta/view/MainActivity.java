@@ -16,6 +16,9 @@ import de.ehealth.project.letitrip_beta.view.fragment.Session;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionDetail;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionOverview;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Fragments.CheckUserProfile;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Fragments.FitBitInit;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Fragments.WebviewOauth;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.General;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
@@ -30,7 +33,7 @@ public class MainActivity extends Activity implements FragmentChanger{
 
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
-        SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP
+        SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT, FIT_BIT_CHECKPROFILE
     }
 
     @Override
@@ -98,7 +101,18 @@ public class MainActivity extends Activity implements FragmentChanger{
                 txtHeader.setText("Einstellungen");
                 fragmentContent = new Help();
                 break;
-
+            case WEB_VIEW_OAUTH:
+                txtHeader.setText("Einstellungen");
+                fragmentContent = new WebviewOauth();
+                break;
+            case FIT_BIT_INIT:
+                txtHeader.setText("Einstellungen");
+                fragmentContent = new FitBitInit();
+                break;
+            case FIT_BIT_CHECKPROFILE:
+                txtHeader.setText("Einstellungen");
+                fragmentContent = new CheckUserProfile();
+                break;
         }
 
         fragmentManager.beginTransaction().replace(R.id.contentContainer, fragmentContent).commit();

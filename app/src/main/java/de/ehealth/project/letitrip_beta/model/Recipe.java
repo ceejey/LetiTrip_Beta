@@ -6,10 +6,6 @@ package de.ehealth.project.letitrip_beta.model;
 public class Recipe {
 
     public Recipe(){
-<<<<<<< Updated upstream
-        Integer test = 1;
-=======
         Integer test = 2;
->>>>>>> Stashed changes
     }
 }

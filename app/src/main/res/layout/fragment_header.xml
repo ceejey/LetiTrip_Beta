@@ -1,0 +1,32 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="de.ehealth.project.letitrip.view.fragment.Header"
+    >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:alpha="0.5"></View>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:alpha="0.25"></View>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Startseite"
+        android:id="@+id/txtHeader"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="25dp"
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:alpha="1" />
+
+</FrameLayout>

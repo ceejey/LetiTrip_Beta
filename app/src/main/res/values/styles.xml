@@ -1,0 +1,20 @@
+<resources>
+
+    <!-- Base application theme. -->
+
+    -<style parent="Base.Theme.AppCompat.Light" name="AppBaseTheme">
+    <item name="android:colorLongPressedHighlight">@color/colorPrimary</item>
+    <!-- Theme customizations available in newer API levels can go in res/values-vXX/styles.xml, while customizations related to backward-compatibility can go here. -->
+    </style>
+
+    <!-- Application theme. -->
+
+
+
+    -<style parent="AppBaseTheme" name="AppTheme">
+    <item name="android:colorLongPressedHighlight">@color/colorPrimary</item>
+    <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+
+    </style>
+
+</resources>

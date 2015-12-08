@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.Fitbit_Tracker;
+package de.ehealth.project.letitrip_beta.handler.task.fitbit;
 
 
 import android.app.Activity;
@@ -16,8 +16,9 @@ import org.scribe.model.Verb;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBitUserMovement.FitBitUserData;
-import de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBit_Oauth.Oauth;
+import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 
 
 /** The class "FitBitGetJsonTask" extends "AsyncTask" and its purpose is to request and receive JSon

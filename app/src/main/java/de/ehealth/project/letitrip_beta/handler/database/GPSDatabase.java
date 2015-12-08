@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.GPS;
+package de.ehealth.project.letitrip_beta.handler.database;
 
 import android.content.ContentValues;
 import android.content.Context;

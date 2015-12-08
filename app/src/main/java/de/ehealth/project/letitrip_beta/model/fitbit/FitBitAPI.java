@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.Fitbit_Tracker;
+package de.ehealth.project.letitrip_beta.model.fitbit;
 
 
 import org.scribe.builder.api.DefaultApi10a;

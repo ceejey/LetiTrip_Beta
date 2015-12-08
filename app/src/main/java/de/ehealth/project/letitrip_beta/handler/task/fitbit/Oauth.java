@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBit_Oauth;
+package de.ehealth.project.letitrip_beta.handler.task.fitbit;
 
 /**
  * Created by Mirorn on 06.10.2015.
@@ -13,38 +13,47 @@ import org.scribe.builder.api.Api;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
+
 /* Subclass AsyncTask which gets over the scribe service a request token.
  */
-class createrequestToken extends AsyncTask< Void, Void, Void> {
+class RequestTokenTask extends AsyncTask<Void, Void, Void> {
     Oauth oauth = Oauth.getmOauth();
     String oauthUrl = "";
     Token requestToken = null;
+
     protected Void doInBackground(Void... params) {
         try {
             requestToken = oauth.getmService().getRequestToken();
             oauthUrl = oauth.getmService().getAuthorizationUrl(requestToken);
             Log.d("Fitbit", "Fertig");
-        }catch(Exception ex){ ex.printStackTrace(); }
-            Log.d("Fitbit", "Check connection");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        Log.d("Fitbit", "Check connection");
         oauth.setmAuthUrl(oauthUrl);
         oauth.setmRequestToken(requestToken);
         return null;
     }
 
 }
-class createaccessquestToken extends AsyncTask< Void, Void, Void> {
+
+class AccessTokenTask extends AsyncTask<Void, Void, Void> {
     Oauth oauth = Oauth.getmOauth();
     Verifier verifier;
     Token accessToken = null;
+
     protected Void doInBackground(Void... params) {
         try {
-            accessToken = oauth.getmService().getAccessToken(oauth.getmRequestToken(),verifier = new Verifier(oauth.getmVerifier()));
-        }catch(Exception ex){ ex.printStackTrace(); }
+            accessToken = oauth.getmService().getAccessToken(oauth.getmRequestToken(), verifier = new Verifier(oauth.getmVerifier()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         oauth.setmAccessToken(accessToken);
         return null;
     }
 
 }
+
 public class Oauth {
 
     private String mConsumerKey = "";
@@ -58,12 +67,14 @@ public class Oauth {
     private Class mApiClass = null;
     private static Oauth mOauth = new Oauth();
 
-    private Oauth() {}
+    private Oauth() {
+    }
 
     public static Oauth getOauth() {
         return mOauth;
     }
-    public void initOauth(String consumerKey, String consumerSecret, String redirectUrl, Class<? extends Api> apiClass){
+
+    public void initOauth(String consumerKey, String consumerSecret, String redirectUrl, Class<? extends Api> apiClass) {
 
         mConsumerKey = consumerKey;
         mConsumerSecret = consumerSecret;
@@ -77,6 +88,7 @@ public class Oauth {
 
         mOauth.buildService(mOauth.getmApiClass());
     }
+
     /*
      * Erstellt ein Oauth Service Objekt für die Browser Variante der Autorisierung mit Redirect Url.
      * @param apiClass
@@ -89,18 +101,26 @@ public class Oauth {
                     .callback(mRedirectUrl)
                     .debug()
                     .build();
-        }catch(Exception ex){ ex.printStackTrace(); }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
-    public void firstoauthstep(){
+
+    public void firstoauthstep() {
         try {
-            new createrequestToken().execute().get();                                // asyncthread
-        }catch(Exception ex){ ex.printStackTrace(); }
+            new RequestTokenTask().execute().get();                                // asyncthread
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
-    public void lastoauthstep(){
+
+    public void lastoauthstep() {
 
         try {
-            new createaccessquestToken().execute().get();                              // asyncthread
-        }catch(Exception ex){ ex.printStackTrace(); }
+            new AccessTokenTask().execute().get();                              // asyncthread
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public String getVerifierFromUrl(String url) {
@@ -121,6 +141,7 @@ public class Oauth {
 
         return "";
     }
+
     public String getmConsumerKey() {
         return mConsumerKey;
     }

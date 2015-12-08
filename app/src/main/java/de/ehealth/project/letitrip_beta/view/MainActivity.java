@@ -16,9 +16,9 @@ import de.ehealth.project.letitrip_beta.view.fragment.Session;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionDetail;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionOverview;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
-import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Fragments.CheckUserProfile;
-import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Fragments.FitBitInit;
-import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Fragments.WebviewOauth;
+import de.ehealth.project.letitrip_beta.view.fragment.fitbit.CheckUserProfile;
+import de.ehealth.project.letitrip_beta.view.fragment.fitbit.FitBitInit;
+import de.ehealth.project.letitrip_beta.view.fragment.fitbit.WebviewOauth;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.General;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
@@ -29,7 +29,6 @@ public class MainActivity extends Activity implements FragmentChanger{
     Fragment mFragmentHeader;
     Fragment mFragmentCaption;
     Fragment mFragmentContent;
-    Fragment mFragmentBar;
 
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,

@@ -1,12 +1,13 @@
-package de.ehealth.project.letitrip_beta.model.Fitbit_Tracker;
+package de.ehealth.project.letitrip_beta.model.fitbit;
 
 import android.app.Activity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBitUserMovement.Summary;
-import de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBit_Oauth.Oauth;
+import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
+import de.ehealth.project.letitrip_beta.handler.task.fitbit.FitBitGetJsonTask;
+import de.ehealth.project.letitrip_beta.handler.task.fitbit.Oauth;
 
 /**
  * Created by Mirorn on 25.11.2015.

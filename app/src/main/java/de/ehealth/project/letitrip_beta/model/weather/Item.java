@@ -1,9 +1,8 @@
-package de.ehealth.project.letitrip_beta.model.weather.model;
+package de.ehealth.project.letitrip_beta.model.weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import de.ehealth.project.letitrip_beta.model.weather.JSONReceiver;
 
 public class Item implements JSONReceiver {
 

@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBitUserMovement;
+package de.ehealth.project.letitrip_beta.model.fitbit;
 
 
 import com.google.gson.annotations.Expose;

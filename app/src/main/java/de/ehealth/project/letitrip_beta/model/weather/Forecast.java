@@ -1,7 +1,6 @@
-package de.ehealth.project.letitrip_beta.model.weather.model;
+package de.ehealth.project.letitrip_beta.model.weather;
 
 import org.json.JSONObject;
-import de.ehealth.project.letitrip_beta.model.weather.JSONReceiver;
 
 public class Forecast implements JSONReceiver{
 

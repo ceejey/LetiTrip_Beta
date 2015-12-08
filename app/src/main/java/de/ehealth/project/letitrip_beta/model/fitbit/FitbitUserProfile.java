@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.Fitbit_Tracker;
+package de.ehealth.project.letitrip_beta.model.fitbit;
 
 
 import android.content.Context;
@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.Token;
 
-import de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBit_Oauth.Oauth;
+import de.ehealth.project.letitrip_beta.handler.task.fitbit.Oauth;
 
 /**
  * Created by Mirorn on 28.10.2015.

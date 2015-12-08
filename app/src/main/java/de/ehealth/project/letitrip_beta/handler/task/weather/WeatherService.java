@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.weather;
+package de.ehealth.project.letitrip_beta.handler.task.weather;
 
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,7 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import de.ehealth.project.letitrip_beta.model.weather.model.Channel;
+import de.ehealth.project.letitrip_beta.model.weather.Channel;
 
 //select * from weather.forecast where woeid in (SELECT woeid FROM geo.placefinder WHERE text="52.4242,6.52342" and gflags="R")
 

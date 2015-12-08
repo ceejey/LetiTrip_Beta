@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.Fitbit_Tracker;
+package de.ehealth.project.letitrip_beta.handler.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBitUserMovement.FitBitUserData;
-import de.ehealth.project.letitrip_beta.model.Fitbit_Tracker.FitBitUserMovement.Summary;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
+import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
 
 
 /**

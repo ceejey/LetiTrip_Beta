@@ -2,11 +2,9 @@ package de.ehealth.project.letitrip_beta.view.fragment;
 
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
+import android.app.Fragment;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -108,7 +106,8 @@ public class Bar extends Fragment {
 
                     } else {
                         BarHandler.selBtn = "Session";
-                        updateActivity(MainActivity.FragmentName.SESSION);
+                        //updateActivity(MainActivity.FragmentName.SESSION);
+                        updateActivity(MainActivity.FragmentName.SESSION_OVERVIEW);
                         BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
                                 0xffffffff, 0xffffa726, 0xffffffff, 0xffffffff);
                     }

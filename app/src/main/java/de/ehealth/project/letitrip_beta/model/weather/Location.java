@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 public class Location implements JSONReceiver {
 
-
     private String city;
     private String country;
     private String region;

@@ -20,11 +20,11 @@ import de.ehealth.project.letitrip_beta.model.weather.Channel;
 
 public class WeatherService extends AsyncTask<String, Void, String> {
 
-        private WeatherCallback wscallback;
+        private WeatherCallback weatherServiveCallback;
         private Exception ex;
 
         public WeatherService(WeatherCallback callback) {
-            this.wscallback=callback;
+            this.weatherServiveCallback =callback;
         }
 
 
@@ -76,7 +76,7 @@ public class WeatherService extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String json) {
         super.onPostExecute(json);
         if ((json == null) || (ex != null)) {
-            wscallback.failure(ex);
+            weatherServiveCallback.failure(ex);
             return;
         }
 
@@ -86,22 +86,22 @@ public class WeatherService extends AsyncTask<String, Void, String> {
 
             //if no location was found YQL query returns count=0
             if (queryResults.optInt("count") == 0){
-                wscallback.failure(new Exception("Location not found."));
+                weatherServiveCallback.failure(new Exception("Location not found."));
                 return;
             }
             //if coordinates don't match to a known location
             if (queryResults.optJSONObject("results").optJSONObject("channel").optString("title").contains("Error")){
-                wscallback.failure(new Exception("Coordinates not found."));
+                weatherServiveCallback.failure(new Exception("Coordinates not found."));
                 return;
             }
 
             Channel channel = new Channel();
             channel.receive(queryResults.optJSONObject("results").optJSONObject("channel"));
 
-            wscallback.success(channel);
+            weatherServiveCallback.success(channel);
 
         } catch (JSONException e) {
-            wscallback.failure(e);
+            weatherServiveCallback.failure(e);
         }
     }
 }

@@ -29,6 +29,7 @@ public class FitbitUserProfile {
     private String mFullname= "";
     private String mAvatar = "";
     private String mDateOfBirth = "";
+    private String mAge = "";
     private String mGender = "";
     private String mHeight = "";
     private String mWeight = "";
@@ -53,6 +54,7 @@ public class FitbitUserProfile {
                     profile.mAccessToken = accessToken;
                     profile.mFullname = obj.getString("fullName");
                     profile.mDateOfBirth = obj.getString("dateOfBirth");
+                    profile.mAge= obj.getString("age");
                     profile.mDisplayName = obj.getString("displayName");
                     profile.mAvatar = obj.getString("avatar");
                     profile.mHeight = obj.getString("height");
@@ -86,6 +88,7 @@ public class FitbitUserProfile {
         edit.putString("Secret", mActiveUser.getmAccessToken().getSecret().toString() );
         edit.putString("Fullname",mActiveUser.getmFullname() );
         edit.putString("DateOfBirth", mActiveUser.getmDateOfBirth() );
+        edit.putString("Age", mActiveUser.getmAge() );
         edit.putString("DisplayName",mActiveUser.getmDisplayName() );
         edit.putString("Avatar", mActiveUser.getmAvatar() );
         edit.putString("Height",mActiveUser.getmHeight() );
@@ -107,6 +110,7 @@ public class FitbitUserProfile {
         profile.mAccessToken = new Token(pref.getString("AccessToken",""), pref.getString("Secret","" ));
         profile.mFullname = pref.getString("Fullname","");
         profile.mDateOfBirth = pref.getString("DateOfBirth","");
+        profile.mAge = pref.getString("Age","");
         profile.mDisplayName = pref.getString("DisplayName","");
         profile.mAvatar = pref.getString("Avatar","");
         profile.mHeight = pref.getString("Height","");
@@ -230,5 +234,13 @@ public class FitbitUserProfile {
 
     public void setmEncodedId(String mEncodedId) {
         this.mEncodedId = mEncodedId;
+    }
+
+    public String getmAge() {
+        return mAge;
+    }
+
+    public void setmAge(String mAge) {
+        this.mAge = mAge;
     }
 }

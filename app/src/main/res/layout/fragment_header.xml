@@ -25,8 +25,8 @@
         android:layout_gravity="left|center_vertical"
         android:layout_marginLeft="25dp"
         android:textSize="@dimen/abc_text_size_headline_material"
+        android:fontFamily="sans-serif"
         android:textColor="#FFFFFF"
-        android:textStyle="bold"
         android:alpha="1" />
 
 </FrameLayout>

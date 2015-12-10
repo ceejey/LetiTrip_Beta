@@ -11,6 +11,7 @@ import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.Dashboard;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 import de.ehealth.project.letitrip_beta.view.fragment.Header;
+import de.ehealth.project.letitrip_beta.view.fragment.News;
 import de.ehealth.project.letitrip_beta.view.fragment.Recipe;
 import de.ehealth.project.letitrip_beta.view.fragment.Session;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionDetail;
@@ -32,7 +33,8 @@ public class MainActivity extends Activity implements FragmentChanger{
 
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
-        SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT, FIT_BIT_CHECKPROFILE
+        SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT, FIT_BIT_CHECKPROFILE,
+        NEWS
     }
 
     @Override
@@ -112,6 +114,9 @@ public class MainActivity extends Activity implements FragmentChanger{
                 txtHeader.setText("Einstellungen");
                 fragmentContent = new CheckUserProfile();
                 break;
+            case NEWS:
+                txtHeader.setText("Nachrichten");
+                fragmentContent = new News();
         }
 
         fragmentManager.beginTransaction().replace(R.id.contentContainer, fragmentContent).commit();

@@ -57,6 +57,12 @@ public class GPSDatabase extends SQLiteOpenHelper {
         return res;
     }
 
+    public int testMethod(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
+        return res.getCount();
+    }
+
     public Cursor getLastPosOfRun(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         //SELECT Latitude, Longitude FROM  GPSDataTable WHERE ((RunNumber=1) AND (ID=(SELECT MAX(ID) FROM GPSDataTable))

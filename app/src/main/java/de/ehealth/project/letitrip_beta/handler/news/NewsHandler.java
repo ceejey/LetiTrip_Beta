@@ -62,14 +62,26 @@ public class NewsHandler {
                             if (story.getMedia() != null) {
 
                                 List<Image> imageList = story.getMedia().getImage();
+                                boolean foundImage = false;
 
                                 for (Image image : imageList) {
 
-                                    new DownloadImageTask(imgNews).execute(image.getUrl());
+                                    if (!image.getUrl().isEmpty() && image.getCaption().contains("Veröffentlichung bitte unter Quellenangabe:")) {
 
-                                    String caption = image.getCaption();
-                                    caption = caption.substring(caption.indexOf("\"") + 1, caption.lastIndexOf("\""));
-                                    txtNewsImgCaption.setText(caption);
+                                        txtNewsImgCaption.setVisibility(View.VISIBLE);
+                                        imgNews.setVisibility(View.VISIBLE);
+
+                                        new DownloadImageTask(imgNews).execute(image.getUrl());
+
+                                        String caption = image.getCaption();
+
+                                        caption = caption.substring(caption.indexOf("Veröffentlichung bitte unter Quellenangabe: ") + 46, caption.lastIndexOf("\""));
+                                        txtNewsImgCaption.setText(caption);
+                                        foundImage = true;
+                                    } else if(foundImage == false) {
+                                        txtNewsImgCaption.setVisibility(View.GONE);
+                                        imgNews.setVisibility(View.GONE);
+                                    }
 
                                 }
 

@@ -96,11 +96,17 @@ public class SessionOverview extends Fragment {
         sessionOverviewListView = (ListView) view.findViewById(R.id.sessionOverviewListView);
         byciclecheckBox = (CheckBox) view.findViewById(R.id.byciclecheckBox);
 
+        byciclecheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
+            }
+        });
         //tracking on/off
         gpsEnabledToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("sessionoverview",GPSDatabaseHandler.getInstance().getData().testMethod()+"");
+                Log.d("sessionoverview", GPSDatabaseHandler.getInstance().getData().testMethod() + "");
                 if (bound) {
                     if (gpsEnabledToggle.isChecked()) {
                         Intent i = new Intent(getActivity(), GPSService.class);
@@ -160,6 +166,17 @@ public class SessionOverview extends Fragment {
         return view;
     }
 
+    public void showRunDialog(int id) {
+        Toast.makeText(getActivity(),"Shit aint working yet",Toast.LENGTH_SHORT).show();
+
+//            if (id > 0){
+//                RunSelectorDialog newFragment = new RunSelectorDialog(id);
+//                newFragment.show(getFragmentManager(),"DialogTag");
+//            } else {
+//                Toast.makeText(getActivity(),"Select/record a run first",Toast.LENGTH_SHORT).show();
+//            }
+
+    }
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -191,6 +208,7 @@ public class SessionOverview extends Fragment {
         myGPSObject = new GPSTest();
         GPSDatabase myDB = new GPSDatabase(getActivity());
         GPSDatabaseHandler.getInstance().setData(myDB);
+
     }
 
     @Override
@@ -230,17 +248,7 @@ public class SessionOverview extends Fragment {
         //sessionOverviewListView.setSelection(2);
     }
 
-    private void showRunDialog(int id) {
-        Toast.makeText(getActivity(),"Shit aint working yet",Toast.LENGTH_SHORT).show();
 
-        /*if (id > 0){
-            RunSelectorDialog newFragment = new RunSelectorDialog(id);
-            newFragment.show(getFragmentManager(),"DialogTag");
-        } else {
-            Toast.makeText(getActivity(),"Select/record a run first",Toast.LENGTH_SHORT).show();
-        }
-*/
-    }
 
     public void bindToService() {
         Intent i = new Intent(getActivity(), GPSService.class);
@@ -296,7 +304,6 @@ public class SessionOverview extends Fragment {
                 valueList.add(new GPSCustomListItem(i,ins));
             }
         }
-        Log.w("sessionOverview",valueList.size()+"yooo");
         itemsAdapter = new ArrayAdapter <GPSCustomListItem> (getActivity(), android.R.layout.simple_list_item_1, valueList);
         sessionOverviewListView.setAdapter(itemsAdapter);
     }
@@ -343,7 +350,7 @@ public class SessionOverview extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case 0:
-                                    //TO-DO
+                                    //TODO
                                     /*
                                     Intent intent = new Intent(getActivity(), MapsActivity.class);
                                     //only put the runID to the intent if map shouldnt show the current live track

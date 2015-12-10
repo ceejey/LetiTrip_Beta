@@ -19,7 +19,7 @@ public class GPSTest {
             tv1.setText("Tracking disabled.");
         }
 
-        if (gps.getRecordingAsBicycle()==1){
+        if (gps.getRecordingAsBicycle() == 1){
             cb1.setChecked(true);
         }
     }

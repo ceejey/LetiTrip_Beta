@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.handler.task.news;
+package de.ehealth.project.letitrip_beta.handler.news;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.handler.task.weather;
+package de.ehealth.project.letitrip_beta.handler.weather;
 
 import android.net.Uri;
 import android.os.AsyncTask;

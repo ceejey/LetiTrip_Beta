@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.handler.task.news;
+package de.ehealth.project.letitrip_beta.handler.news;
 
 import android.os.AsyncTask;
 import android.util.Log;

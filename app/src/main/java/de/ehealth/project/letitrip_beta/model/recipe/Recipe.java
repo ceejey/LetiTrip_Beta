@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model;
+package de.ehealth.project.letitrip_beta.model.recipe;
 
 /**
  * Created by eHealth on 08.12.2015.

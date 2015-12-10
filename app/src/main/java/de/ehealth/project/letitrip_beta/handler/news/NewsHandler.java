@@ -10,13 +10,10 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.task.news.DownloadImageTask;
-import de.ehealth.project.letitrip_beta.handler.task.news.NewsTask;
 import de.ehealth.project.letitrip_beta.model.news.Content;
 import de.ehealth.project.letitrip_beta.model.news.Image;
 import de.ehealth.project.letitrip_beta.model.news.News;
@@ -30,8 +27,11 @@ import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 public class NewsHandler {
 
     private static Story mSelectedStory;
+    private static boolean mTaskComplete = false;
 
     public static void fillNewsFeed(final View view, final LayoutInflater inflater, final Activity activity) {
+
+        mTaskComplete = false;
 
         try {
 
@@ -150,6 +150,7 @@ public class NewsHandler {
             e.printStackTrace();
         }
 
+        mTaskComplete = true;
     }
 
     public static Story getmSelectedStory() {
@@ -160,4 +161,12 @@ public class NewsHandler {
         NewsHandler.mSelectedStory = mSelectedStory;
     }
 
+    public static boolean ismTaskComplete() {
+        return mTaskComplete;
+    }
+
+
+    public static void setmTaskComplete(boolean mTaskComplete) {
+        NewsHandler.mTaskComplete = mTaskComplete;
+    }
 }

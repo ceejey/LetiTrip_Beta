@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.handler.task.fitbit;
+package de.ehealth.project.letitrip_beta.handler.fitbit;
 
 /**
  * Created by Mirorn on 06.10.2015.

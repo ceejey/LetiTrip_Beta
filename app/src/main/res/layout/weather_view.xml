@@ -91,7 +91,8 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
                     android:layout_weight="0.5"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:id="@+id/layoutWeatherRight">
 
                     <TextView
                         android:id="@+id/txtWeatherWindHeader"

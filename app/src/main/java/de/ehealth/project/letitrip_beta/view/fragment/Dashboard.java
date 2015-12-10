@@ -96,6 +96,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
         TextView txtWeatherWind = (TextView) getView().findViewById(R.id.txtWeatherWind);
         TextView txtWeatherHumidity = (TextView) getView().findViewById(R.id.txtWeatherHumidity);
         TextView txtWeatherPressure = (TextView) getView().findViewById(R.id.txtWeatherPressure);
+        LinearLayout layoutWeatherRight = (LinearLayout) getView().findViewById(R.id.layoutWeatherRight);
 
         txtWeatherWindHeader.setVisibility(View.GONE);
         txtWeatherHumidityHeader.setVisibility(View.GONE);
@@ -104,6 +105,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
         txtWeatherWind.setVisibility(View.GONE);
         txtWeatherHumidity.setVisibility(View.GONE);
         txtWeatherPressure.setVisibility(View.GONE);
+        layoutWeatherRight.setVisibility(View.GONE);
 
         txtWeatherSubHeading.setText("Ooops!");
         txtWeatherTempHeader.setText("Leider konnten keine Wetterinformationen heruntergeladen werden.");

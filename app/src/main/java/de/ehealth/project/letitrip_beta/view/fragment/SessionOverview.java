@@ -5,9 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -22,6 +20,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +63,6 @@ public class SessionOverview extends Fragment {
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSTest myGPSObject;
 
-
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -71,7 +70,7 @@ public class SessionOverview extends Fragment {
             GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
             gps = binder.getService();
             bound = true;
-            Log.w("sessionoverview","GEBUNDEN");
+            Log.w("sessionoverview", "GEBUNDEN");
             Log.w("sessionoverview", "status:" + gps.getStatus() + "");
 
             myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, byciclecheckBox);
@@ -80,7 +79,7 @@ public class SessionOverview extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            Log.w("sessionoverview","ungebunden");
+            Log.w("sessionoverview", "ungebunden");
             bound = false;
         }
     };
@@ -96,20 +95,14 @@ public class SessionOverview extends Fragment {
         sessionOverviewListView = (ListView) view.findViewById(R.id.sessionOverviewListView);
         byciclecheckBox = (CheckBox) view.findViewById(R.id.byciclecheckBox);
 
-        byciclecheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
-            }
-        });
         //tracking on/off
         gpsEnabledToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("sessionoverview", GPSDatabaseHandler.getInstance().getData().testMethod() + "");
+                Log.d("sessionoverview", "bound:" + bound);
                 if (bound) {
                     if (gpsEnabledToggle.isChecked()) {
+                        Log.w("soverview", "checked");
                         Intent i = new Intent(getActivity(), GPSService.class);
                         i.putExtra("bicycle", (byciclecheckBox.isChecked() ? 1 : 0));
                         getActivity().startService(i);
@@ -139,21 +132,20 @@ public class SessionOverview extends Fragment {
             }
         });
 
-
         //used for delete
         dialogListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){
+                switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         int deletes = GPSDatabaseHandler.getInstance().getData().deleteRun(selectedRun);
-                        Toast.makeText(getActivity(), deletes + " Entries deleted.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), deletes + " Einträge gelöscht.", Toast.LENGTH_SHORT).show();
                         updateList();
-                        Log.w("sessionoverview",GPSDatabaseHandler.getInstance().getData().getLastRunID()+"");
-                        if (GPSDatabaseHandler.getInstance().getData().getLastRunID()!=0){
+                        Log.w("sessionoverview", GPSDatabaseHandler.getInstance().getData().getLastRunID() + "");
+                        if (GPSDatabaseHandler.getInstance().getData().getLastRunID() != 0) {
                             selectedRun = GPSDatabaseHandler.getInstance().getData().getLastRunID();
                         }
-                        if (GPSDatabaseHandler.getInstance().getData().getLastRunID()==0) {
+                        if (GPSDatabaseHandler.getInstance().getData().getLastRunID() == 0) {
                             selectedRun = -1;
                         }
                         break;
@@ -168,16 +160,21 @@ public class SessionOverview extends Fragment {
     }
 
     public void showRunDialog(int id) {
-        Toast.makeText(getActivity(),id+"Shit aint working yet",Toast.LENGTH_SHORT).show();
 
-//            if (id > 0){
-//                RunSelectorDialog newFragment = new RunSelectorDialog(id);
-//                newFragment.show(getFragmentManager(),"DialogTag");
-//            } else {
-//                Toast.makeText(getActivity(),"Select/record a run first",Toast.LENGTH_SHORT).show();
-//            }
+
+        //DialogFragment dialogFrag = RunSelectorDialog.newInstance(id);
+        //dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
+        //dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
+            if (id > 0){
+                DialogFragment newFragment = RunSelectorDialog.newInstance(id);
+                newFragment.setTargetFragment(this, 1);
+                newFragment.show(getFragmentManager().beginTransaction(),"DialogTag");
+            } else {
+                Toast.makeText(getActivity(),"Select/record a run first",Toast.LENGTH_SHORT).show();
+            }
 
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -190,13 +187,13 @@ public class SessionOverview extends Fragment {
 
     @Override
     public void onDetach() {
-        Log.d("sessionoverviewfrag","deattach");
+        Log.d("sessionoverviewfrag", "deattach");
         super.onDetach();
         mListener = null;
     }
 
     public void updateActivity(MainActivity.FragmentName fn) {
-        Log.d("sessionoverviewfrag","update");
+        Log.d("sessionoverviewfrag", "update");
         mListener.changeFragment(fn);
     }
 
@@ -221,10 +218,10 @@ public class SessionOverview extends Fragment {
         super.onStart();
         Log.d("sessionoverviewfrag", "onStart");
         bindToService();
-        //testMethod();
+        testMethod();
 
         //for >android 6.0
-        if (Build.VERSION.SDK_INT  >= 23) doPermissionCheck();
+        if (Build.VERSION.SDK_INT >= 23) doPermissionCheck();
 
         if (GPSDatabaseHandler.getInstance().getData().getLastRunID() == 0) {
             selectedRun = -1;
@@ -233,10 +230,11 @@ public class SessionOverview extends Fragment {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                int message = intent.getIntExtra("GPSActivity",-1);
-                Log.w("sessionoverview","broadcast:"+message);
-                if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, byciclecheckBox);
-                if (message == 2) updateList();
+                int message = intent.getIntExtra("GPSActivity", -1);
+                Log.w("sessionoverview", "broadcast:" + message);
+                if (message == 1)
+                    myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, byciclecheckBox);
+                if (message == 2) updateList(); //tracking started in service
             }
         };
         //registering receiver
@@ -248,11 +246,11 @@ public class SessionOverview extends Fragment {
     }
 
 
-
     public void bindToService() {
         Intent i = new Intent(getActivity(), GPSService.class);
         getActivity().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
+
     public void testMethod() {
 //            DataHolder_Database.getInstance().getData().addData(2, 51.615970, 6.707983, 50,0);
 //            try {
@@ -273,11 +271,11 @@ public class SessionOverview extends Fragment {
 //                e.printStackTrace();
 //            }
 //            DataHolder_Database.getInstance().getData().addData(2, 51.646960, 6.907983, 53, 0);
-//        GPSDatabaseHandler.getInstance().getData().addData(1, 51.500896, 6.890523, 50,0);
-//        GPSDatabaseHandler.getInstance().getData().addData(1, 51.662572, 6.612438, 50,0);
-//        GPSDatabaseHandler.getInstance().getData().addData(1, 51.575960, 6.707983, 50,0);
-//        GPSDatabaseHandler.getInstance().getData().addData(3, 51.500896, 6.890523, 50,1);
-//        GPSDatabaseHandler.getInstance().getData().addData(4, 51.662572, 6.612438, 50,1);
+          GPSDatabaseHandler.getInstance().getData().addData(1, 51.500896, 6.890523, 50,0);
+          GPSDatabaseHandler.getInstance().getData().addData(1, 51.662572, 6.612438, 50,0);
+          GPSDatabaseHandler.getInstance().getData().addData(1, 51.575960, 6.707983, 50,0);
+          GPSDatabaseHandler.getInstance().getData().addData(3, 51.500896, 6.890523, 50,1);
+          GPSDatabaseHandler.getInstance().getData().addData(4, 51.662572, 6.612438, 50,1);
 
         //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         //Date d = new Date();
@@ -299,18 +297,19 @@ public class SessionOverview extends Fragment {
             String ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfRun(i);
             if (ins != null) {
                 if (gps.getStatus() == GPSService.Status.TRACKINGSTARTED)
-                    if (i == lastRun)  ins = "(Recording)"+ins;
-                valueList.add(new GPSCustomListItem(i,ins));
+                    if (i == lastRun)
+                        ins = "(Tracking)" + "Session #" + i + " - Für Details hier klicken.";
+                valueList.add(new GPSCustomListItem(i, ins));
             }
         }
-        itemsAdapter = new ArrayAdapter <GPSCustomListItem> (getActivity(), android.R.layout.simple_list_item_1, valueList);
+        itemsAdapter = new ArrayAdapter<GPSCustomListItem>(getActivity(), android.R.layout.simple_list_item_1, valueList);
         sessionOverviewListView.setAdapter(itemsAdapter);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    public void doPermissionCheck(){
+    public void doPermissionCheck() {
         Log.w("sessionOverview", "permission check");
-        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.w("sessionOverview", "not granted");
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -324,60 +323,83 @@ public class SessionOverview extends Fragment {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.w("sessionOverview","granted!");
+                    Log.w("sessionOverview", "granted!");
                 } else {
-                    Log.w("sessionOverview","not granted");
+                    Log.w("sessionOverview", "not granted");
                 }
                 return;
             }
         }
     }
-    @SuppressLint("ValidFragment")
-    public class RunSelectorDialog extends DialogFragment {
 
-        private int id;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        public RunSelectorDialog(int id) {
-            this.id = id;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-            builder.setTitle("Run #" + id)
-                    .setItems(new String[]{"Show on Map", "Delete", "(debug1)", "(debug2"}, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 0:
-                                    //TODO
-                                    /*
-                                    Intent intent = new Intent(getActivity(), MapsActivity.class);
-                                    //only put the runID to the intent if map shouldnt show the current live track
-                                    if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == selectedRun))) {
-                                        intent.putExtra("runID", selectedRun);
-                                    }
-
-                                    startActivity(intent);*/
-                                    break;
-                                case 1:
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogListener)
-                                            .setNegativeButton("No", dialogListener).show();
-                                    break;
-                                case 2:
-                                    myGPSObject.getRunOutput(selectedRun);
-                                    Log.w("sessionoverview", selectedRun + "");
-                                    break;
-                                case 3:
-                                    testMethod();
-                                    break;
-                                default:
-                                    break;
-                            }
+        switch (requestCode) {
+            case 1:
+                switch (resultCode){
+                    case 0:
+                        updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
+                        Toast.makeText(getActivity(),"Route kommt noch",Toast.LENGTH_LONG).show();
+                        /*
+                        Intent intent = new Intent(getActivity(), MapsActivity.class);
+                        //only put the runID to the intent if map shouldnt show the current live track
+                        if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == selectedRun))) {
+                            intent.putExtra("runID", selectedRun);
                         }
-                    });
-            return builder.create();
+
+                        startActivity(intent);
+                        */
+                        break;
+                    case 1:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Sind Sie sich sicher?").setPositiveButton("Ja", dialogListener)
+                                .setNegativeButton("Nein", dialogListener).show();
+                        break;
+                    case 2:
+                        myGPSObject.getRunOutput(selectedRun);
+                        Log.w("sessionoverview", selectedRun + "");
+                        break;
+                    case 3:
+                        //testMethod();
+                        break;
+                    default:
+                        break;
+                }
+                break;
         }
     }
 
 }
+
+    //TODO Klasse auslagern. hab aber keinen plan in welchen ordner :D
+    @SuppressLint("ValidFragment")
+    class RunSelectorDialog extends DialogFragment {
+
+        //private int id;
+
+        public static RunSelectorDialog newInstance(int id) {
+            RunSelectorDialog dialog = new RunSelectorDialog();
+            Bundle args = new Bundle();
+            args.putInt("id",id);
+            dialog.setArguments(args);
+            //this.id = id;
+            return dialog;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            int id = getArguments().getInt("id");
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+            builder.setTitle("Session #" + id)
+                    .setItems(new String[]{"Karte", "Löschen", "(debug1)", "(debug2"}, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            getTargetFragment().onActivityResult(1,which,getActivity().getIntent());
+                        }
+                    });
+            return builder.create();
+
+        }
+    }
+

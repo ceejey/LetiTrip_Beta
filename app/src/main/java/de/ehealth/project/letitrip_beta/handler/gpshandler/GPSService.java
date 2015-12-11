@@ -31,16 +31,17 @@ public class GPSService extends Service {
     private NotificationManager notificationManager;
     private IBinder mBinder = new LocalBinder();
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public int getActiveRecordingID() {
-        return activeRecordingID;
-    }
-
-    public int getRecordingAsBicycle() {
-        return recordingAsBicycle;
+    @Override
+    public void onDestroy() {
+        try {
+            if (mylocman != null) mylocman.removeUpdates(locationListener);
+            status = Status.IDLE;
+        } catch (IllegalArgumentException | SecurityException e) {
+            e.printStackTrace();
+        }
+        Log.w("service", "destroyed");
+        if (notificationManager != null) notificationManager.cancel(0);
+        super.onDestroy();
     }
 
     @Nullable
@@ -85,19 +86,6 @@ public class GPSService extends Service {
         this.sendBroadcast(i);
     }
 
-    @Override
-    public void onDestroy() {
-        try {
-            if (mylocman != null) mylocman.removeUpdates(locationListener);
-            status = Status.IDLE;
-        } catch (IllegalArgumentException | SecurityException e) {
-            e.printStackTrace();
-        }
-        Log.w("service", "destroyed");
-        if (notificationManager != null) notificationManager.cancel(0);
-        super.onDestroy();
-    }
-
     public void startTracking() {
         locationListener = new LocationListener() {
             @Override
@@ -111,7 +99,7 @@ public class GPSService extends Service {
                         Toast.makeText(GPSService.this, "Accuaracy:" + l.getAccuracy(), Toast.LENGTH_SHORT).show();
                     }
 
-                    //check this part after first data set is inserted to create an table entry at GPS activity
+                    //check this part after first data set is inserted to create an table entry at the SessioOverview fragment
                     if (status != Status.TRACKINGSTARTED) {
                         createNotification();
                         Log.w("service", "Listen to id:" + activeRecordingID);
@@ -161,11 +149,23 @@ public class GPSService extends Service {
         notificationManager.notify(0, notification);
     }
 
-    public enum Status {TRACKINGSTARTED, SEARCHINGGPS, IDLE}
+    public enum Status {TRACKINGSTARTED, SEARCHINGGPS, IDLE;}
 
     public class LocalBinder extends Binder {
+
         public GPSService getService() {
             return GPSService.this;
         }
+    }
+    public Status getStatus() {
+        return status;
+    }
+
+    public int getActiveRecordingID() {
+        return activeRecordingID;
+    }
+
+    public int getRecordingAsBicycle() {
+        return recordingAsBicycle;
     }
 }

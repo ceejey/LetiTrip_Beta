@@ -2,7 +2,7 @@ package de.ehealth.project.letitrip_beta.view.fragment.settings;
 
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;

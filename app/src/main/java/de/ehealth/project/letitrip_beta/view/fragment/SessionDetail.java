@@ -2,7 +2,6 @@ package de.ehealth.project.letitrip_beta.view.fragment;
 
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -243,8 +243,6 @@ public class SessionDetail extends Fragment {
             boolean endMarker = true;
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-
-
                 Log.w("map","showthisrun:" + showThisRun);
                 if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (showThisRun == -1)) {
                     showThisRun = gps.getActiveRecordingID();

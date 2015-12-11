@@ -3,7 +3,7 @@ package de.ehealth.project.letitrip_beta.view.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,10 +12,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
-import de.ehealth.project.letitrip_beta.model.news.Story;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class News extends Fragment {

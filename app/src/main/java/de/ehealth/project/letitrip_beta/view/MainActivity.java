@@ -1,9 +1,9 @@
 package de.ehealth.project.letitrip_beta.view;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.widget.TextView;
 
 import de.ehealth.project.letitrip_beta.R;
@@ -25,12 +25,11 @@ import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Settings;
 
-public class MainActivity extends Activity implements FragmentChanger{
+public class MainActivity extends FragmentActivity implements FragmentChanger{
 
     Fragment mFragmentHeader;
     Fragment mFragmentCaption;
     Fragment mFragmentContent;
-    public int tesssssst;
 
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
@@ -43,11 +42,12 @@ public class MainActivity extends Activity implements FragmentChanger{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         mFragmentHeader = new Header();
         mFragmentContent = new Dashboard();
         mFragmentCaption = new Bar();
+
 
         fragmentManager.beginTransaction().replace(R.id.headerContainer, mFragmentHeader).commit();
         fragmentManager.beginTransaction().replace(R.id.captionContainer, mFragmentCaption).commit();
@@ -57,7 +57,7 @@ public class MainActivity extends Activity implements FragmentChanger{
     @Override
     public void changeFragment(FragmentName fn) {
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment fragmentContent = new Dashboard();
         TextView txtHeader = (TextView) mFragmentHeader.getView().findViewById(R.id.txtHeader);

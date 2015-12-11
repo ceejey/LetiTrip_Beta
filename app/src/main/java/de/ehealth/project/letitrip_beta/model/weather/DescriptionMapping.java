@@ -26,7 +26,7 @@ public class DescriptionMapping {
             descriptionMap.put("showers", "Duschen");
             descriptionMap.put("snow flurries", "Schneetreiben");
             descriptionMap.put("light snow showers", "Leichte Schneeschauer");
-            descriptionMap.put("blowing snow", "weht Schnee");
+            descriptionMap.put("blowing snow", "Schneewehen");
             descriptionMap.put("snow", "Schnee");
             descriptionMap.put("hail", "Hagel");
             descriptionMap.put("sleet", "Schneeregen");

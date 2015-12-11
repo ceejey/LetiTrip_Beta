@@ -22,6 +22,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -38,15 +40,20 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class SessionDetail extends Fragment {
 
     private FragmentChanger mListener;
+    private ServiceConnection mConnection;
+
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private TextView tv1;
-    private int showThisRun;
-    private BroadcastReceiver broadcastReceiver;
-    private de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService gps;
-    private boolean bound = false;
+    private MapView mapView;
     private PolylineOptions route;
     private Marker liveMarker;
-    private ServiceConnection mConnection;
+
+    private BroadcastReceiver broadcastReceiver;
+    private de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService gps;
+
+    private Button bt;
+    private TextView infoBox;
+    private int showThisRun;
+    private boolean bound = false;
     private int lastSpeedID = -1;
 
     @Override
@@ -54,15 +61,19 @@ public class SessionDetail extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view  = inflater.inflate(R.layout.fragment_session_detail, container, false);
-        tv1 = (TextView)view.findViewById(R.id.textView2);
+        infoBox = (TextView)view.findViewById(R.id.infoBox);
 
-        final Button bt = (Button) view.findViewById(R.id.button);
+        bt = (Button) view.findViewById(R.id.button);
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchMapType(mMap, bt);
+                switchMapType();
             }
         });
+
+        mapView = (MapView) view.findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+
         return view;
     }
 
@@ -110,26 +121,6 @@ public class SessionDetail extends Fragment {
         };
 
     }
-    /**
-     *
-     * @param tv1
-     * @param showThisRun
-     * @param averageSpeed pass 0 if it shouldnt be displayed
-     */
-    public void updateInfoBox(TextView tv1, int showThisRun, double averageSpeed){
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(showThisRun);
-        long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        tv1.setText("Run #" + showThisRun +
-                "\nDuration: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " minutes" +
-                "\nDistance: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun)) + "meters" +
-                "\nAverage speed: " + averageSpeed + "km/h" +
-                "\nTemperature: " +
-                "\nWind: ");
-
-
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -151,7 +142,7 @@ public class SessionDetail extends Fragment {
                     if (lastSpeedID == -1) {
                         lastSpeedID = tempLastID;
                     } else {
-                        updateInfoBox(tv1,showThisRun,(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastSpeedID,tempLastID)*3.6));
+                        updateInfoBox((GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastSpeedID,tempLastID)*3.6));
                         lastSpeedID = tempLastID;
                     }
                     LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
@@ -172,8 +163,53 @@ public class SessionDetail extends Fragment {
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 
-    public void setUpUI(){
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.w("maps", "pause");
+        try{
+            getActivity().unregisterReceiver(broadcastReceiver);
+        } catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+        if (bound) {
+            getActivity().unbindService(mConnection);
+            bound = false;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        mapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        mapView.onLowMemory();
+        super.onLowMemory();
+    }
+
+    /**
+     *
+     * @param averageSpeed pass 0 if it shouldnt be displayed
+     */
+    public void updateInfoBox(double averageSpeed){
+        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(showThisRun);
+        long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+        infoBox.setText("Run #" + showThisRun +
+                "\nDuration: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " minutes" +
+                "\nDistance: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun)) + "meters" +
+                "\nAverage speed: " + averageSpeed + "km/h" +
+                "\nTemperature: " +
+                "\nWind: ");
     }
 
     public void bindToService() {
@@ -199,12 +235,16 @@ public class SessionDetail extends Fragment {
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
-            //TODO
-            // Try to obtain the map from the SupportMapFragment.
+            // Try to obtain the map
            //mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+            mMap = mapView.getMap();
+            MapsInitializer.initialize(this.getActivity());
+
             boolean endMarker = true;
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
+
+
                 Log.w("map","showthisrun:" + showThisRun);
                 if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (showThisRun == -1)) {
                     showThisRun = gps.getActiveRecordingID();
@@ -212,21 +252,6 @@ public class SessionDetail extends Fragment {
                 }
                 setUpMap(endMarker);
             }
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.w("maps", "pause");
-        try{
-            getActivity().unregisterReceiver(broadcastReceiver);
-        } catch (IllegalArgumentException e){
-            e.printStackTrace();
-        }
-        if (bound) {
-            getActivity().unbindService(mConnection);
-            bound = false;
         }
     }
 
@@ -241,7 +266,7 @@ public class SessionDetail extends Fragment {
 
         //is the int set to show a specific run at activity startup?
         if (showThisRun != -1) {
-            showRunOnMap(showThisRun, tv1, mMap, route, endMarker, GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun, 0));
+            showRunOnMap(endMarker, GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun, 0));
             showThisRun = -1;
         }
     }
@@ -261,12 +286,12 @@ public class SessionDetail extends Fragment {
         }
     }*/
 
-    public void showRunOnMap(int showThisRun, TextView tv1, GoogleMap mMap, PolylineOptions route, boolean endMarker, double averageSpeed){
+    public void showRunOnMap(boolean endMarker, double averageSpeed){
         //save run data to an array
         Cursor res = GPSDatabaseHandler.getInstance().getData().getRun(showThisRun);
 
         //display the data
-        updateInfoBox(tv1,showThisRun,averageSpeed);
+        updateInfoBox(averageSpeed);
         while (res.moveToNext()){
             route.add(new LatLng(res.getDouble(3), res.getDouble(4)));
         }
@@ -295,7 +320,7 @@ public class SessionDetail extends Fragment {
 
     }
 
-    public void switchMapType(GoogleMap mMap, Button bt) {
+    public void switchMapType() {
         if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
             mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             bt.setText("Switch to Hybrid View");

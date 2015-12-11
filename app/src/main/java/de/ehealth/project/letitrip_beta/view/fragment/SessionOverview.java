@@ -99,6 +99,7 @@ public class SessionOverview extends Fragment {
         byciclecheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
             }
         });
@@ -167,7 +168,7 @@ public class SessionOverview extends Fragment {
     }
 
     public void showRunDialog(int id) {
-        Toast.makeText(getActivity(),"Shit aint working yet",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(),id+"Shit aint working yet",Toast.LENGTH_SHORT).show();
 
 //            if (id > 0){
 //                RunSelectorDialog newFragment = new RunSelectorDialog(id);
@@ -190,7 +191,6 @@ public class SessionOverview extends Fragment {
     @Override
     public void onDetach() {
         Log.d("sessionoverviewfrag","deattach");
-
         super.onDetach();
         mListener = null;
     }
@@ -208,7 +208,6 @@ public class SessionOverview extends Fragment {
         myGPSObject = new GPSTest();
         GPSDatabase myDB = new GPSDatabase(getActivity());
         GPSDatabaseHandler.getInstance().setData(myDB);
-
     }
 
     @Override

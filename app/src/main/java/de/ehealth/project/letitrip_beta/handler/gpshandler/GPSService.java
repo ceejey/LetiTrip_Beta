@@ -21,9 +21,6 @@ import java.util.Calendar;
 
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
-/**
- * Created by Lars on 08.12.2015.
- */
 public class GPSService extends Service {
 
     private LocationListener locationListener;

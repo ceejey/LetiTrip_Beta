@@ -13,8 +13,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -37,7 +41,7 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
-public class SessionDetail extends Fragment {
+public class SessionDetail extends Fragment implements SessionOverview.ShowRunOnMap{
 
     private FragmentChanger mListener;
     private ServiceConnection mConnection;
@@ -96,12 +100,8 @@ public class SessionDetail extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         route = new PolylineOptions();
-
-
-        if (getActivity().getIntent().hasExtra("runID")){
-            showThisRun = (int) getActivity().getIntent().getExtras().get("runID");
-        } else showThisRun = -1;
 
         mConnection = new ServiceConnection() {
             @Override
@@ -121,10 +121,11 @@ public class SessionDetail extends Fragment {
         };
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
-        Log.w("maps", "start");
+        Log.w("maps", "start"+showThisRun);
         bindToService();
 
         broadcastReceiver = new BroadcastReceiver() {
@@ -184,6 +185,13 @@ public class SessionDetail extends Fragment {
         }
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     @Override
     public void onDestroy() {
         mapView.onDestroy();
@@ -204,11 +212,11 @@ public class SessionDetail extends Fragment {
         long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(showThisRun);
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        infoBox.setText("Run #" + showThisRun +
-                "\nDuration: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " minutes" +
-                "\nDistance: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun)) + "meters" +
-                "\nAverage speed: " + averageSpeed + "km/h" +
-                "\nTemperature: " +
+        infoBox.setText("Session #" + showThisRun +
+                "\nDauer: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
+                "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun)) + " Meter" +
+                "\nDurchschn. Geschwindigkeit: " + averageSpeed + "km/h" +
+                "\nTemperatur: " +
                 "\nWind: ");
     }
 
@@ -244,6 +252,8 @@ public class SessionDetail extends Fragment {
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 Log.w("map","showthisrun:" + showThisRun);
+
+
                 if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (showThisRun == -1)) {
                     showThisRun = gps.getActiveRecordingID();
                     endMarker = false;
@@ -315,23 +325,47 @@ public class SessionDetail extends Fragment {
         route.width(6);
         route.color(Color.RED);
         mMap.addPolyline(route);
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(getActivity(), v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_map, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.w("CLICK","CLICK"+item.getOrder()+"-"+item.getGroupId()+"-"+item.getItemId()+"-"+item.getTitle());
+                switch (item.getItemId()) {
+                    case R.id.menuitem1:
+                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        break;
+                    case R.id.menuitem2:
+                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                        break;
+                    case R.id.menuitem3:
+                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        break;
+                    case R.id.menuitem4:
+                        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show();
 
     }
 
     public void switchMapType() {
-        if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
-            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-            bt.setText("Switch to Hybrid View");
-        } else if (mMap.getMapType() == GoogleMap.MAP_TYPE_HYBRID) {
-            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-            bt.setText("Switch to Normal View");
-        } else {
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            bt.setText("Switch to Terrain View");
-        }
+        showPopup(getView());
     }
 
     public void updateActivity(MainActivity.FragmentName fn) {
         mListener.changeFragment(fn);
+    }
+
+    @Override
+    public void setSelectedRunID(int id) {
+        showThisRun = id;
     }
 }

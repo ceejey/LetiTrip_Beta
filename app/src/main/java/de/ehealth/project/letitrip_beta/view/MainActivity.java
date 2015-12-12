@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.TextView;
 
 import de.ehealth.project.letitrip_beta.R;
@@ -25,7 +27,7 @@ import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Settings;
 
-public class MainActivity extends FragmentActivity implements FragmentChanger{
+public class MainActivity extends FragmentActivity implements FragmentChanger, SessionOverview.ShowRunOnMap{
 
     Fragment mFragmentHeader;
     Fragment mFragmentCaption;
@@ -121,5 +123,31 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         }
 
         fragmentManager.beginTransaction().replace(R.id.contentContainer, fragmentContent).commit();
+    }
+
+    /**
+     *  SessionOverview calls this method if a run should be shown on the map
+     */
+    @Override
+    public void setSelectedRunID(int id) {
+
+        Log.w("activity", "abc");
+        SessionDetail newFragment = new SessionDetail();
+        Bundle args = new Bundle();
+        args.putInt("runID", id);
+        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.contentContainer, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+        newFragment.setSelectedRunID(id);
+
+        //changeFragment(FragmentName.SESSION_DETAIL);
     }
 }

@@ -63,6 +63,12 @@ public class SessionOverview extends Fragment {
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSTest myGPSObject;
 
+    ShowRunOnMap showRunOnMap;
+
+    public interface ShowRunOnMap{
+        void setSelectedRunID(int id);
+    }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -183,6 +189,12 @@ public class SessionOverview extends Fragment {
         } else {
             Log.d("Fitbit", "Wrong interface implemented");
         }
+
+        try {
+            showRunOnMap = (ShowRunOnMap) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement ShowRunOnMap");
+        }
     }
 
     @Override
@@ -220,6 +232,9 @@ public class SessionOverview extends Fragment {
         bindToService();
         testMethod();
 
+        //only gets called when user returns to this fragment via back button
+        if ((gps!=null) && (sessionOverviewListView.getAdapter() == null)) updateList();
+
         //for >android 6.0
         if (Build.VERSION.SDK_INT >= 23) doPermissionCheck();
 
@@ -227,6 +242,7 @@ public class SessionOverview extends Fragment {
             selectedRun = -1;
         }
 
+        //TODO
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -240,9 +256,6 @@ public class SessionOverview extends Fragment {
         //registering receiver
         IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
-
-        //sessionOverviewListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        //sessionOverviewListView.setSelection(2);
     }
 
 
@@ -339,17 +352,11 @@ public class SessionOverview extends Fragment {
             case 1:
                 switch (resultCode){
                     case 0:
-                        updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
-                        Toast.makeText(getActivity(),"Route kommt noch",Toast.LENGTH_LONG).show();
-                        /*
-                        Intent intent = new Intent(getActivity(), MapsActivity.class);
                         //only put the runID to the intent if map shouldnt show the current live track
                         if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == selectedRun))) {
-                            intent.putExtra("runID", selectedRun);
-                        }
-
-                        startActivity(intent);
-                        */
+                            //intent.putExtra("runID", selectedRun);
+                            showRunOnMap.setSelectedRunID(selectedRun);
+                        } else updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
                         break;
                     case 1:
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

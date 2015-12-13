@@ -48,12 +48,47 @@ public class FitBitActivityScore {
         mStepsAvg = mStepsAvg /14;
         mCaloriesBMRAvg = mCaloriesBMRAvg /14;
         mCaloriesOutAvg = mCaloriesOutAvg /14;
-
+        setUserAims();
         try {
             mActivtiyScoreSteps = mStepsAvg / mStepsAim;
             mActivtiyScoreCalories = mCaloriesOutAvg / mCaloriesAim;
         } catch(Exception ex){ ex.printStackTrace(); }
+    }
 
+    /**
+     * Look at our Aim Table. We decie that our overall aim is an active User
+     */
+    public void setUserAims(){
+        int user_age = Integer.parseInt(FitbitUserProfile.getmActiveUser().getmAge());
+        if(FitbitUserProfile.getmActiveUser().getmGender().contains("MALE")) {
+            if (user_age == 18) {
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(3200);
+            }
+            if (user_age >= 19 && user_age <= 35){
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(3000);
+            }
+            if (user_age >= 36 && user_age <= 55){
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2800);
+            }
+            if (user_age >= 56 && user_age <= 75){
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2600);
+            }
+            if (user_age > 75){
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2400);
+            }
+        }
+        else{
+
+            if (user_age >= 18 && user_age <= 30){
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2400);
+            }
+            if (user_age >= 31 && user_age <= 60){
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2200);
+            }
+            if (user_age >= 61 ){
+                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2000);
+            }
+        }
     }
 
     public static double getmStepsAim() {

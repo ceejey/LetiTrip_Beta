@@ -12,6 +12,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,6 +31,12 @@ public class GPSService extends Service {
     private Status status;
     private NotificationManager notificationManager;
     private IBinder mBinder = new LocalBinder();
+
+    public class LocalBinder extends Binder {
+        public GPSService getService() {
+            return GPSService.this;
+        }
+    }
 
     @Override
     public void onDestroy() {
@@ -68,7 +75,7 @@ public class GPSService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w("service", "started");
-        activeRecordingID = (de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler.getInstance().getData().getLastRunID()) + 1;
+        activeRecordingID = (GPSDatabaseHandler.getInstance().getData().getLastRunID()) + 1;
         if (intent.hasExtra("bicycle")) {
             recordingAsBicycle = (intent.getIntExtra("bicycle", 0) == 0 ? 0 : 1);
             Log.w("gpsservice", "recordingAsBicycle=" + recordingAsBicycle);
@@ -81,9 +88,13 @@ public class GPSService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void sendBroadcast(String msg, int ID) {
-        Intent i = new Intent("android.intent.action.MAIN").putExtra(msg, ID);
-        this.sendBroadcast(i);
+    public void sendBroadcast(String msg, int ID){
+        //Intent i = new Intent("android.intent.action.MAIN").putExtra(msg,ID);
+        //this.sendBroadcast(i);#
+        Intent intent = new Intent("my-event");
+        // add data
+        intent.putExtra("message", 3);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     public void startTracking() {
@@ -91,13 +102,11 @@ public class GPSService extends Service {
             @Override
             public void onLocationChanged(Location l) {
                 if (l != null) {
-                    boolean ins = de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle);
-                    if (!ins)
-                        Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
-                    else {
+                    boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle);
+                    if (ins) {
                         sendBroadcast("MapsActivity", 1);
                         Toast.makeText(GPSService.this, "Accuaracy:" + l.getAccuracy(), Toast.LENGTH_SHORT).show();
-                    }
+                    } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
 
                     //check this part after first data set is inserted to create an table entry at the SessioOverview fragment
                     if (status != Status.TRACKINGSTARTED) {
@@ -120,7 +129,9 @@ public class GPSService extends Service {
 
         };
         try {
-            mylocman.requestLocationUpdates("gps", 3000, 10, locationListener);
+           // mylocman.requestLocationUpdates("gps", 3000, 10, locationListener);
+            mylocman.requestLocationUpdates("gps", 100, 2, locationListener);
+
             status = Status.SEARCHINGGPS;
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -151,12 +162,6 @@ public class GPSService extends Service {
 
     public enum Status {TRACKINGSTARTED, SEARCHINGGPS, IDLE;}
 
-    public class LocalBinder extends Binder {
-
-        public GPSService getService() {
-            return GPSService.this;
-        }
-    }
     public Status getStatus() {
         return status;
     }

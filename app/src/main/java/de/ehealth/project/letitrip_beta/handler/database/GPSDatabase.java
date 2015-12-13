@@ -253,7 +253,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0+" = "+ID1+" or "+COLUMN0+ " = "+ID2+")", null);
         res.moveToFirst();
-        int val1=res.getInt(0);
+        int val1 = res.getInt(0);
         res.moveToNext();
         return (res.getInt(0)-val1);
     }
@@ -267,7 +267,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
     public double getAverageSpeed(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res;
-        Log.w("db",ID1+"");
         if (ID2 == 0){
             res = db.rawQuery("select " + COLUMN2 +","+COLUMN3+","+COLUMN4+","+COLUMN5+ " from " + TABLE_NAME + " where " + COLUMN1 + "="+ID1, null);
         } else {
@@ -317,8 +316,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
             count++;
             res.moveToNext();
         }
-
-        Log.w("db",totalDistance+"-"+totalSeconds+"-"+(totalDistance/totalSeconds));
 
         return totalDistance/totalSeconds;
     }

@@ -1,14 +1,21 @@
 package de.ehealth.project.letitrip_beta.view;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.handler.database.GPSDatabase;
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.Dashboard;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -40,6 +47,31 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("my-event"));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        //ExampleFragment fragment = (ExampleFragment) getSupportFragmentManager().findFragmentById(R.id.example_fragment);
+
+        //Fragment sessionOverview = (SessionOverview) getSupportFragmentManager().find(R.id.fr);
+        //sessionOverview.<specific_function_name>();
+        super.onPause();
+    }
+
+    //handler to receive broadcast messages from gps service
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int message = intent.getIntExtra("message", -1);
+            Log.d("receiver", "Got message: " + message);
+        }
+    };
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -54,6 +86,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
         fragmentManager.beginTransaction().replace(R.id.headerContainer, mFragmentHeader).commit();
         fragmentManager.beginTransaction().replace(R.id.captionContainer, mFragmentCaption).commit();
         fragmentManager.beginTransaction().replace(R.id.contentContainer, mFragmentContent).commit();
+
+        GPSDatabase myDB = new GPSDatabase(this);
+        GPSDatabaseHandler.getInstance().setData(myDB);
     }
 
     @Override
@@ -130,8 +165,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
      */
     @Override
     public void setSelectedRunID(int id) {
-
-        Log.w("activity", "abc");
+        Log.w("activity","setSelectedRunID called!");
         SessionDetail newFragment = new SessionDetail();
         Bundle args = new Bundle();
         args.putInt("runID", id);
@@ -150,4 +184,5 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
 
         //changeFragment(FragmentName.SESSION_DETAIL);
     }
+
 }

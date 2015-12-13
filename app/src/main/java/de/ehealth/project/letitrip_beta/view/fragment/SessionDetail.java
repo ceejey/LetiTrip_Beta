@@ -16,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -87,7 +86,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
         if (activity instanceof FragmentChanger) {
             mListener = (FragmentChanger) activity;
         } else {
-            Log.d("Fitbit", "Wrong interface implemented");
+            Log.d("SessionDetail", "Wrong interface implemented");
         }
     }
 
@@ -185,13 +184,6 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
         }
     }
 
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
     @Override
     public void onDestroy() {
         mapView.onDestroy();
@@ -206,7 +198,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
     /**
      *
-     * @param averageSpeed pass 0 if it shouldnt be displayed
+     * @param averageSpeed
      */
     public void updateInfoBox(double averageSpeed){
         long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(showThisRun);
@@ -244,7 +236,6 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map
-           //mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
             mMap = mapView.getMap();
             MapsInitializer.initialize(this.getActivity());
 
@@ -278,21 +269,6 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
             showThisRun = -1;
         }
     }
-    /*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.blabla1:
-                Toast.makeText(MapsActivity.this, "Test1", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.blabla2:
-                Toast.makeText(MapsActivity.this, "Test2", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
 
     public void showRunOnMap(boolean endMarker, double averageSpeed){
         //save run data to an array

@@ -6,8 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
-import de.ehealth.project.letitrip_beta.handler.task.fitbit.FitBitGetJsonTask;
-import de.ehealth.project.letitrip_beta.handler.task.fitbit.Oauth;
+import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
+import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 
 /**
  * Created by Mirorn on 25.11.2015.

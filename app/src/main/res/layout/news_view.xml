@@ -7,6 +7,7 @@
     <ImageView
         android:id="@+id/imgNews"
         android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
         android:layout_height="180dp"
         android:scaleType="centerCrop"/>
 
@@ -18,6 +19,7 @@
         android:layout_alignBottom="@+id/imgNews"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
         android:background="#ffffff"
@@ -36,7 +38,7 @@
         android:id="@+id/linearLayout2">
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/imgNewsIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_newspaper_grey600_24dp" />

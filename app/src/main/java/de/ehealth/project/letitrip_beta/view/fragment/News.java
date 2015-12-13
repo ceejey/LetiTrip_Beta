@@ -3,16 +3,17 @@ package de.ehealth.project.letitrip_beta.view.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
-import de.ehealth.project.letitrip_beta.model.news.Story;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class News extends Fragment {
@@ -26,19 +27,19 @@ public class News extends Fragment {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
 
         TextView txtNewsTitle = (TextView) view.findViewById(R.id.txtNewsTitle);
-        TextView txtNewsText = (TextView) view.findViewById(R.id.txtNewsText);
 
         txtNewsTitle.setText(NewsHandler.getmSelectedStory().getTitle());
 
         String body = NewsHandler.getmSelectedStory().getBody();
-        for(int i = 0; i < body.length() ; i++){
-            if(body.charAt(i) == '\n' && body.charAt(i+1) != '\n' && body.charAt(i+2) != '\n'){
-                if(body.length() > i+1)
-                    body = body.substring(0, i) + " " + body.substring(i+1, body.length());
-            }
-        }
-        txtNewsText.setText(body);
 
+        body = Html.escapeHtml(body);
+        WebView webView = (WebView) view.findViewById(R.id.webVNews);
+
+        String text = "<html><body>" +
+                        "<p align=\"justify\">" + body + "</p> " +
+                    "</body></html>";
+
+        webView.loadData(text, "text/html", "utf-8");
 
         return view;
     }

@@ -1,7 +1,7 @@
 package de.ehealth.project.letitrip_beta.view.fragment.fitbit;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.task.fitbit.Oauth;
+import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 

@@ -1,9 +1,11 @@
 package de.ehealth.project.letitrip_beta.view;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.TextView;
 
 import de.ehealth.project.letitrip_beta.R;
@@ -16,16 +18,16 @@ import de.ehealth.project.letitrip_beta.view.fragment.Recipe;
 import de.ehealth.project.letitrip_beta.view.fragment.Session;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionDetail;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionOverview;
-import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.CheckUserProfile;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.FitBitInit;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.WebviewOauth;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.General;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Settings;
 
-public class MainActivity extends Activity implements FragmentChanger{
+public class MainActivity extends FragmentActivity implements FragmentChanger, SessionOverview.ShowRunOnMap{
 
     Fragment mFragmentHeader;
     Fragment mFragmentCaption;
@@ -42,11 +44,12 @@ public class MainActivity extends Activity implements FragmentChanger{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         mFragmentHeader = new Header();
         mFragmentContent = new Dashboard();
         mFragmentCaption = new Bar();
+
 
         fragmentManager.beginTransaction().replace(R.id.headerContainer, mFragmentHeader).commit();
         fragmentManager.beginTransaction().replace(R.id.captionContainer, mFragmentCaption).commit();
@@ -56,7 +59,7 @@ public class MainActivity extends Activity implements FragmentChanger{
     @Override
     public void changeFragment(FragmentName fn) {
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         Fragment fragmentContent = new Dashboard();
         TextView txtHeader = (TextView) mFragmentHeader.getView().findViewById(R.id.txtHeader);
@@ -120,5 +123,31 @@ public class MainActivity extends Activity implements FragmentChanger{
         }
 
         fragmentManager.beginTransaction().replace(R.id.contentContainer, fragmentContent).commit();
+    }
+
+    /**
+     *  SessionOverview calls this method if a run should be shown on the map
+     */
+    @Override
+    public void setSelectedRunID(int id) {
+
+        Log.w("activity", "abc");
+        SessionDetail newFragment = new SessionDetail();
+        Bundle args = new Bundle();
+        args.putInt("runID", id);
+        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.contentContainer, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+        newFragment.setSelectedRunID(id);
+
+        //changeFragment(FragmentName.SESSION_DETAIL);
     }
 }

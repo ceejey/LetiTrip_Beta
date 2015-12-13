@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.handler.task.fitbit;
+package de.ehealth.project.letitrip_beta.handler.fitbit;
 
 
 import android.app.Activity;

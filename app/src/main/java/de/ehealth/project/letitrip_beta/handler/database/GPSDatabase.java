@@ -128,14 +128,14 @@ public class GPSDatabase extends SQLiteOpenHelper {
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
 
-            result+="Run #"+res.getInt(1)+" ("+minutes+":";
+            result+="Session #"+res.getInt(1)+" ("+minutes+":";
             if (seconds < 10) result+="0";
             result+=seconds+"; ";
             result+=res.getCount()+" positions; ";
             double meters = getWalkDistance(id);
-            result+=((int)getWalkDistance(id))+" meters; ";
-            result+="\u00D8speed: "+decimalFormat.format(3.6*(meters/(seconds+(minutes*60))))+" km/h; ";
-            result+=(bicycle == 0?"walk":"bicycle")+")";
+            result+=((int)getWalkDistance(id))+" Meter; ";
+            result+="\u00D8Geschwindigkeit: "+decimalFormat.format(3.6*(meters/(seconds+(minutes*60))))+" km/h; ";
+            result+=(bicycle == 0?"Lauf":"Fahrrad")+")";
 
             return result;
         } else return null;

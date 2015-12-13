@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.Token;
 
-import de.ehealth.project.letitrip_beta.handler.task.fitbit.Oauth;
+import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 
 /**
  * Created by Mirorn on 28.10.2015.

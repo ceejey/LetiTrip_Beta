@@ -1,7 +1,7 @@
 package de.ehealth.project.letitrip_beta.view.fragment.fitbit;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,9 +12,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.task.fitbit.FitBitGetJsonTask;
-import de.ehealth.project.letitrip_beta.handler.task.fitbit.Oauth;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitBitActivityScore;
+import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
+import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -94,7 +93,6 @@ public class CheckUserProfile extends Fragment {
         }
 
         FitbitUserProfile.saveUser(getActivity());
-        FitBitActivityScore.getmActivityScore().calcActivtiyScore(getActivity());
         // updateActivity(MainActivity.FragmentEnum.HomeUser);
     }
 

@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.handler.task.weather;
+package de.ehealth.project.letitrip_beta.handler.weather;
 
 import de.ehealth.project.letitrip_beta.model.weather.Channel;
 

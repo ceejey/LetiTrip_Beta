@@ -5,8 +5,6 @@
     tools:context="de.ehealth.project.letitrip.view.fragment.SessionOverview"
     android:background="#ffffff">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -21,12 +19,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Tracking disabled."
+                android:text="Aufnahme deaktiviert."
                 android:id="@+id/gpsStatusTextView"
                 android:textSize="20dp"
                 android:layout_below="@+id/gpsEnabledToggle"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="3dp"/>
 
             <ToggleButton
                 android:layout_width="wrap_content"
@@ -39,14 +38,15 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
 
-            <CheckBox
+            <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="bycicle"
-                android:id="@+id/byciclecheckBox"
+                android:text="Lauf"
+                android:id="@+id/bycicleSwitch"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/gpsEnabledToggle"
                 android:layout_alignBottom="@+id/gpsStatusTextView"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:checked="false" />
         </RelativeLayout>
 
         <LinearLayout

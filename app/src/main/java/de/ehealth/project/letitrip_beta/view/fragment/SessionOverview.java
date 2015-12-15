@@ -26,8 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -47,9 +47,10 @@ public class SessionOverview extends Fragment {
 
     private FragmentChanger mListener;
     private TextView gpsStatusTextView;
-    private CheckBox byciclecheckBox;
+
     private ToggleButton gpsEnabledToggle;
     private ListView sessionOverviewListView;
+    private Switch bycicleSwitch;
 
     private ArrayAdapter<GPSCustomListItem> itemsAdapter;
     private int selectedRun = -1;
@@ -78,7 +79,7 @@ public class SessionOverview extends Fragment {
             Log.w("sessionoverview", "GEBUNDEN");
             Log.w("sessionoverview", "status:" + gps.getStatus() + "");
 
-            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, byciclecheckBox);
+            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bycicleSwitch);
             updateList();
         }
 
@@ -92,40 +93,42 @@ public class SessionOverview extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.w("sessionoverview","oncreateview called");
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_session_overview, container, false);
 
         gpsStatusTextView = (TextView) view.findViewById(R.id.gpsStatusTextView);
         gpsEnabledToggle = (ToggleButton) view.findViewById(R.id.gpsEnabledToggle);
         sessionOverviewListView = (ListView) view.findViewById(R.id.sessionOverviewListView);
-        byciclecheckBox = (CheckBox) view.findViewById(R.id.byciclecheckBox);
+        bycicleSwitch = (Switch) view.findViewById(R.id.bycicleSwitch);
 
         //tracking on/off
         gpsEnabledToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("sessionoverview", "bound:" + bound);
-                Log.d("sessionoverview", "gpsEnabledToggle.isChecked():" + gpsEnabledToggle.isChecked());
+                Log.d("sessionoverview", "gpsEnabledToggle.isChecked():" + ((ToggleButton)v).isChecked());
+
 
                 if (bound) {
                     if (gpsEnabledToggle.isChecked()) {
                         Log.w("soverview", "checked");
                         Intent i = new Intent(getActivity(), GPSService.class);
-                        i.putExtra("bicycle", (byciclecheckBox.isChecked() ? 1 : 0));
+                        i.putExtra("bicycle", (bycicleSwitch.isChecked() ? 1 : 0));
                         getActivity().startService(i);
-                        gpsStatusTextView.setText("Record starts soon...");
+                        gpsStatusTextView.setText("Aufnahme startet bald...");
                     } else {
                         Log.w("sessionoverview", "stopping...");
                         //unbind from service to be able to stop it
                         getActivity().unbindService(mConnection);
-                        bound = false;
 
-                        Intent i = new Intent(getActivity(), GPSService.class);
-                        getActivity().stopService(i);
-                        gpsStatusTextView.setText("Tracking disabled.");
+                        bound = false;
+                        getActivity().stopService(new Intent(getActivity(), GPSService.class));
                         updateList();
+
                         //bind again
-                        bindToService();
+                        getActivity().bindService(new Intent(getActivity(), GPSService.class), mConnection, Context.BIND_AUTO_CREATE);
                     }
                 } else Log.w("sessionoverview", "bind error");
             }
@@ -163,6 +166,15 @@ public class SessionOverview extends Fragment {
             }
         };
 
+        bycicleSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bycicleSwitch.isChecked()){
+                    bycicleSwitch.setText("Fahrrad");
+                } else bycicleSwitch.setText("Lauf");
+            }
+        });
+
         return view;
     }
 
@@ -172,7 +184,7 @@ public class SessionOverview extends Fragment {
                 newFragment.setTargetFragment(this, 1);
                 newFragment.show(getFragmentManager().beginTransaction(),"DialogTag");
             } else {
-                Toast.makeText(getActivity(),"Select/record a run first",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Zuerst eine Session auswählen/aufnehmen!",Toast.LENGTH_SHORT).show();
             }
     }
 
@@ -190,6 +202,13 @@ public class SessionOverview extends Fragment {
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement ShowRunOnMap");
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        getActivity().unbindService(mConnection);
+        super.onDestroy();
+        Log.w("sessionoverview","ondestroy");
     }
 
     @Override
@@ -222,11 +241,16 @@ public class SessionOverview extends Fragment {
     public void onStart() {
         super.onStart();
         Log.d("sessionoverviewfrag", "onStart");
-        bindToService();
+        getActivity().bindService(new Intent(getActivity(), GPSService.class), mConnection, Context.BIND_AUTO_CREATE);
         testMethod();
 
         //only gets called when user returns to this fragment via back button
-        if ((gps != null) && (sessionOverviewListView.getAdapter() == null)) updateList();
+        if ((gps != null) && (sessionOverviewListView.getAdapter() == null)){
+            updateList();
+            //has to be called again. when opening map and returning to this fragment the service is already bound and
+            //"updatTrackingUI" wont be called
+            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bycicleSwitch);
+        }
 
         //for >android 6.0
         if (Build.VERSION.SDK_INT >= 23) doPermissionCheck();
@@ -234,27 +258,8 @@ public class SessionOverview extends Fragment {
         if (GPSDatabaseHandler.getInstance().getData().getLastRunID() == 0) {
             selectedRun = -1;
         }
-
-        //TODO
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int message = intent.getIntExtra("GPSActivity", -1);
-                Log.w("sessionoverview", "broadcast:" + message);
-                if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, byciclecheckBox);
-                if (message == 2) updateList(); //tracking started in service
-            }
-        };
-        //registering receiver
-        IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
-        getActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 
-
-    public void bindToService() {
-        Intent i = new Intent(getActivity(), GPSService.class);
-        getActivity().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
-    }
 
     public void testMethod() {
 //            DataHolder_Database.getInstance().getData().addData(2, 51.615970, 6.707983, 50,0);
@@ -323,6 +328,32 @@ public class SessionOverview extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //TODO
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int message = intent.getIntExtra("GPSActivity", -1);
+                Log.w("sessionoverview", "broadcast:" + message);
+                if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bycicleSwitch);
+                if (message == 2) updateList(); //tracking started in service
+            }
+        };
+
+        //registering receiver
+        IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
@@ -347,6 +378,7 @@ public class SessionOverview extends Fragment {
                         //only put the runID to the intent if map shouldnt show the current live track
                         if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == selectedRun))) {
                             //intent.putExtra("runID", selectedRun);
+                            Log.w("sessionoverview","livebroadcast");
                             interfaceSender.setSelectedRunID(selectedRun);
                         } else updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
                         break;

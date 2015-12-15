@@ -131,7 +131,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             result+="Session #"+res.getInt(1)+" ("+minutes+":";
             if (seconds < 10) result+="0";
             result+=seconds+"; ";
-            result+=res.getCount()+" positions; ";
+            result+=res.getCount()+" Positionen; ";
             double meters = getWalkDistance(id);
             result+=((int)getWalkDistance(id))+" Meter; ";
             result+="\u00D8Geschwindigkeit: "+decimalFormat.format(3.6*(meters/(seconds+(minutes*60))))+" km/h; ";

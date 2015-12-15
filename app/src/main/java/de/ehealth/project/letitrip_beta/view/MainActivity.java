@@ -40,6 +40,12 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
     Fragment mFragmentCaption;
     Fragment mFragmentContent;
 
+    public int getDasIstMeinInt() {
+        return dasIstMeinInt;
+    }
+
+    int dasIstMeinInt;
+
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT, FIT_BIT_CHECKPROFILE,
@@ -57,7 +63,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         //ExampleFragment fragment = (ExampleFragment) getSupportFragmentManager().findFragmentById(R.id.example_fragment);
 
-        //Fragment sessionOverview = (SessionOverview) getSupportFragmentManager().find(R.id.fr);
+       // Fragment sessionOverview = (SessionOverview) getSupportFragmentManager().findFragmentById(R.id.layout)
+       //         R.id.fr
         //sessionOverview.<specific_function_name>();
         super.onPause();
     }
@@ -67,7 +74,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
         @Override
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("message", -1);
-            Log.d("receiver", "Got message: " + message);
+            Log.d("receiver", "Main Got message: " + message);
         }
     };
 

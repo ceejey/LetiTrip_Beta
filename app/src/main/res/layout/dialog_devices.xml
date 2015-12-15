@@ -20,8 +20,8 @@
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:id="@+id/imv_FitBit"
-                android:src="@drawable/fitbitflex"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/fitbitflex" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -43,7 +43,8 @@
                 android:layout_width="100dp"
                 android:layout_height="70dp"
                 android:id="@+id/imageView2"
-                android:src="@drawable/polar" />
+                android:src="@drawable/polar"
+            />
 
             <TextView
                 android:layout_width="wrap_content"

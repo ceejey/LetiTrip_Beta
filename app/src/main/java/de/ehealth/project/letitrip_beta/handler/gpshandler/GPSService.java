@@ -82,7 +82,7 @@ public class GPSService extends Service {
         }
 
         if (!mylocman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(GPSService.this, "Enable GPS to start tracking!", Toast.LENGTH_LONG).show();
+            Toast.makeText(GPSService.this, "GPS aktivieren!", Toast.LENGTH_LONG).show();
             sendBroadcast("GPSActivity", 1);
         } else startTracking();
         return super.onStartCommand(intent, flags, startId);

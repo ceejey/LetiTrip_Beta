@@ -7,14 +7,11 @@ import android.support.v4.app.DialogFragment;
 
 public class RunSelectorDialog extends DialogFragment {
 
-    //private int id;
-
     public static RunSelectorDialog newInstance(int id) {
         RunSelectorDialog dialog = new RunSelectorDialog();
         Bundle args = new Bundle();
         args.putInt("id",id);
         dialog.setArguments(args);
-        //this.id = id;
         return dialog;
     }
 

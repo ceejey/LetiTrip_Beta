@@ -62,10 +62,18 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
     }
 
     //Not implemented!!!!!!!!!!!!!!!!!!
-    public void dropTable(){
+    public  void newTable(){
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        sInstance = null;
+        String CREATE_USER_TABLE = "CREATE TABLE "+ TABLE_USER +
+                " ( " + ID + " INTEGER PRIMARY KEY , " +
+                ACTIVITY_CALORIES + " TEXT , " +
+                CALORIES_BMR + " TEXT, " +
+                CALORIES_Out + " TEXT, " +
+                DATE + " TEXT UNIQUE, " +
+                STEPS + " TEXT)";
+        db.execSQL(CREATE_USER_TABLE);
+       // sInstance = null;
     }
     /* At first this Method searches for a entry which contains the parameter string "day" if an entry
     * has been found it will be only updated "updateFitBitData()" because DATE is a unique field
@@ -212,6 +220,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
             Log.d("Fitbit", rowSeperator);
         }
     }
+
     public FitBitUserData getCurFitBitUserMovement() {
         return mCurFitBitUserData;
     }

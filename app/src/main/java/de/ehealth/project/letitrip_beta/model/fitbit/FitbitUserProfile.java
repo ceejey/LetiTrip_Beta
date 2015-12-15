@@ -124,15 +124,16 @@ public class FitbitUserProfile {
         Oauth.getmOauth().setmAccessToken(profile.mAccessToken);
 
     }
-/*
-    public static void deleteConsumer(Context context){
-        SharedPreferences pref = context.getSharedPreferences("user", context.MODE_PRIVATE);
+
+    public static void deleteUser(Context context){
+        SharedPreferences pref = context.getSharedPreferences("userprofile", context.MODE_PRIVATE);
+        mActiveUser.setmEncodedId("");
         final SharedPreferences.Editor edit = pref.edit();
         edit.clear();
         edit.commit();
 
     }
-*/
+
     public String getmWeightUnit() {
         return mWeightUnit;
     }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="387dp"
+        android:layout_height="167dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="83dp"
+            android:weightSum="1"
+            android:id="@+id/layout_FitBit">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:id="@+id/imv_FitBit"
+                android:src="@drawable/fitbitflex"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="FitBit Tracker"
+                android:id="@+id/textView"
+                android:layout_weight="0.35"
+                android:layout_marginTop="25dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:id="@+id/imageView2"
+                android:src="@drawable/polar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Polar Herzfrequenz"
+                android:id="@+id/textView8"
+                android:layout_marginTop="25dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

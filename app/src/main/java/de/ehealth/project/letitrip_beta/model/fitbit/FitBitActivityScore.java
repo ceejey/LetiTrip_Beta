@@ -28,7 +28,7 @@ public class FitBitActivityScore {
         return mActivityScore;
     }
 
-    public void calcActivtiyScore(Activity activity){
+    public static void calcActivtiyScore(Activity activity){
 
         try {
             new FitBitGetJsonTask(Oauth.getmOauth(), FitBitGetJsonTask.ENDPOINT_MOVES,activity).execute().get();
@@ -58,7 +58,7 @@ public class FitBitActivityScore {
     /**
      * Look at our Aim Table. We decie that our overall aim is an active User
      */
-    public void setUserAims(){
+    public static void setUserAims(){
         int user_age = Integer.parseInt(FitbitUserProfile.getmActiveUser().getmAge());
         if(FitbitUserProfile.getmActiveUser().getmGender().contains("MALE")) {
             if (user_age == 18) {

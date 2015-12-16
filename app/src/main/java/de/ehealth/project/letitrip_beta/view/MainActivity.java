@@ -1,15 +1,10 @@
 package de.ehealth.project.letitrip_beta.view;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -40,43 +35,11 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
     Fragment mFragmentCaption;
     Fragment mFragmentContent;
 
-    public int getDasIstMeinInt() {
-        return dasIstMeinInt;
-    }
-
-    int dasIstMeinInt;
-
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT, FIT_BIT_CHECKPROFILE,
         NEWS
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("my-event"));
-    }
-
-    @Override
-    protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-        //ExampleFragment fragment = (ExampleFragment) getSupportFragmentManager().findFragmentById(R.id.example_fragment);
-
-       // Fragment sessionOverview = (SessionOverview) getSupportFragmentManager().findFragmentById(R.id.layout)
-       //         R.id.fr
-        //sessionOverview.<specific_function_name>();
-        super.onPause();
-    }
-
-    //handler to receive broadcast messages from gps service
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int message = intent.getIntExtra("message", -1);
-            Log.d("receiver", "Main Got message: " + message);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,13 +142,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
         newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
         transaction.replace(R.id.contentContainer, newFragment);
-        transaction.addToBackStack(null);
+        transaction.addToBackStack(null); //to be able to use the back button
 
-        // Commit the transaction
         transaction.commit();
         newFragment.setSelectedRunID(id);
 

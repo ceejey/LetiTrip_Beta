@@ -25,7 +25,6 @@ public class News extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news, container, false);
-
         TextView txtNewsTitle = (TextView) view.findViewById(R.id.txtNewsTitle);
 
         txtNewsTitle.setText(NewsHandler.getmSelectedStory().getTitle());

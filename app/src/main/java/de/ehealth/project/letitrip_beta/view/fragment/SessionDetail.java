@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,14 +46,14 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class SessionDetail extends Fragment implements SessionOverview.ShowRunOnMap{
 
     private FragmentChanger mListener;
-    private ServiceConnection mConnection;
+    //private ServiceConnection mConnection;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapView mapView;
     private PolylineOptions route;
     private Marker liveMarker;
 
-    private BroadcastReceiver broadcastReceiver;
+    //private BroadcastReceiver broadcastReceiver;
     private GPSService gps;
 
     private Button bt;
@@ -61,6 +62,22 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
     private boolean bound = false;
     private int lastSpeedID = -1;
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
+            gps = binder.getService();
+            bound = true;
+            setUpMapIfNeeded();
+            Log.w("maps", "GEBUNDEN");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.w("maps","ungebunden");
+            bound = false;
+        }
+    };
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,94 +117,72 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.w("oncreate",showThisRun+"");
+        Log.w("oncreate", showThisRun + "");
 
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         route = new PolylineOptions();
 
-
-
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder service) {
-                GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
-                gps = binder.getService();
-                bound = true;
-                setUpMapIfNeeded();
-                Log.w("maps", "GEBUNDEN");
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName arg0) {
-                Log.w("maps","ungebunden");
-                bound = false;
-            }
-        };
-
     }
+
+    //handler to receive broadcast messages from gps service
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int message = intent.getIntExtra("MapsActivity",-1);
+            Log.w("sessionDetail","broadcast:"+message);
+
+            //new position received, add it to the route+update liveMarker
+            if ((message == 1) && (showThisRun == gps.getActiveRecordingID())) {
+                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfRun(gps.getActiveRecordingID());
+                res.moveToFirst();
+
+                int tempLastID = GPSDatabaseHandler.getInstance().getData().getLastID();
+                if (lastSpeedID == -1) {
+                    lastSpeedID = tempLastID;
+                } else {
+                    Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+showThisRun);
+                    updateInfoBox((GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastSpeedID,tempLastID)*3.6));
+                    lastSpeedID = tempLastID;
+                }
+                LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
+
+                route.add(temp);
+                mMap.addPolyline(route);
+                liveMarker.remove();
+                liveMarker = mMap.addMarker(new MarkerOptions()
+                        .position(temp)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                updateInfoBox(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun,0));
+            }
+        }
+    };
 
     @Override
     public void onStart() {
-        super.onStart();
         Log.w("maps", "showThisRunSTART"+showThisRun);
         bindToService();
-
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int message = intent.getIntExtra("MapsActivity",-1);
-                Log.w("maps","broadcast:"+message);
-
-                //new position received, add it to the route+update liveMarker
-                if (message == 1) {
-                    Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfRun(gps.getActiveRecordingID());
-                    res.moveToFirst();
-
-                    int tempLastID = GPSDatabaseHandler.getInstance().getData().getLastID();
-                    if (lastSpeedID == -1) {
-                        lastSpeedID = tempLastID;
-                    } else {
-                        updateInfoBox((GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastSpeedID,tempLastID)*3.6));
-                        lastSpeedID = tempLastID;
-                    }
-                    LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
-
-                    route.add(temp);
-                    mMap.addPolyline(route);
-                    liveMarker.remove();
-                    liveMarker = mMap.addMarker(new MarkerOptions()
-                            .position(temp)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-
-                }
-            }
-        };
-
-        //registering receiver
-        IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
-        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+        super.onStart();
     }
 
     @Override
     public void onResume() {
         mapView.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("my-event"));
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         Log.w("maps", "pause");
-        try{
-            getActivity().unregisterReceiver(broadcastReceiver);
-        } catch (IllegalArgumentException e){
-            e.printStackTrace();
-        }
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+
         if (bound) {
+            Log.w("sessiondetail","UNBINDING");
             getActivity().unbindService(mConnection);
             bound = false;
         }
+        super.onPause();
     }
 
     @Override
@@ -254,7 +249,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
                 //live
                 if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (showThisRun == -1)) {
-                    Log.w("aaa","live enabled");
+                    Log.w("aaa","live enabled-activerecID"+gps.getActiveRecordingID());
                     showThisRun = gps.getActiveRecordingID();
                     endMarker = false;
                 }
@@ -273,10 +268,12 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
                 .visible(false));
 
         //is the int set to show a specific run at activity startup?
-        Log.w("bla","showthisrun:"+showThisRun);
+        Log.w("sessiondetail","showthisrun:"+showThisRun);
+
         if (showThisRun != -1) {
             showRunOnMap(endMarker, GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun, 0));
-            showThisRun = -1;
+            //TODO why?
+            //if (gps.getActiveRecordingID() != showThisRun) showThisRun = -1;
         }
     }
 

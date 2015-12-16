@@ -60,13 +60,14 @@ public class GPSDatabase extends SQLiteOpenHelper {
     public int testMethod(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
+        res.close();
         return res.getCount();
     }
 
     public Cursor getLastPosOfRun(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         //SELECT Latitude, Longitude FROM  GPSDataTable WHERE ((RunNumber=1) AND (ID=(SELECT MAX(ID) FROM GPSDataTable))
-        Cursor res = db.rawQuery("select "+COLUMN3+", "+COLUMN4+" from " + TABLE_NAME + " where ((" + COLUMN1 + " = " + id+") and ("+COLUMN0+"=(select max("+COLUMN0+") from "+TABLE_NAME+")))", null);
+        Cursor res = db.rawQuery("select " + COLUMN3 + ", " + COLUMN4 + " from " + TABLE_NAME + " where ((" + COLUMN1 + " = " + id + ") and (" + COLUMN0 + "=(select max(" + COLUMN0 + ") from " + TABLE_NAME + ")))", null);
         return res;
     }
 
@@ -91,9 +92,11 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select distinct " + COLUMN1 + " from " + TABLE_NAME + " where " + COLUMN1 + "=(select max(" + COLUMN1 + ") from " + TABLE_NAME + ")", null);
 
-        if (res!=null) if (res.getCount()>0){
+        if (res != null) if (res.getCount()>0){
             res.moveToFirst();
-            return res.getInt(0);
+            int result = res.getInt(0);
+            res.close();
+            return result;
         } else return 0; else return 0;
     }
 
@@ -103,7 +106,9 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
         if (res != null) if (res.getCount() > 0){
             res.moveToFirst();
-            return res.getInt(0);
+            int result = res.getInt(0);
+            res.close();
+            return result;
         } else return 0; else return 0;
     }
 
@@ -136,7 +141,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             result+=((int)getWalkDistance(id))+" Meter; ";
             result+="\u00D8Geschwindigkeit: "+decimalFormat.format(3.6*(meters/(seconds+(minutes*60))))+" km/h; ";
             result+=(bicycle == 0?"Lauf":"Fahrrad")+")";
-
+            res.close();
             return result;
         } else return null;
     }
@@ -156,6 +161,8 @@ public class GPSDatabase extends SQLiteOpenHelper {
             endTime = dateFormat.parse(res.getString(0));
         } catch (ParseException e) {
             e.printStackTrace();
+        } finally {
+            res.close();
         }
 
         return (endTime.getTime() - startTime.getTime());
@@ -177,6 +184,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             lon = res.getDouble(1);
             alt = res.getDouble(2);
         }
+        res.close();
         return distance;
     }
 
@@ -240,6 +248,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
                 outputmeters += (int) getWalkDistance(res.getInt(0));
             }
         }
+        res.close();
         return outputmeters;
     }
 
@@ -251,11 +260,13 @@ public class GPSDatabase extends SQLiteOpenHelper {
      */
     public int getAltitudeDifference(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0+" = "+ID1+" or "+COLUMN0+ " = "+ID2+")", null);
+        Cursor res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2 + ")", null);
         res.moveToFirst();
         int val1 = res.getInt(0);
         res.moveToNext();
-        return (res.getInt(0)-val1);
+        int result = res.getInt(0)-val1;
+        res.close();
+        return result;
     }
 
     /**

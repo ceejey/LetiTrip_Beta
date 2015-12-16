@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +59,7 @@ public class SessionOverview extends Fragment {
     private DialogInterface.OnClickListener dialogListener;
     private GPSService gps;
     boolean bound = false;
-    private BroadcastReceiver broadcastReceiver;
+    //private BroadcastReceiver broadcastReceiver;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSTest myGPSObject;
 
@@ -67,7 +68,6 @@ public class SessionOverview extends Fragment {
     public interface ShowRunOnMap{
         void setSelectedRunID(int id);
     }
-
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -108,8 +108,6 @@ public class SessionOverview extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d("sessionoverview", "bound:" + bound);
-                Log.d("sessionoverview", "gpsEnabledToggle.isChecked():" + ((ToggleButton)v).isChecked());
-
 
                 if (bound) {
                     if (gpsEnabledToggle.isChecked()) {
@@ -183,8 +181,6 @@ public class SessionOverview extends Fragment {
                 DialogFragment newFragment = RunSelectorDialog.newInstance(id);
                 newFragment.setTargetFragment(this, 1);
                 newFragment.show(getFragmentManager().beginTransaction(),"DialogTag");
-            } else {
-                Toast.makeText(getActivity(),"Zuerst eine Session auswählen/aufnehmen!",Toast.LENGTH_SHORT).show();
             }
     }
 
@@ -284,8 +280,8 @@ public class SessionOverview extends Fragment {
           GPSDatabaseHandler.getInstance().getData().addData(1, 51.500896, 6.890523, 50,0);
           GPSDatabaseHandler.getInstance().getData().addData(1, 51.662572, 6.612438, 50,0);
           GPSDatabaseHandler.getInstance().getData().addData(1, 51.575960, 6.707983, 50,0);
-          GPSDatabaseHandler.getInstance().getData().addData(3, 51.500896, 6.890523, 50,1);
-          GPSDatabaseHandler.getInstance().getData().addData(4, 51.662572, 6.612438, 50,1);
+          //GPSDatabaseHandler.getInstance().getData().addData(3, 51.500896, 6.890523, 50,1);
+          //GPSDatabaseHandler.getInstance().getData().addData(4, 51.662572, 6.612438, 50,1);
 
         //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         //Date d = new Date();
@@ -330,13 +326,34 @@ public class SessionOverview extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
+
+    /**
+     * Broadcastlist:
+     * message      value   meaning
+     * GPSActivity  1       GPS not enabled
+     * GPSActivity  2       Tracking initially started
+     * MapsActivity 1       new position inserted
+     */
+    //handler to receive broadcast messages from gps service
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int message = intent.getIntExtra("GPSActivity", -1);
+            Log.w("sessionoverview", "broadcast:" + message);
+            if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bycicleSwitch);
+            if (message == 2) {
+                myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView,bycicleSwitch);
+                updateList(); //tracking started in service
+            }
+        }
+    };
 
     @Override
     public void onResume() {
         super.onResume();
-
+/*
         //TODO
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -347,10 +364,12 @@ public class SessionOverview extends Fragment {
                 if (message == 2) updateList(); //tracking started in service
             }
         };
-
+*/
         //registering receiver
-        IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
-        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+        //IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
+        //LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,intentFilter);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("my-event"));
+        //getActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 
     @Override
@@ -375,10 +394,8 @@ public class SessionOverview extends Fragment {
             case 1:
                 switch (resultCode){
                     case 0:
-                        //only put the runID to the intent if map shouldnt show the current live track
+                        //only put the runID to the intent if map shouldnt show the current live session
                         if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == selectedRun))) {
-                            //intent.putExtra("runID", selectedRun);
-                            Log.w("sessionoverview","livebroadcast");
                             interfaceSender.setSelectedRunID(selectedRun);
                         } else updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
                         break;

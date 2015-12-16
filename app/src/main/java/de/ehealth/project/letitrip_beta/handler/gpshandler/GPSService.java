@@ -41,6 +41,7 @@ public class GPSService extends Service {
     @Override
     public void onDestroy() {
         try {
+            //TODO creates error "java.lang.IllegalArgumentException: invalid listener: null"
             if (mylocman != null) mylocman.removeUpdates(locationListener);
             status = Status.IDLE;
         } catch (IllegalArgumentException | SecurityException e) {
@@ -89,12 +90,8 @@ public class GPSService extends Service {
     }
 
     public void sendBroadcast(String msg, int ID){
-        //Intent i = new Intent("android.intent.action.MAIN").putExtra(msg,ID);
-        //this.sendBroadcast(i);#
-        Intent intent = new Intent("my-event");
-        // add data
-        intent.putExtra("message", 3);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        Intent intent = new Intent("my-event").putExtra(msg, ID);;
+        LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(intent);
     }
 
     public void startTracking() {
@@ -108,7 +105,7 @@ public class GPSService extends Service {
                         Toast.makeText(GPSService.this, "Accuaracy:" + l.getAccuracy(), Toast.LENGTH_SHORT).show();
                     } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
 
-                    //check this part after first data set is inserted to create an table entry at the SessioOverview fragment
+                    //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
                     if (status != Status.TRACKINGSTARTED) {
                         createNotification();
                         Log.w("service", "Listen to id:" + activeRecordingID);
@@ -118,15 +115,9 @@ public class GPSService extends Service {
                 }
             }
 
-            public void onProviderDisabled(String provider) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
+            public void onProviderDisabled(String provider) {}
+            public void onProviderEnabled(String provider) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
         try {
            // mylocman.requestLocationUpdates("gps", 3000, 10, locationListener);

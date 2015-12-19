@@ -53,7 +53,6 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
     private PolylineOptions route;
     private Marker liveMarker;
 
-    //private BroadcastReceiver broadcastReceiver;
     private GPSService gps;
 
     private Button bt;
@@ -69,18 +68,20 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
             gps = binder.getService();
             bound = true;
             setUpMapIfNeeded();
-            Log.w("maps", "GEBUNDEN");
+            Log.w("sessiondetail", "GEBUNDEN");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            Log.w("maps","ungebunden");
+            Log.w("sessiondetail","ungebunden");
             bound = false;
         }
     };
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.w("sessiondetail","oncreateview");
+
         // Inflate the layout for this fragment
         View view  = inflater.inflate(R.layout.fragment_session_detail, container, false);
         infoBox = (TextView)view.findViewById(R.id.infoBox);
@@ -111,18 +112,18 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
     @Override
     public void onDetach() {
+        Log.w("sessiondetail","ondeattach");
         super.onDetach();
         mListener = null;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.w("oncreate", showThisRun + "");
+        Log.w("sessiondetail","oncreate"+ showThisRun + "");
 
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         route = new PolylineOptions();
-
     }
 
     //handler to receive broadcast messages from gps service
@@ -147,6 +148,8 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
                 }
                 LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
 
+                res.close();
+
                 route.add(temp);
                 mMap.addPolyline(route);
                 liveMarker.remove();
@@ -159,14 +162,21 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
     };
 
     @Override
+    public void onStop() {
+        Log.w("sessiondetail","onstop");
+        super.onStop();
+    }
+
+    @Override
     public void onStart() {
-        Log.w("maps", "showThisRunSTART"+showThisRun);
+        Log.w("sessiondetail", "showThisRunSTART"+showThisRun);
         bindToService();
         super.onStart();
     }
 
     @Override
     public void onResume() {
+        Log.w("sessiondetail","onresume");
         mapView.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("my-event"));
         super.onResume();
@@ -174,19 +184,22 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
     @Override
     public void onPause() {
-        Log.w("maps", "pause");
+        Log.w("sessiondetail", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
 
         if (bound) {
             Log.w("sessiondetail","UNBINDING");
-            getActivity().unbindService(mConnection);
+            getActivity().getApplicationContext().unbindService(mConnection);
             bound = false;
         }
+        //getActivity().getSupportFragmentManager().popBackStack();
+        Log.w("...",bound+"yoooo");
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
+        Log.w("sessiondetail","ondestroy");
         mapView.onDestroy();
         super.onDestroy();
     }
@@ -217,7 +230,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
     public void bindToService() {
         Intent i = new Intent(getActivity(), de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.class);
-        getActivity().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+        getActivity().getApplicationContext().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -245,14 +258,14 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
             boolean endMarker = true;
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                Log.w("map","showthisrun:" + showThisRun);
+                Log.w("sessionDetail","showthisrun:" + showThisRun);
 
                 //live
                 if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (showThisRun == -1)) {
-                    Log.w("aaa","live enabled-activerecID"+gps.getActiveRecordingID());
                     showThisRun = gps.getActiveRecordingID();
                     endMarker = false;
                 }
+
                 setUpMap(endMarker);
             }
         }
@@ -304,6 +317,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
                     .position(new LatLng(res.getDouble(3), res.getDouble(4))
                     ));
         }
+        res.close();
 
         route.width(6);
         route.color(Color.RED);

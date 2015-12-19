@@ -42,7 +42,8 @@ public class GPSService extends Service {
     public void onDestroy() {
         try {
             //TODO creates error "java.lang.IllegalArgumentException: invalid listener: null"
-            if (mylocman != null) mylocman.removeUpdates(locationListener);
+            //if (mylocman != null) mylocman.removeUpdates(locationListener);
+            if (locationListener != null) mylocman.removeUpdates(locationListener);
             status = Status.IDLE;
         } catch (IllegalArgumentException | SecurityException e) {
             e.printStackTrace();

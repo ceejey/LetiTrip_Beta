@@ -39,6 +39,7 @@ public class GPSTest {
                 str+=("Longitude:"+res.getString(4)+"\t");
                 str+=("Altitude:"+res.getString(5)+"\t");
                 str+=("bicycle:"+res.getString(6)+"\n");
+                res.close();
                 Log.w("gps", str);
             }
 

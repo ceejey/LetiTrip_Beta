@@ -21,7 +21,7 @@ public class RunSelectorDialog extends DialogFragment {
         int id = getArguments().getInt("id");
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setTitle("Session #" + id)
-                .setItems(new String[]{"Karte", "Löschen", "(debug1)", "(debug2"}, new DialogInterface.OnClickListener() {
+                .setItems(new String[]{"Karte", "Löschen", "debug"}, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         getTargetFragment().onActivityResult(1,which,getActivity().getIntent());
                     }

@@ -13,9 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Lars on 08.12.2015.
- */
 public class GPSDatabase extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "eHealthDb";

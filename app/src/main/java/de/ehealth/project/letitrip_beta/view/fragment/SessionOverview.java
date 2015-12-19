@@ -136,7 +136,16 @@ public class SessionOverview extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedRun = itemsAdapter.getItem(position).getID();
+
+                //the dialog menu is only available for finished sessions, live sessions will be shown in the "session" fragment
+                if (gps != null){
+                    if (gps.getActiveRecordingID() == selectedRun){
+                        updateActivity(MainActivity.FragmentName.SESSION);
+                        return;
+                    }
+                }
                 showRunDialog(selectedRun);
+
             }
         });
 
@@ -209,13 +218,13 @@ public class SessionOverview extends Fragment {
 
     @Override
     public void onDetach() {
-        Log.d("sessionoverviewfrag", "deattach");
+        Log.d("sessionoverview", "deattach");
         super.onDetach();
         mListener = null;
     }
 
     public void updateActivity(MainActivity.FragmentName fn) {
-        Log.d("sessionoverviewfrag", "update");
+        Log.d("sessionoverview", "update");
         mListener.changeFragment(fn);
     }
 
@@ -223,20 +232,20 @@ public class SessionOverview extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("sessionoverviewfrag", "onCreate");
+        Log.d("sessionoverview", "onCreate");
         myGPSObject = new GPSTest();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("sessionoverviewfrag", "onStop");
+        Log.d("sessionoverview", "onStop");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("sessionoverviewfrag", "onStart");
+        Log.d("sessionoverview", "onStart");
         getActivity().bindService(new Intent(getActivity(), GPSService.class), mConnection, Context.BIND_AUTO_CREATE);
         testMethod();
 
@@ -326,6 +335,7 @@ public class SessionOverview extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.w("sessionoverview", "onpause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 
@@ -353,23 +363,8 @@ public class SessionOverview extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-/*
-        //TODO
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int message = intent.getIntExtra("GPSActivity", -1);
-                Log.w("sessionoverview", "broadcast:" + message);
-                if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bycicleSwitch);
-                if (message == 2) updateList(); //tracking started in service
-            }
-        };
-*/
-        //registering receiver
-        //IntentFilter intentFilter = new IntentFilter("android.intent.action.MAIN");
-        //LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,intentFilter);
+        Log.w("sessionoverview", "onresume");
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("my-event"));
-        //getActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 
     @Override
@@ -406,10 +401,6 @@ public class SessionOverview extends Fragment {
                         break;
                     case 2:
                         myGPSObject.getRunOutput(selectedRun);
-                        Log.w("sessionoverview", selectedRun + "");
-                        break;
-                    case 3:
-                        //testMethod();
                         break;
                     default:
                         break;

@@ -142,10 +142,11 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
         newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.contentContainer, newFragment);
-        transaction.addToBackStack(null); //to be able to use the back button
+        transaction.replace(R.id.contentContainer, newFragment).commit();
 
-        transaction.commit();
+        //gpsservice wont be able to stop anymore when this line is called
+        //transaction.addToBackStack(null); //to be able to use the back button
+
         newFragment.setSelectedRunID(id);
 
         //changeFragment(FragmentName.SESSION_DETAIL);

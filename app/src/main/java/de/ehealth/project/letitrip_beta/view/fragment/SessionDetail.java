@@ -218,7 +218,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
         long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(showThisRun);
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        DecimalFormat decimalFormat = new DecimalFormat("#.0");
+        DecimalFormat decimalFormat = new DecimalFormat("0.0");
         infoBox.setText("Session #" + showThisRun +
                 "\nDauer: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
                 "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun)) + " Meter" +
@@ -284,7 +284,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
         Log.w("sessiondetail","showthisrun:"+showThisRun);
 
         if (showThisRun != -1) {
-            showRunOnMap(endMarker, GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun, 0));
+            showRunOnMap(endMarker, GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun, 0)*3.6);
             //TODO why?
             //if (gps.getActiveRecordingID() != showThisRun) showThisRun = -1;
         }

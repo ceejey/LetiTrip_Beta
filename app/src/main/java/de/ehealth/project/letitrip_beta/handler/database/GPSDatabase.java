@@ -11,6 +11,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 public class GPSDatabase extends SQLiteOpenHelper {
@@ -74,10 +76,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
         Date date = new Date();
 
-        contentValues.put(COLUMN1,runNumber);
-        contentValues.put(COLUMN2,dateFormat.format(date));
-        contentValues.put(COLUMN3,latitude);
-        contentValues.put(COLUMN4,longitude);
+        contentValues.put(COLUMN1, runNumber);
+        contentValues.put(COLUMN2, dateFormat.format(date));
+        contentValues.put(COLUMN3, latitude);
+        contentValues.put(COLUMN4, longitude);
         contentValues.put(COLUMN5, altitude);
         contentValues.put(COLUMN6, bicycle);
 
@@ -120,7 +122,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         String result = "";
 
         if ((res != null) && (res.getCount() > 0)) {
-            DecimalFormat decimalFormat = new DecimalFormat("#.0");
+            DecimalFormat decimalFormat = new DecimalFormat("0.0");
             res.moveToFirst();
 
             //0=walk; 1=bicycle
@@ -257,7 +259,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
      */
     public int getAltitudeDifference(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2 + ")", null);
+        Cursor res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
         res.moveToFirst();
         int val1 = res.getInt(0);
         res.moveToNext();
@@ -326,6 +328,100 @@ public class GPSDatabase extends SQLiteOpenHelper {
         }
 
         return totalDistance/totalSeconds;
+    }
+
+    /**
+     *
+     * @param ID1
+     * @param ID2
+     * @return
+     */
+    public double getWalkDirection(int ID1, int ID2){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select " + COLUMN3 + "," + COLUMN4 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
+
+        res.moveToFirst();
+        double lat1 = res.getDouble(0);
+        double lon1 = res.getDouble(1);
+
+        res.moveToNext();
+        double lat2 = res.getDouble(0);
+        double lon2 = res.getDouble(1);
+        res.close();
+
+        double y = Math.sin(lon2 - lon1) * Math.cos(lat2);
+        double x = Math.cos(lat1)*Math.sin(lat2) -
+                Math.sin(lat1)*Math.cos(lat2)*Math.cos(lon2 - lon1);
+        double brng = Math.atan2(y, x);
+        return (Math.toDegrees(brng)+360)%360;
+    }
+
+    /**
+     * sources: http://climate.umn.edu/snow_fence/components/winddirectionanddegreeswithouttable3.htm
+     *          http://stackoverflow.com/questions/13399821/data-structures-that-can-map-a-range-of-values-to-a-key
+     *
+     * @param degrees in range of [0..360[
+     * @return N, O, S, W etc.
+     */
+    public String getDirectionLetter(double degrees){
+        TreeMap<Double, String> map = new TreeMap<Double, String>();
+
+        map.put(0.0, "N");
+        map.put(11.25, null);
+
+        map.put(11.25, "NNO");
+        map.put(33.75, null);
+
+        map.put(33.75, "NO");
+        map.put(56.25, null);
+
+        map.put(56.25, "ONO");
+        map.put(78.75, null);
+
+        map.put(78.75, "O");
+        map.put(101.25, null);
+
+        map.put(101.25, "OSO");
+        map.put(123.75, null);
+
+        map.put(123.75, "SO");
+        map.put(146.25, null);
+
+        map.put(146.25, "SSO");
+        map.put(168.75, null);
+
+        map.put(168.75, "S");
+        map.put(191.25, null);
+
+        map.put(191.25, "SSW");
+        map.put(213.75, null);
+
+        map.put(213.75, "SW");
+        map.put(236.25, null);
+
+        map.put(236.25, "WSW");
+        map.put(258.75, null);
+
+        map.put(258.75, "W");
+        map.put(281.25, null);
+
+        map.put(281.25, "WNW");
+        map.put(303.75, null);
+
+        map.put(303.75, "NW");
+        map.put(326.25, null);
+
+        map.put(326.25, "NNW");
+        map.put(348.75, null);
+
+        map.put(348.75, "N");
+        map.put(360.00, null);
+
+        Map.Entry<Double, String> e = map.floorEntry(degrees);
+        if (e != null && e.getValue() == null) {
+            e = map.lowerEntry(degrees);
+        }
+        return e == null ? "ERR" : e.getValue();
     }
 
 }

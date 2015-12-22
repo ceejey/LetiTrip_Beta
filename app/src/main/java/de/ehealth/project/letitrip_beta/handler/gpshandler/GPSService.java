@@ -28,6 +28,8 @@ public class GPSService extends Service {
     private LocationManager mylocman;
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
+    private boolean isPaused = false;
+
     private Status status;
     private NotificationManager notificationManager;
     private IBinder mBinder = new LocalBinder();

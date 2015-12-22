@@ -30,7 +30,7 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class Session extends Fragment {
 
     private FragmentChanger mListener;
-    private TextView puls, watt, geschw, temp, wind, distanz, geschwSession, zeit, laufFahrrad;
+    private TextView puls, watt, geschw, laufRichtung, temp, wind, distanz, geschwSession, zeit, laufFahrrad;
     private GPSService gps;
     private boolean bound = false;
     private int showThisRun;
@@ -63,7 +63,7 @@ public class Session extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        df = new DecimalFormat("#.0");
+        df = new DecimalFormat("0.0");
     }
 
     @Override
@@ -75,6 +75,7 @@ public class Session extends Fragment {
         puls = (TextView) view.findViewById(R.id.textView9);
         watt = (TextView) view.findViewById(R.id.textView10);
         geschw = (TextView) view.findViewById(R.id.textView11);
+        laufRichtung = (TextView) view.findViewById(R.id.textView18);
         temp = (TextView) view.findViewById(R.id.textView12);
         wind = (TextView) view.findViewById(R.id.textView13);
         distanz = (TextView) view.findViewById(R.id.textView14);
@@ -132,15 +133,22 @@ public class Session extends Fragment {
         watt.setText("Watt nicht verfügbar");
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
-        if (currentID != lastID) geschw.setText("Geschwindigkeit:"+GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastID,currentID)+" km/h");
-            else geschw.setText("Aktuelle Geschwindigkeit: NaN");
+        if (currentID != lastID){
+            geschw.setText("Geschwindigkeit: "+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastID,currentID))+" km/h");
+            double degrees = GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
+            laufRichtung.setText("Laufrichtung: "+ GPSDatabaseHandler.getInstance().getData().getDirectionLetter(degrees)+" ("+df.format(degrees)+")");
+        } else {
+            geschw.setText("Geschwindigkeit: Warte...");
+            laufRichtung.setText("Laufrichtung: Warte...");
+
+        }
         lastID = currentID;
 
         geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun,0))+" km/h");
 
         temp.setText("Temperatur nicht verfügbar");
-        wind.setText("Wind nicht verfügbar");
 
+        wind.setText("Wind nicht verfügbar.");
 
         distanz.setText("Distanz: " + df.format(((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun))) + " Meter");
 

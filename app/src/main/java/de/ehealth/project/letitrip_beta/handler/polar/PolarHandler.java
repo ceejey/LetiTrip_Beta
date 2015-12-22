@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PolarHandler {
@@ -24,6 +25,7 @@ public class PolarHandler {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private BluetoothGatt mBluetoothGatt;
     private BluetoothDevice mDevice;
+    private List<BluetoothDevice> mDeviceList = new ArrayList<>();
 
     private final String HEART_RATE_UUID = "00002a37-0000-1000-8000-00805f9b34fb";
 
@@ -115,11 +117,13 @@ public class PolarHandler {
         }
     }
 
-    public void connectToPolarDevice(){
+    public void connectToPolarDevice(BluetoothDevice device){
+        mBluetoothAdapter.cancelDiscovery();
+        mDeviceSearch = false;
         if(!mDeviceSearch && mDeviceFound && !mConnected && !mConnectionStateChanging) {
             mConnectionStateChanging = true;
             Toast.makeText(mActivity, "Trying to connect..", Toast.LENGTH_SHORT).show();
-            mBluetoothGatt = mDevice.connectGatt(mActivity, false, mGattCallback);
+            mBluetoothGatt = device.connectGatt(mActivity, false, mGattCallback);
         }
         else
             Toast.makeText(mActivity, "Connection failed", Toast.LENGTH_LONG).show();
@@ -166,9 +170,11 @@ public class PolarHandler {
                     Log.d("Bluetooth Device", "Found: " + mDevice.getName());
                     Toast.makeText(mActivity, "Found: " + mDevice.getName(), Toast.LENGTH_SHORT).show();
                     mDeviceFound = true;
-                    Log.d("Bluetooth Adapter", "Canceled Discovery");
-                    mBluetoothAdapter.cancelDiscovery();
-                    mDeviceSearch = false;
+                    //Log.d("Bluetooth Adapter", "Canceled Discovery");
+                    //mBluetoothAdapter.cancelDiscovery();
+                    BluetoothDevice device = mDevice; //Not tested whether the list entry gets changed when the same mDevice gets changed everytime a new device gets found.
+                    mDeviceList.add(device);
+                    //mDeviceSearch = false;
                 }
             }
         }
@@ -255,5 +261,9 @@ public class PolarHandler {
             }
         }
     };
+
+    public List<BluetoothDevice> getDeviceList() {
+        return mDeviceList;
+    }
 
 }

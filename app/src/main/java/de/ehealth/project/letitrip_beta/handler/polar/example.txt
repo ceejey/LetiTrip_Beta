@@ -13,10 +13,13 @@
                     }
                 }
         );
+
+        List<BluetoothDevice> deviceList = polar.getDeviceList(); //Ab hier kannst du checken ob das gespeicherte dabei ist mit deviceList.get(0).getName(); !
+
         btnConnect.setOnClickListener(
                 new Button.OnClickListener() {
                     public void onClick(View v) {
-                            polar.connectToPolarDevice();
+                            polar.connectToPolarDevice(deviceList.get(0)); //Welches du nimmst musst du abfragen!
                     }
                 }
         );

@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -53,6 +54,7 @@ public class SessionOverview extends Fragment {
     private ToggleButton gpsEnabledToggle;
     private ListView sessionOverviewListView;
     private Switch bicycleSwitch;
+    private Button pauseButton;
 
     private ArrayAdapter<GPSCustomListItem> itemsAdapter;
     private int selectedRun = -1;
@@ -78,7 +80,7 @@ public class SessionOverview extends Fragment {
             bound = true;
             Log.w("sessionoverview", "bound - status:" + gps.getStatus() + "");
 
-            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch);
+            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch,pauseButton);
             updateList();
         }
 
@@ -101,6 +103,7 @@ public class SessionOverview extends Fragment {
         gpsEnabledToggle = (ToggleButton) view.findViewById(R.id.gpsEnabledToggle);
         sessionOverviewListView = (ListView) view.findViewById(R.id.sessionOverviewListView);
         bicycleSwitch = (Switch) view.findViewById(R.id.bycicleSwitch);
+        pauseButton = (Button) view.findViewById(R.id.pauseButton);
 
         //tracking on/off
         gpsEnabledToggle.setOnClickListener(new View.OnClickListener() {
@@ -179,6 +182,20 @@ public class SessionOverview extends Fragment {
             }
         });
 
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bound) {
+                    Button b = (Button) v;
+                    if (gps.isPaused()) {
+                        gps.setIsPaused(false);
+                    } else {
+                        gps.setIsPaused(false);
+                    }
+                    myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView,bicycleSwitch,pauseButton);
+                } else Log.w("sessionoverview", "bind error");
+            }
+        });
         return view;
     }
 
@@ -251,7 +268,7 @@ public class SessionOverview extends Fragment {
             updateList();
             //has to be called again. when opening map and returning to this fragment the service is already bound and
             //"updatTrackingUI" wont be called
-            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch);
+            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch,pauseButton);
         }
 
         //for >android 6.0
@@ -350,9 +367,9 @@ public class SessionOverview extends Fragment {
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("GPSActivity", -1);
             Log.w("sessionoverview", "broadcast:" + message);
-            if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch);
+            if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch,pauseButton);
             if (message == 2) {
-                myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView, bicycleSwitch);
+                myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView, bicycleSwitch,pauseButton);
                 updateList(); //tracking started in service
             }
         }
@@ -363,7 +380,7 @@ public class SessionOverview extends Fragment {
         super.onResume();
         //Log.w("sessionoverview", "onresume");
 
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("my-event"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
     }
 
     @Override
@@ -404,7 +421,7 @@ public class SessionOverview extends Fragment {
                     default:
                         break;
                 }
-                break;
+            break;
         }
     }
 

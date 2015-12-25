@@ -2,26 +2,33 @@ package de.ehealth.project.letitrip_beta.handler.gpshandler;
 
 import android.database.Cursor;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class GPSTest {
-    public void updateTrackingUI(GPSService gps, ToggleButton tb1, TextView tv1, Switch bycicleSwitch){
+    public void updateTrackingUI(GPSService gps, ToggleButton tb1, TextView tv1, Switch bicycleSwitch, Button pauseButton){
         if (gps.getStatus()== GPSService.Status.SEARCHINGGPS) {
             tb1.setChecked(true);
             tv1.setText("Aufnahme startet bald...");
+            pauseButton.setText("Pause");
+            pauseButton.setEnabled(false);
         } else if (gps.getStatus()== GPSService.Status.TRACKINGSTARTED) {
             tb1.setChecked(true);
             tv1.setText("Aufnahme läuft.");
+            if (gps.isPaused()) pauseButton.setText("Pause"); else pauseButton.setText("Fortfahren");
+            pauseButton.setEnabled(true);
         } else {
             tb1.setChecked(false);
             tv1.setText("Aufnahme deaktiviert.");
+            pauseButton.setText("Pause");
+            pauseButton.setEnabled(false);
         }
 
         if (gps.getRecordingAsBicycle() == 1){
-            bycicleSwitch.setChecked(true);
-            bycicleSwitch.setText("Fahrrad");
+            bicycleSwitch.setChecked(true);
+            bicycleSwitch.setText("Fahrrad");
         }
     }
 

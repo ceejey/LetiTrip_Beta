@@ -124,7 +124,6 @@ public class Session extends Fragment {
 
     public void updateStaticUI(){
         laufFahrrad.setText("Art:"+(gps.getRecordingAsBicycle()==0?"Lauf":"Fahrrad"));
-
     }
 
     private void updateUI() {
@@ -160,7 +159,7 @@ public class Session extends Fragment {
 
     @Override
     public void onResume() {
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("my-event"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
         super.onResume();
     }
 

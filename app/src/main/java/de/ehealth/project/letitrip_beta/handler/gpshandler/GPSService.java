@@ -85,6 +85,7 @@ public class GPSService extends Service {
             Log.w("gpsservice", "recordingAsBicycle=" + recordingAsBicycle);
         }
 
+        //gps enabled?
         if (!mylocman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toast.makeText(GPSService.this, "GPS aktivieren!", Toast.LENGTH_LONG).show();
             sendBroadcast("GPSActivity", 1);
@@ -93,7 +94,7 @@ public class GPSService extends Service {
     }
 
     public void sendBroadcast(String msg, int ID){
-        Intent intent = new Intent("my-event").putExtra(msg, ID);;
+        Intent intent = new Intent("gps-event").putExtra(msg, ID);;
         LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(intent);
     }
 
@@ -101,7 +102,7 @@ public class GPSService extends Service {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location l) {
-                if (l != null) {
+                if ((l != null) && (!isPaused)) {
                     boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle);
                     if (ins) {
                         sendBroadcast("MapsActivity", 1);
@@ -166,5 +167,13 @@ public class GPSService extends Service {
 
     public int getRecordingAsBicycle() {
         return recordingAsBicycle;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setIsPaused(boolean isPaused) {
+        this.isPaused = isPaused;
     }
 }

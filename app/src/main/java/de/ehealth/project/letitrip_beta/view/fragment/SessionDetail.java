@@ -178,7 +178,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
     public void onResume() {
         Log.w("sessiondetail","onresume");
         mapView.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("my-event"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
         super.onResume();
     }
 

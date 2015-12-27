@@ -35,7 +35,7 @@ public class NewsHandler {
 
         try {
 
-            final String newsJson = new NewsTask("gesundheit", "dbce43690d443111a49fc0b38f48e2d4", "de", 15).execute().get();
+            final String newsJson = new NewsTask("gesundheit", "75ba7c79e2aeff0db0e33b1db79ee188", "de", 15).execute().get();
 
             if (!newsJson.isEmpty()) {
 

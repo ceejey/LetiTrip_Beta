@@ -90,7 +90,7 @@ public class PolarHandler {
     public void searchPolarDevice(){
         if(isBluetoothEnabled()) {
             Handler handler = new Handler();
-            final long SCAN_PERIOD = 10000;
+            final long SCAN_PERIOD = 2000;
 
             IntentFilter filter = new IntentFilter();
 

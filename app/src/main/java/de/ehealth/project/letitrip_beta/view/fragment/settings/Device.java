@@ -36,12 +36,13 @@ public class Device extends Fragment {
     private DialogInterface.OnClickListener mDialogListener;
     private ListView mDeviceListView;
     private int mSelectedDevice = -1;
-    private  ListAdapter mCustomAdapter = null;
+    private ListAdapter mCustomAdapter = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_device, container, false);
         mDeviceListView = (ListView) view.findViewById(R.id.listDevices);
         ImageView imgAddDevice = (ImageView) view.findViewById(R.id.imgAddDevice);
@@ -78,6 +79,9 @@ public class Device extends Fragment {
         if (!FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
             itemList.add(new DevicesRow(1,"Fitbit","Benutzername: " + FitbitUserProfile.getmActiveUser().getmFullname()));
         }
+        if (!Polar.getmPolarDevice().equals("")){
+            itemList.add(new DevicesRow(2,"Polar",Polar.getmPolarDevice()));
+        }
         //ON CLICK LISTENER !!
         mCustomAdapter = new DevicesAdapter(getActivity(), itemList);
         mDeviceListView.setAdapter(mCustomAdapter);
@@ -109,8 +113,19 @@ public class Device extends Fragment {
                         break;
                     case 1:
                         if(mSelectedDevice == 0){
-                            FitbitUserProfile.deleteUser(getActivity());
-                            FitBitUserDataSQLite.getInstance(getActivity()).newTable();
+                            if(!Polar.getmPolarDevice().equals("")){
+                                Polar.setmPolarDevice("");
+                                updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
+                            }
+                            else {
+                                FitbitUserProfile.deleteUser(getActivity());
+                                FitBitUserDataSQLite.getInstance(getActivity()).newTable();
+                                updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
+                            }
+
+                        }
+                        if(mSelectedDevice == 1){
+                            Polar.setmPolarDevice("");
                             updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                         }
                         break;

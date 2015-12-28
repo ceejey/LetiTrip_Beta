@@ -37,6 +37,8 @@ public class FitbitUserProfile {
     private String mWeightUnit = "";
     private String mHeightUnit = "";
     private String mWaterUnit = "";
+    private static String mFahrradTyp = "";
+    private static String mReifenTyp = "";
 
 
     public static void JsonToUserProfile(String jSon, Token accessToken) {
@@ -98,6 +100,8 @@ public class FitbitUserProfile {
         edit.putString("WaterUnit",mActiveUser.getmWaterUnit() );
         edit.putString("Gender", mActiveUser.getmGender() );
         edit.putString("MemberSince", mActiveUser.getmMemberSince() );
+        edit.putString("FahrradTyp", mFahrradTyp );
+        edit.putString("ReifenTyp", mReifenTyp );
         edit.commit();
     }
 
@@ -120,6 +124,8 @@ public class FitbitUserProfile {
         profile.mWaterUnit = pref.getString("WaterUnit","");
         profile.mGender = pref.getString("Gender","");
         profile.mMemberSince = pref.getString("MemberSince","");
+        profile.mFahrradTyp = pref.getString("FahrradTyp","");
+        profile.mReifenTyp = pref.getString("ReifenTyp","");
         // initialisiere Oauth sodass neue Json vom server nach einem App neustart geladen werden können
         Oauth.getmOauth().setmAccessToken(profile.mAccessToken);
 

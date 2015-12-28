@@ -20,12 +20,12 @@ import de.ehealth.project.letitrip_beta.view.fragment.Recipe;
 import de.ehealth.project.letitrip_beta.view.fragment.Session;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionDetail;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionOverview;
-import de.ehealth.project.letitrip_beta.view.fragment.fitbit.CheckUserProfile;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.FitBitInit;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.WebviewOauth;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.General;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.Polar;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Settings;
 
@@ -37,8 +37,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
 
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
-        SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT, FIT_BIT_CHECKPROFILE,
-        NEWS
+        SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT,
+        NEWS, POLAR_DEVICE
     }
 
     @Override
@@ -118,13 +118,13 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
                 txtHeader.setText("Einstellungen");
                 fragmentContent = new FitBitInit();
                 break;
-            case FIT_BIT_CHECKPROFILE:
-                txtHeader.setText("Einstellungen");
-                fragmentContent = new CheckUserProfile();
-                break;
             case NEWS:
                 txtHeader.setText("Nachrichten");
                 fragmentContent = new News();
+                break;
+            case POLAR_DEVICE:
+                txtHeader.setText("Polar");
+                fragmentContent = new Polar();
         }
 
         fragmentManager.beginTransaction().replace(R.id.contentContainer, fragmentContent).commit();

@@ -12,13 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
-import de.ehealth.project.letitrip_beta.view.adapter.DevicesRow;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
 /**
@@ -42,7 +38,9 @@ public class DeviceCreateDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         final View modifyView = inflater.inflate(R.layout.dialog_devices, container, false);
         ImageView fitBit = (ImageView) modifyView.findViewById(R.id.imv_FitBit);
-        List<DevicesRow> itemList = new ArrayList<>();
+        ImageView polar = (ImageView) modifyView.findViewById(R.id.imageView2);
+
+        //Imageviw onClick listener FITBIT
         if (FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
             fitBit.setOnTouchListener(new View.OnTouchListener() {
 
@@ -77,6 +75,42 @@ public class DeviceCreateDialog extends DialogFragment {
             fitBit.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
             modifyView.findViewById(R.id.layout_FitBit).setBackgroundColor(Color.GRAY);
         }
+        //Imageviw onClick listener POLAR
+        if (Polar.getmPolarDevice().equals("")) {
+            polar.setOnTouchListener(new View.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN: {
+                            ImageView view = (ImageView) v;
+                            //overlay is black with transparency of 0x77 (119)
+                            view.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                            view.invalidate();
+                            updateActivity(MainActivity.FragmentName.POLAR_DEVICE);
+                            view.getDrawable().clearColorFilter();
+                            getDialog().dismiss();
+                            break;
+                        }
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_CANCEL: {
+                            ImageView view = (ImageView) v;
+                            //clear the overlay
+                            view.getDrawable().clearColorFilter();
+                            view.invalidate();
+                            break;
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
+        else{
+            polar.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+            modifyView.findViewById(R.id.layout_FitBit).setBackgroundColor(Color.GRAY);
+        }
+
         return modifyView;
 
     }

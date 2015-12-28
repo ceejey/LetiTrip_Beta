@@ -45,7 +45,7 @@ public class WebviewOauth extends Fragment{
                     mOauth.lastoauthstep();
                     if (mOauth.getmAccessToken() != null) {
                         Log.d("Fitbit", "Access Token !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                        updateActivity(MainActivity.FragmentName.FIT_BIT_CHECKPROFILE);
+                        updateActivity(MainActivity.FragmentName.SETTINGS_PROFILE);
                     }
                 }
                 return false;
@@ -54,7 +54,6 @@ public class WebviewOauth extends Fragment{
         webView.loadUrl(mOauth.getmAuthUrl());
         return view;
     }
-
 
     @Override
     public void onAttach(Activity activity) {

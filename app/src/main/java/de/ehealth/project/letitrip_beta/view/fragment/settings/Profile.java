@@ -1,6 +1,5 @@
 package de.ehealth.project.letitrip_beta.view.fragment.settings;
 
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,21 +7,149 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
+import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitBitActivityScore;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
+/**
+ * Created by Mirorn on 08.12.2015.
+ */
 public class Profile extends Fragment {
 
     private FragmentChanger mListener;
+    private Oauth mOauth = Oauth.getOauth();
+    private FitbitUserProfile mUser;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+    private TextView mVtxtFullName;
+    private TextView mVtxtHeight;
+    private TextView mVtxtAge;
+    private TextView mVtxtFahrradTyp;
+    private TextView mVtxtReifenTyp;
+    private EditText mEtxtWeight;
+    private Button mBtnSaveUser;
+    private CheckBox mCbBike;
+    private Spinner mSpReifentyp;
+    private Spinner mSpFahrradTyp;
+    private boolean checkbox = false;
+
+    RadioButton mRbMale;
+    RadioButton mRbFemale;
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.checkprofile, container, false);
+        mVtxtFullName = (TextView) view.findViewById(R.id.vtxtFullName);
+        mVtxtAge = (TextView) view.findViewById(R.id.vtxtAge);
+        mVtxtHeight = (TextView) view.findViewById(R.id.vtxtHeight);
+        mEtxtWeight = (EditText) view.findViewById(R.id.etxtWeight);
+        mRbMale = (RadioButton) view.findViewById(R.id.rdMale);
+        mRbFemale = (RadioButton) view.findViewById(R.id.rdFemale);
+        mBtnSaveUser = (Button) view.findViewById(R.id.bnSaveUserProfile);
+        mCbBike = (CheckBox) view.findViewById(R.id.cbFahrrad);
+        mVtxtFahrradTyp = (TextView) view.findViewById(R.id.vtxtFahrradtyp);
+        mVtxtReifenTyp = (TextView) view.findViewById(R.id.vtxtReifentyp);
+        mSpReifentyp = (Spinner) view.findViewById(R.id.spReifenTyp);
+        mSpFahrradTyp = (Spinner) view.findViewById(R.id.spFahrradTyp);
+
+
+        final List<String> typenListe = new ArrayList<String>();
+        typenListe.add("Stollen (Normal)");
+        typenListe.add("Stollen (Groß)");
+        typenListe.add("Straße (Standart)");
+        typenListe.add("Straße (Schmal)");
+        mSpReifentyp.setAdapter(new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, typenListe));
+
+        final List<String> typenListetwo = new ArrayList<String>();
+
+        typenListetwo.add("Cityrad (aufrechtsitzend)");
+        typenListetwo.add("Stollen (vorgebeugt)");
+        typenListetwo.add("TourenRad tiefer Lenker (vorgebeugt)");
+        typenListetwo.add("Renrad (vorgebeugt)");
+        mSpFahrradTyp.setAdapter(new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, typenListetwo));
+
+        mVtxtFahrradTyp.setVisibility(view.INVISIBLE);
+        mVtxtReifenTyp.setVisibility(view.INVISIBLE);
+        mSpFahrradTyp.setVisibility(view.INVISIBLE);
+        mSpReifentyp.setVisibility(view.INVISIBLE);
+
+        try {
+            new FitBitGetJsonTask(mOauth, FitBitGetJsonTask.ENDPOINT_PROFILE, getActivity()).execute().get();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        mUser = FitbitUserProfile.getmActiveUser();
+        mCbBike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!checkbox) {
+                    mVtxtFahrradTyp.setVisibility(v.VISIBLE);
+                    mVtxtReifenTyp.setVisibility(v.VISIBLE);
+                    mSpFahrradTyp.setVisibility(v.VISIBLE);
+                    mSpReifentyp.setVisibility(v.VISIBLE);
+                    checkbox = true;
+                }
+                else {
+                    mVtxtFahrradTyp.setVisibility(v.INVISIBLE);
+                    mVtxtReifenTyp.setVisibility(v.INVISIBLE);
+                    mSpFahrradTyp.setVisibility(v.INVISIBLE);
+                    mSpReifentyp.setVisibility(v.INVISIBLE);
+                    checkbox = false;
+                }
+            }
+        });
+        if (!mUser.getmEncodedId().isEmpty()) {
+            mVtxtFullName.setText(mUser.getmFullname());
+            mBtnSaveUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    saveUser();
+                }
+            });
+            mVtxtAge.setText(mUser.getmAge());
+            mVtxtHeight.setText(mUser.getmHeight());
+            mEtxtWeight.setText(mUser.getmWeight());
+            if (mUser.getmGender().equals("MALE"))
+                mRbMale.setChecked(true);
+            else if (mUser.getmGender().equals("FEMALE"))
+                mRbFemale.setChecked(true);
+        }
+
+        return view;
     }
+
+    public void saveUser() {
+
+        mUser.setmWeight(mEtxtWeight.getText().toString());
+        //change the difference between current weight and the weight from server
+        try {
+            new FitBitGetJsonTask(Oauth.getmOauth()
+                    , FitBitGetJsonTask.ENDPOINT_WEIGHT, getActivity()
+                    , Integer.parseInt(mEtxtWeight.getText().toString())).execute().get();
+            FitbitUserProfile.getmActiveUser().setmWeight(mEtxtWeight.getText().toString());
+            FitbitUserProfile.getmActiveUser().saveUser(getActivity());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        FitbitUserProfile.saveUser(getActivity());
+        FitBitActivityScore.calcActivtiyScore(getActivity());
+        updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
+    }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -44,3 +171,4 @@ public class Profile extends Fragment {
         mListener.changeFragment(fn);
     }
 }
+

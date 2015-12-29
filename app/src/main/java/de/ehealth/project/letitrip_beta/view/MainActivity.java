@@ -25,6 +25,7 @@ import de.ehealth.project.letitrip_beta.view.fragment.fitbit.WebviewOauth;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.General;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.NewsSettings;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Polar;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Settings;
@@ -38,7 +39,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT,
-        NEWS, POLAR_DEVICE
+        NEWS, POLAR_DEVICE, NEWS_SETTINGS
     }
 
     @Override
@@ -123,8 +124,12 @@ public class MainActivity extends FragmentActivity implements FragmentChanger, S
                 fragmentContent = new News();
                 break;
             case POLAR_DEVICE:
-                txtHeader.setText("Polar");
+                txtHeader.setText("Polar-Einstellungen");
                 fragmentContent = new Polar();
+                break;
+            case NEWS_SETTINGS:
+                txtHeader.setText("News-Einstellungen");
+                fragmentContent = new NewsSettings();
         }
 
         fragmentManager.beginTransaction().replace(R.id.contentContainer, fragmentContent).commit();

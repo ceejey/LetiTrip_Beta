@@ -118,7 +118,7 @@ public class Device extends Fragment {
                                 updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                             }
                             else {
-                                FitbitUserProfile.deleteUser(getActivity());
+                                //FitbitUserProfile.deleteUser(getActivity());
                                 FitBitUserDataSQLite.getInstance(getActivity()).newTable();
                                 updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                             }

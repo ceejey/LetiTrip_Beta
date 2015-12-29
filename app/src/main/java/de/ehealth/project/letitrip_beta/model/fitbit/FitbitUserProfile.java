@@ -8,6 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.Token;
 
+import java.util.Set;
+
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 
 /**
@@ -37,8 +39,9 @@ public class FitbitUserProfile {
     private String mWeightUnit = "";
     private String mHeightUnit = "";
     private String mWaterUnit = "";
-    private static String mFahrradTyp = "";
-    private static String mReifenTyp = "";
+    private Set<String>  mNewsSettings = null;
+    private static String mFahrradTyp = "Nichts ausgewählt";
+    private static String mReifenTyp = "Nichts ausgewählt";
 
 
     public static void JsonToUserProfile(String jSon, Token accessToken) {
@@ -102,6 +105,7 @@ public class FitbitUserProfile {
         edit.putString("MemberSince", mActiveUser.getmMemberSince() );
         edit.putString("FahrradTyp", mFahrradTyp );
         edit.putString("ReifenTyp", mReifenTyp );
+        edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());
         edit.commit();
     }
 
@@ -126,6 +130,7 @@ public class FitbitUserProfile {
         profile.mMemberSince = pref.getString("MemberSince","");
         profile.mFahrradTyp = pref.getString("FahrradTyp","");
         profile.mReifenTyp = pref.getString("ReifenTyp","");
+        profile.mNewsSettings = pref.getStringSet("NewsSettings", null);
         // initialisiere Oauth sodass neue Json vom server nach einem App neustart geladen werden können
         Oauth.getmOauth().setmAccessToken(profile.mAccessToken);
 
@@ -249,5 +254,29 @@ public class FitbitUserProfile {
 
     public void setmAge(String mAge) {
         this.mAge = mAge;
+    }
+
+    public static String getmFahrradTyp() {
+        return mFahrradTyp;
+    }
+
+    public static void setmFahrradTyp(String mFahrradTyp) {
+        FitbitUserProfile.mFahrradTyp = mFahrradTyp;
+    }
+
+    public static String getmReifenTyp() {
+        return mReifenTyp;
+    }
+
+    public static void setmReifenTyp(String mReifenTyp) {
+        FitbitUserProfile.mReifenTyp = mReifenTyp;
+    }
+
+    public Set<String> getmNewsSettings() {
+        return mNewsSettings;
+    }
+
+    public void setmNewsSettings(Set<String> mNewsSettings) {
+        this.mNewsSettings = mNewsSettings;
     }
 }

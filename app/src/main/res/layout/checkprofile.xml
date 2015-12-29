@@ -198,7 +198,7 @@
                         android:layout_width="148dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/spFahrradTyp"
-                        android:spinnerMode="dropdown"
+                        android:spinnerMode="dialog"
                         android:layout_marginTop="10dp" />
                 </LinearLayout>
 
@@ -223,7 +223,7 @@
                         android:layout_width="148dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/spReifenTyp"
-                        android:spinnerMode="dropdown"
+                        android:spinnerMode="dialog"
                         android:layout_marginTop="10dp" />
                 </LinearLayout>
 

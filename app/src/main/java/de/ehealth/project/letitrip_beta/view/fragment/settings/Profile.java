@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -67,25 +68,64 @@ public class Profile extends Fragment {
 
 
         final List<String> typenListe = new ArrayList<String>();
+
+        typenListe.add("Nichts ausgewählt");
         typenListe.add("Stollen (Normal)");
         typenListe.add("Stollen (Groß)");
         typenListe.add("Straße (Standart)");
         typenListe.add("Straße (Schmal)");
         mSpReifentyp.setAdapter(new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, typenListe));
 
+        for(int i = 0; i < typenListe.size(); i++ ) {
+            if(typenListe.get(i).contains(FitbitUserProfile.getmReifenTyp())) {
+                mSpReifentyp.setSelection(i);
+            }
+        }
         final List<String> typenListetwo = new ArrayList<String>();
 
+        typenListetwo.add("Nichts ausgewählt");
         typenListetwo.add("Cityrad (aufrechtsitzend)");
         typenListetwo.add("Stollen (vorgebeugt)");
         typenListetwo.add("TourenRad tiefer Lenker (vorgebeugt)");
         typenListetwo.add("Renrad (vorgebeugt)");
         mSpFahrradTyp.setAdapter(new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, typenListetwo));
+        for(int i = 0; i < typenListetwo.size(); i++ ) {
+            if(typenListetwo.get(i).contains(FitbitUserProfile.getmFahrradTyp())) {
+                mSpFahrradTyp.setSelection(i);
+            }
+        }
 
-        mVtxtFahrradTyp.setVisibility(view.INVISIBLE);
-        mVtxtReifenTyp.setVisibility(view.INVISIBLE);
-        mSpFahrradTyp.setVisibility(view.INVISIBLE);
-        mSpReifentyp.setVisibility(view.INVISIBLE);
+        if(FitbitUserProfile.getmFahrradTyp().equals("Nichts ausgewählt") || FitbitUserProfile.getmReifenTyp().equals("Nichts ausgewählt")) {
 
+            mVtxtFahrradTyp.setVisibility(view.INVISIBLE);
+            mVtxtReifenTyp.setVisibility(view.INVISIBLE);
+            mSpFahrradTyp.setVisibility(view.INVISIBLE);
+            mSpReifentyp.setVisibility(view.INVISIBLE);
+            checkbox = false;
+        }
+        else{
+            mCbBike.setChecked(!mCbBike.isChecked());
+            checkbox = true;
+            mSpReifentyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    FitbitUserProfile.setmReifenTyp(typenListe.get(position));
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+            mSpFahrradTyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    FitbitUserProfile.setmFahrradTyp(typenListetwo.get(position));
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
         try {
             new FitBitGetJsonTask(mOauth, FitBitGetJsonTask.ENDPOINT_PROFILE, getActivity()).execute().get();
         } catch (Exception ex) {
@@ -100,6 +140,27 @@ public class Profile extends Fragment {
                     mVtxtReifenTyp.setVisibility(v.VISIBLE);
                     mSpFahrradTyp.setVisibility(v.VISIBLE);
                     mSpReifentyp.setVisibility(v.VISIBLE);
+                    mSpReifentyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            FitbitUserProfile.setmReifenTyp(typenListe.get(position));
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+                        }
+                    });
+                    mSpFahrradTyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            FitbitUserProfile.setmFahrradTyp(typenListetwo.get(position));
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
                     checkbox = true;
                 }
                 else {
@@ -147,7 +208,11 @@ public class Profile extends Fragment {
 
         FitbitUserProfile.saveUser(getActivity());
         FitBitActivityScore.calcActivtiyScore(getActivity());
-        updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
+        if(!checkbox){
+            FitbitUserProfile.setmFahrradTyp("Nichts ausgewählt");
+            FitbitUserProfile.setmReifenTyp("Nichts ausgewählt");
+        }
+        updateActivity(MainActivity.FragmentName.SETTINGS);
     }
 
 

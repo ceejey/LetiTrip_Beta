@@ -38,6 +38,7 @@ public class Settings extends Fragment {
         itemList.add(new SettingsRow("Allgemein", "test"));
         itemList.add(new SettingsRow("Profil", "test"));
         itemList.add(new SettingsRow("Geräte", "test"));
+        itemList.add(new SettingsRow("News", "test"));
         itemList.add(new SettingsRow("Hilfe", "test"));
         ListAdapter customAdapter = new SettingsAdapter(getActivity(), itemList);
         listSettings.setAdapter(customAdapter);
@@ -58,6 +59,9 @@ public class Settings extends Fragment {
                 }
                 if(row.getCustomItem().equals("Geräte")){
                     updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
+                }
+                if(row.getCustomItem().equals("News")){
+                    updateActivity(MainActivity.FragmentName.NEWS_SETTINGS);
                 }
                 if(row.getCustomItem().equals("Hilfe")){
                     updateActivity(MainActivity.FragmentName.SETTINGS_HELP);

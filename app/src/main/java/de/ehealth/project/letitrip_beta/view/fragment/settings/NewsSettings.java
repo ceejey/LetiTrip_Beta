@@ -70,8 +70,10 @@ public class NewsSettings extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings_news, container, false);
 
-        mCheckedList = new ArrayList<String>(FitbitUserProfile.getmActiveUser().getmNewsSettings());
-
+        if(FitbitUserProfile.getmActiveUser().getmNewsSettings() != null)
+            mCheckedList = new ArrayList<String>(FitbitUserProfile.getmActiveUser().getmNewsSettings());
+        else
+            mCheckedList = new ArrayList<String>();
         cbNewsEinschalten = (CheckBox) view.findViewById(R.id.cbNewsEinschalten);
         mBTSaveNewsSettings = (Button) view.findViewById(R.id.bnSpeichernNews);
 

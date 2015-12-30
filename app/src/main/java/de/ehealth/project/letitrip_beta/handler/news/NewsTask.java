@@ -27,9 +27,7 @@ public class NewsTask extends AsyncTask<Void, Void, String> {
 
         String responseJson = "";
         try {
-
-            String url = "http://api.presseportal.de/api/article/branche/" + mBranche + "?api_key=" + mApiKey + "&format=json" +
-                    "&lang=" + mLanguage + "&limit=" + mLimit;
+            String url = "http://recipeapi-ehealthrecipes.rhcloud.com/news?branche=" + mBranche + "&lang=" + mLanguage + "&limit=" + mLimit;
 
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();

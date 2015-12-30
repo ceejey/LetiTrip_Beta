@@ -38,7 +38,7 @@ public class DeviceCreateDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         final View modifyView = inflater.inflate(R.layout.dialog_devices, container, false);
         ImageView fitBit = (ImageView) modifyView.findViewById(R.id.imv_FitBit);
-        ImageView polar = (ImageView) modifyView.findViewById(R.id.imageView2);
+        ImageView polar = (ImageView) modifyView.findViewById(R.id.imv_Polar);
 
         //Imageviw onClick listener FITBIT
         if (FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {

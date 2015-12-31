@@ -13,8 +13,10 @@ import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.database.GPSDatabase;
+import de.ehealth.project.letitrip_beta.handler.database.WeatherDatabase;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
+import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.Dashboard;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -63,8 +65,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
         mOldTag = "dashboard";
 
-        GPSDatabase myDB = new GPSDatabase(this);
-        GPSDatabaseHandler.getInstance().setData(myDB);
+        GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
+        WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
     }
 
     @Override
@@ -155,18 +157,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 break;
             case RECIPE:
                 txtHeader.setText("Rezepte");
-                newTag = "recipes";
-
-                expectedEntryCount = 1;
-                expectedEntry = "dashboard";
-                refillEntrys.add("dashboard");
-                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
-
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else
-                    fragmentContent = new Recipe();
+                fragmentContent = new Recipe();
                 break;
             case SETTINGS:
                 txtHeader.setText("Einstellungen");
@@ -388,7 +379,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentManager.beginTransaction().addToBackStack(entry).commit();
             }
 
-        }else {
+        } else {
             Log.d("Test", "Expected entry count is empty");
             for(String entry : refillEntrys){
                 Log.d("Test", "Add to back stack: " + entry);

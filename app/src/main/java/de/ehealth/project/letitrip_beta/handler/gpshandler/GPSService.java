@@ -11,7 +11,6 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -25,7 +24,7 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class GPSService extends Service {
 
     private LocationListener locationListener;
-    private LocationManager mylocman;
+    private LocationManager locationManager;
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
     private boolean isPaused = false;
@@ -44,8 +43,8 @@ public class GPSService extends Service {
     public void onDestroy() {
         try {
             //TODO creates error "java.lang.IllegalArgumentException: invalid listener: null"
-            //if (mylocman != null) mylocman.removeUpdates(locationListener);
-            if (locationListener != null) mylocman.removeUpdates(locationListener);
+            //if (locationManager != null) locationManager.removeUpdates(locationListener);
+            if (locationListener != null) locationManager.removeUpdates(locationListener);
             status = Status.IDLE;
         } catch (IllegalArgumentException | SecurityException e) {
             e.printStackTrace();
@@ -55,7 +54,7 @@ public class GPSService extends Service {
         super.onDestroy();
     }
 
-    @Nullable
+    //@Nullable
     @Override
     public IBinder onBind(Intent intent) {
         Log.w("service", "onbind");
@@ -65,7 +64,7 @@ public class GPSService extends Service {
     @Override
     public void onCreate() {
         Log.w("service", "created");
-        mylocman = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         status = Status.IDLE;
         super.onCreate();
     }
@@ -86,7 +85,7 @@ public class GPSService extends Service {
         }
 
         //gps enabled?
-        if (!mylocman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toast.makeText(GPSService.this, "GPS aktivieren!", Toast.LENGTH_LONG).show();
             sendBroadcast("GPSActivity", 1);
         } else startTracking();
@@ -116,7 +115,7 @@ public class GPSService extends Service {
                         status = Status.TRACKINGSTARTED;
                         sendBroadcast("GPSActivity", 2);
                     }
-                }
+                } else Log.w("gpsservice","paused or no location!");
             }
 
             public void onProviderDisabled(String provider) {}
@@ -124,8 +123,8 @@ public class GPSService extends Service {
             public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
         try {
-           // mylocman.requestLocationUpdates("gps", 3000, 10, locationListener);
-            mylocman.requestLocationUpdates("gps", 100, 2, locationListener);
+           // locationManager.requestLocationUpdates("gps", 3000, 10, locationListener);
+            locationManager.requestLocationUpdates("gps", 100, 2, locationListener);
 
             status = Status.SEARCHINGGPS;
         } catch (SecurityException e) {

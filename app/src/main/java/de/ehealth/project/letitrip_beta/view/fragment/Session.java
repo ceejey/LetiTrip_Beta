@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
+import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class Session extends Fragment {
@@ -145,9 +147,17 @@ public class Session extends Fragment {
 
         geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun,0))+" km/h");
 
-        temp.setText("Temperatur nicht verfügbar");
+        Cursor res = WeatherDatabaseHandler.getInstance().getData().weatherOfTodayAvailable();
+        res.moveToFirst();
+        if (res.getCount() == 1){
+            temp.setText("Temperatur: "+res.getInt(2)+" °C");
+            wind.setText("Wind: "+res.getInt(3)+" km/h ("+GPSDatabaseHandler.getInstance().getData().getDirectionLetter(res.getInt(4))+"["+res.getInt(4)+"])");
+        } else {
+            temp.setText("Temperatur nicht verfügbar");
+            wind.setText("Wind nicht verfügbar.");
+        }
+        res.close();
 
-        wind.setText("Wind nicht verfügbar.");
 
         distanz.setText("Distanz: " + df.format(((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun))) + " Meter");
 

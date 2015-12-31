@@ -27,7 +27,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
     public static final String COLUMN5 = "Altitude";
     public static final String COLUMN6 = "Bicycle"; //1=bicycle, 0=walking
 
-    //, String name, SQLiteDatabase.CursorFactory factory, int version
     public GPSDatabase(Context context) {
         super(context, DATABASE_NAME, null, 1);
     }
@@ -54,13 +53,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN1 + " = " + id, null);
         return res;
-    }
-
-    public int testMethod(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
-        res.close();
-        return res.getCount();
     }
 
     public Cursor getLastPosOfRun(int id){

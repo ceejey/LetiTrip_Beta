@@ -44,6 +44,7 @@ import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSTest;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
+import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
 
@@ -65,13 +66,13 @@ public class SessionOverview extends Fragment {
     boolean bound = false;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSTest myGPSObject;
-
+/*
     ShowRunOnMap interfaceSender;
 
     public interface ShowRunOnMap{
         void setSelectedRunID(int id);
     }
-
+*/
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -191,7 +192,7 @@ public class SessionOverview extends Fragment {
                     if (gps.isPaused()) {
                         gps.setIsPaused(false);
                     } else {
-                        gps.setIsPaused(false);
+                        gps.setIsPaused(true);
                     }
                     myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView,bicycleSwitch,pauseButton);
                 } else Log.w("sessionoverview", "bind error");
@@ -422,6 +423,8 @@ public class SessionOverview extends Fragment {
                         break;
                     case 2:
                         myGPSObject.getRunOutput(selectedRun);
+                        Log.w("sessionoverview", "weatheravailable?" + WeatherDatabaseHandler.getInstance().getData().weatherOfTodayAvailable());
+                        WeatherDatabaseHandler.getInstance().getData().outPutAll();
                         break;
                     default:
                         break;

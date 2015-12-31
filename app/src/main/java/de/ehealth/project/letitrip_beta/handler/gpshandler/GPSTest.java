@@ -17,7 +17,7 @@ public class GPSTest {
         } else if (gps.getStatus()== GPSService.Status.TRACKINGSTARTED) {
             tb1.setChecked(true);
             tv1.setText("Aufnahme läuft.");
-            if (gps.isPaused()) pauseButton.setText("Pause"); else pauseButton.setText("Fortfahren");
+            if (gps.isPaused()) pauseButton.setText("Fortfahren"); else pauseButton.setText("Pause");
             pauseButton.setEnabled(true);
         } else {
             tb1.setChecked(false);

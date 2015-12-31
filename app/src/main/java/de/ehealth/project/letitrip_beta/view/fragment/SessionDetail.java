@@ -44,10 +44,9 @@ import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
-public class SessionDetail extends Fragment implements SessionOverview.ShowRunOnMap{
+public class SessionDetail extends Fragment {
 
     private FragmentChanger mListener;
-    //private ServiceConnection mConnection;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapView mapView;
@@ -194,7 +193,6 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
             bound = false;
         }
         //getActivity().getSupportFragmentManager().popBackStack();
-        Log.w("...",bound+"yoooo");
         super.onPause();
     }
 
@@ -286,8 +284,6 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
         if (showThisRun != -1) {
             showRunOnMap(endMarker, GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun, 0)*3.6);
-            //TODO why?
-            //if (gps.getActiveRecordingID() != showThisRun) showThisRun = -1;
         }
     }
 
@@ -361,9 +357,10 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
     public void updateActivity(MainActivity.FragmentName fn) {
         mListener.changeFragment(fn);
     }
-
+/*
     @Override
     public void setSelectedRunID(int id) {
         showThisRun = id;
     }
+    */
 }

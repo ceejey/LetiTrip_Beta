@@ -43,6 +43,7 @@ import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSCustomListItem;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSTest;
+import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
 
@@ -216,11 +217,12 @@ public class SessionOverview extends Fragment {
             Log.d("Fitbit", "Wrong interface implemented");
         }
 
-        try {
+        //TODO
+        /*try { <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             interfaceSender = (ShowRunOnMap) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement ShowRunOnMap");
-        }
+        }*/
     }
 
     @Override
@@ -407,7 +409,10 @@ public class SessionOverview extends Fragment {
                     case 0:
                         //only put the runID to the intent if map shouldnt show the current live session
                         if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == selectedRun))) {
-                            interfaceSender.setSelectedRunID(selectedRun);
+                            //TODO
+                            //interfaceSender.setSelectedRunID(selectedRun); <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            SessionHandler.setSelectedRunId(selectedRun);
+                            mListener.changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
                         } else updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
                         break;
                     case 1:

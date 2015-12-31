@@ -58,6 +58,7 @@ public class Bar extends Fragment {
 
         //Initialize with colored Dashboard icon.
         imgDashboard.setColorFilter(0xffffa726, PorterDuff.Mode.MULTIPLY);
+        BarHandler.selBtn = "Dashboard";
 
         //Choose which button to trigger with x coordinates of the touch, change the fragment and the color of the button.
         btnDashboard.setOnTouchListener(new View.OnTouchListener() {
@@ -67,11 +68,17 @@ public class Bar extends Fragment {
 
                     if (BarHandler.selBtn.equals("Dashboard")) {
                         int width = BarHandler.getWidth(btnDashboard);
-                        if (event.getX() > width / 2 + width / 2 * BarHandler.clickOffset) {
+                        if (event.getX() > width / 2.0F + width / 2.0F * BarHandler.clickOffset) {
                             BarHandler.selBtn = "Session";
                             updateActivity(MainActivity.FragmentName.SESSION);
                             BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
                                     0xffffffff, 0xffffa726, 0xffffffff, 0xffffffff);
+                        }
+                        else {
+                            BarHandler.selBtn = "Dashboard";
+                            updateActivity(MainActivity.FragmentName.DASHBOARD);
+                            BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
+                                    0xffffa726, 0xffffffff, 0xffffffff, 0xffffffff);
                         }
 
                     } else {
@@ -92,16 +99,22 @@ public class Bar extends Fragment {
 
                     if (BarHandler.selBtn.equals("Session")) {
                         int width = BarHandler.getWidth(btnSession);
-                        if (event.getX() > width / 2 + width / 2 * BarHandler.clickOffset) {
+                        if (event.getX() > width / 2.0F + width / 2.0F * BarHandler.clickOffset) {
                             BarHandler.selBtn = "Recipe";
                             updateActivity(MainActivity.FragmentName.RECIPE);
                             BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
                                     0xffffffff, 0xffffffff, 0xffffa726, 0xffffffff);
-                        } else if (event.getX() < width / 2 - width / 2 * BarHandler.clickOffset) {
+                        } else if (event.getX() < width / 2.0F - width / 2.0F * BarHandler.clickOffset) {
                             BarHandler.selBtn = "Dashboard";
                             updateActivity(MainActivity.FragmentName.DASHBOARD);
                             BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
                                     0xffffa726, 0xffffffff, 0xffffffff, 0xffffffff);
+                        } else {
+                            BarHandler.selBtn = "Session";
+                            //updateActivity(MainActivity.FragmentName.SESSION);
+                            updateActivity(MainActivity.FragmentName.SESSION_OVERVIEW);
+                            BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
+                                    0xffffffff, 0xffffa726, 0xffffffff, 0xffffffff);
                         }
 
                     } else {
@@ -123,16 +136,21 @@ public class Bar extends Fragment {
 
                     if (BarHandler.selBtn.equals("Recipe")) {
                         int width = BarHandler.getWidth(btnRecipe);
-                        if (event.getX() > width / 2 + width / 2 * BarHandler.clickOffset) {
+                        if (event.getX() > width / 2.0F + width / 2.0F * BarHandler.clickOffset) {
                             BarHandler.selBtn = "Settings";
                             updateActivity(MainActivity.FragmentName.SETTINGS);
                             BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
                                     0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
-                        } else if (event.getX() < width / 2 - width / 2 * BarHandler.clickOffset) {
+                        } else if (event.getX() < width / 2.0F - width / 2.0F * BarHandler.clickOffset) {
                             BarHandler.selBtn = "Session";
                             updateActivity(MainActivity.FragmentName.SESSION);
                             BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
                                     0xffffffff, 0xffffa726, 0xffffffff, 0xffffffff);
+                        } else {
+                            BarHandler.selBtn = "Recipe";
+                            updateActivity(MainActivity.FragmentName.RECIPE);
+                            BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
+                                    0xffffffff, 0xffffffff, 0xffffa726, 0xffffffff);
                         }
 
                     } else {
@@ -153,14 +171,19 @@ public class Bar extends Fragment {
 
                     if (BarHandler.selBtn.equals("Settings")) {
                         int width = BarHandler.getWidth(btnSettings);
-                        Log.d("TEST", "Rigth: " + (width / 2 + width / 2 * BarHandler.clickOffset));
-                        Log.d("TEST", "Left: " + (width / 2 - width / 2 * BarHandler.clickOffset));
+                        Log.d("TEST", "Rigth: " + (width / 2.0F + width / 2.0F * BarHandler.clickOffset));
+                        Log.d("TEST", "Left: " + (width / 2.0F - width / 2.0F * BarHandler.clickOffset));
                         Log.d("TEST", "X: " + event.getX());
-                        if (event.getX() < width / 2 - width / 2 * BarHandler.clickOffset) {
+                        if (event.getX() < width / 2.0F - width / 2.0F * BarHandler.clickOffset) {
                             BarHandler.selBtn = "Recipe";
                             updateActivity(MainActivity.FragmentName.RECIPE);
                             BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
                                     0xffffffff, 0xffffffff, 0xffffa726, 0xffffffff);
+                        } else {
+                            BarHandler.selBtn = "Settings";
+                            updateActivity(MainActivity.FragmentName.SETTINGS);
+                            BarHandler.changeButtonColors(imgDashboard, imgSession, imgRecipe, imgSettings,
+                                    0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
                         }
 
                     } else {

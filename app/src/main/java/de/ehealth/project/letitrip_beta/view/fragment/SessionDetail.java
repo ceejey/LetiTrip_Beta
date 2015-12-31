@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
+import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class SessionDetail extends Fragment implements SessionOverview.ShowRunOnMap{
@@ -57,7 +58,7 @@ public class SessionDetail extends Fragment implements SessionOverview.ShowRunOn
 
     private Button bt;
     private TextView infoBox;
-    private int showThisRun = -1;
+    private int showThisRun = SessionHandler.getSelectedRunId();
     private boolean bound = false;
     private int lastSpeedID = -1;
 

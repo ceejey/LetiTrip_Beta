@@ -44,6 +44,14 @@ public class FitbitUserProfile {
     private static String mReifenTyp = "Nichts ausgewählt";
 
 
+    public void setmLastRezeptUpdateSince(String mLastRezeptUpdateSince) {
+        this.mLastRezeptUpdateSince = mLastRezeptUpdateSince;
+    }
+
+    private String mLastRezeptUpdateSince = "283996800";
+
+
+
     public static void JsonToUserProfile(String jSon, Token accessToken) {
         // überprüft ob vorhanden wenn ja verwende diesen wenn nicht parse die Informationen
         //    für einen neuen User heraus
@@ -106,6 +114,7 @@ public class FitbitUserProfile {
         edit.putString("FahrradTyp", mFahrradTyp );
         edit.putString("ReifenTyp", mReifenTyp );
         edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());
+        edit.putString("LastRecipeUpdate", mActiveUser.getmLastRezeptUpdateSince() );
         edit.commit();
     }
 
@@ -129,11 +138,15 @@ public class FitbitUserProfile {
         profile.mGender = pref.getString("Gender","");
         profile.mMemberSince = pref.getString("MemberSince","");
         profile.mFahrradTyp = pref.getString("FahrradTyp","");
-        profile.mReifenTyp = pref.getString("ReifenTyp","");
+        profile.mReifenTyp = pref.getString("ReifenTyp", "");
         profile.mNewsSettings = pref.getStringSet("NewsSettings", null);
+        profile.mLastRezeptUpdateSince = pref.getString("LastRecipeUpdate","");
+        //nun überprüfen, ob der letzte update leer ist falls die app neu installiert wurde
+        if(profile.mLastRezeptUpdateSince == ""){
+            profile.mLastRezeptUpdateSince = "283996800";
+        }
         // initialisiere Oauth sodass neue Json vom server nach einem App neustart geladen werden können
         Oauth.getmOauth().setmAccessToken(profile.mAccessToken);
-
     }
 
     public static void deleteUser(Context context){
@@ -279,4 +292,13 @@ public class FitbitUserProfile {
     public void setmNewsSettings(Set<String> mNewsSettings) {
         this.mNewsSettings = mNewsSettings;
     }
+
+    public static void setmActiveUser(FitbitUserProfile mActiveUser) {
+        FitbitUserProfile.mActiveUser = mActiveUser;
+    }
+
+    public String getmLastRezeptUpdateSince() {
+        return mLastRezeptUpdateSince;
+    }
+
 }

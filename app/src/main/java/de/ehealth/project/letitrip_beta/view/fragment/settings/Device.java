@@ -37,7 +37,7 @@ public class Device extends Fragment {
     private ListView mDeviceListView;
     private int mSelectedDevice = -1;
     private ListAdapter mCustomAdapter = null;
-
+    private List<DevicesRow> itemList;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class Device extends Fragment {
             }
         });
 
-        List<DevicesRow> itemList = new ArrayList<>();
+        itemList = new ArrayList<>();
         if (!FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
             itemList.add(new DevicesRow(1,"Fitbit","Benutzername: " + FitbitUserProfile.getmActiveUser().getmFullname()));
         }
@@ -118,8 +118,9 @@ public class Device extends Fragment {
                                 updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                             }
                             else {
-                                //FitbitUserProfile.deleteUser(getActivity());
+                                FitbitUserProfile.getmActiveUser().setmEncodedId("");
                                 FitBitUserDataSQLite.getInstance(getActivity()).newTable();
+                                itemList.remove(0);
                                 updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                             }
 

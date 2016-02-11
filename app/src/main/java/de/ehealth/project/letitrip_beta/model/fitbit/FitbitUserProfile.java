@@ -11,6 +11,7 @@ import org.scribe.model.Token;
 import java.util.Set;
 
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
+import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 
 /**
  * Created by Mirorn on 28.10.2015.
@@ -42,13 +43,8 @@ public class FitbitUserProfile {
     private Set<String>  mNewsSettings = null;
     private static String mFahrradTyp = "Nichts ausgewählt";
     private static String mReifenTyp = "Nichts ausgewählt";
-
-
-    public void setmLastRezeptUpdateSince(String mLastRezeptUpdateSince) {
-        this.mLastRezeptUpdateSince = mLastRezeptUpdateSince;
-    }
-
     private String mLastRezeptUpdateSince = "283996800";
+    private String mClickOffsetForBarSensibility = "1";
 
 
 
@@ -114,7 +110,9 @@ public class FitbitUserProfile {
         edit.putString("FahrradTyp", mFahrradTyp );
         edit.putString("ReifenTyp", mReifenTyp );
         edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());
-        edit.putString("LastRecipeUpdate", mActiveUser.getmLastRezeptUpdateSince() );
+        edit.putString("LastRecipeUpdate", mActiveUser.getmLastRezeptUpdateSince());
+        edit.putString("ClickOffsetForBarSensibility", mActiveUser.getmClickOffsetForBarSensibility() );
+
         edit.commit();
     }
 
@@ -145,6 +143,11 @@ public class FitbitUserProfile {
         if(profile.mLastRezeptUpdateSince == ""){
             profile.mLastRezeptUpdateSince = "283996800";
         }
+        profile.mClickOffsetForBarSensibility = pref.getString("ClickOffsetForBarSensibility","");
+        if(profile.mClickOffsetForBarSensibility == ""){
+            profile.mClickOffsetForBarSensibility = "1";
+        }
+        Bar.setClickOffset(Integer.parseInt(profile.mClickOffsetForBarSensibility));
         // initialisiere Oauth sodass neue Json vom server nach einem App neustart geladen werden können
         Oauth.getmOauth().setmAccessToken(profile.mAccessToken);
     }
@@ -152,6 +155,18 @@ public class FitbitUserProfile {
     public static void deleteUser(Context context){
         SharedPreferences pref = context.getSharedPreferences("userprofile", context.MODE_PRIVATE);
         mActiveUser.setmEncodedId("");
+        mActiveUser.setmAccessToken(null);
+        mActiveUser.setmFullname("");
+        mActiveUser.setmDateOfBirth("");
+        mActiveUser.setmAge("");
+        mActiveUser.setmDisplayName("");
+        mActiveUser.setmHeight("");
+        mActiveUser.setmWeight("");
+        mActiveUser.setmFahrradTyp("");
+        mActiveUser.setmReifenTyp("");
+        mActiveUser.setmNewsSettings(null);
+        mActiveUser.setmLastRezeptUpdateSince("");
+        mActiveUser.setmClickOffsetForBarSensibility("1");
         final SharedPreferences.Editor edit = pref.edit();
         edit.clear();
         edit.commit();
@@ -300,5 +315,15 @@ public class FitbitUserProfile {
     public String getmLastRezeptUpdateSince() {
         return mLastRezeptUpdateSince;
     }
+    public void setmLastRezeptUpdateSince(String mLastRezeptUpdateSince) {
+        this.mLastRezeptUpdateSince = mLastRezeptUpdateSince;
+    }
 
+    public String getmClickOffsetForBarSensibility() {
+        return mClickOffsetForBarSensibility;
+    }
+
+    public void setmClickOffsetForBarSensibility(String mClickOffsetForBarSensibility) {
+        this.mClickOffsetForBarSensibility = mClickOffsetForBarSensibility;
+    }
 }

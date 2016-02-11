@@ -26,7 +26,7 @@ public class DeviceSelectorDialog extends DialogFragment {
 
         int id = getArguments().getInt("id");
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        builder.setTitle("Session #" + id)
+        builder.setTitle("Device ID" + id)
                 .setItems(new String[]{"Info", "Löschen", "Abbrechen"}, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         getTargetFragment().onActivityResult(1,which,getActivity().getIntent());

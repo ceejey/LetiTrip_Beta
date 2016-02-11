@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,14 +23,18 @@ import java.util.concurrent.ExecutionException;
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
+import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
 public class General extends Fragment {
 
     private FragmentChanger mListener;
     private Button mbtnUpdateRecipes;
+    private Button mbtnResetApp;
+    private SeekBar msbrTouchSensibility;
+
     private String requestUrl ="http://recipeapi-ehealthrecipes.rhcloud.com/recipes?since=";
-    private  String mRecepiUrl ="";
+    private String mRecepiUrl ="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,7 +48,36 @@ public class General extends Fragment {
                 updateRecipeDatabase();
             }
         });
+        mbtnResetApp = (Button) view.findViewById(R.id.btnResetApp);
+        mbtnResetApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetApp();
+            }
+        });
+        msbrTouchSensibility = (SeekBar)view.findViewById(R.id.sbrTouchSensibility);
+        msbrTouchSensibility.setMax(30);
+        msbrTouchSensibility.setProgress(Integer.parseInt(FitbitUserProfile.getmActiveUser().getmClickOffsetForBarSensibility()));
+        msbrTouchSensibility.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+                Log.d("Fitbit", "TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
+                FitbitUserProfile.getmActiveUser().setmClickOffsetForBarSensibility(Integer.toString(msbrTouchSensibility.getProgress()));
+                FitbitUserProfile.saveUser(getActivity());
+                Bar.setClickOffset(msbrTouchSensibility.getProgress());
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+                // TODO Auto-generated method stub
+            }
+        });
         return view;
     }
 
@@ -58,8 +92,12 @@ public class General extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        FitbitUserProfile.getmActiveUser().setmLastRezeptUpdateSince(Long.toString(since));
+        FitbitUserProfile.getmActiveUser().setmLastRezeptUpdateSince(Integer.toString(since));
         FitbitUserProfile.saveUser(getActivity());
+    }
+
+    private void resetApp(){
+        FitbitUserProfile.deleteUser(getActivity());
     }
     @Override
     public void onAttach(Activity activity) {

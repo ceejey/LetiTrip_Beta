@@ -14,16 +14,22 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class Bar extends Fragment {
 
     private FragmentChanger mListener;
-
+    public static void setClickOffset(int clickOffset) {
+        BarHandler.clickOffset = clickOffset;
+    }
     private static final class BarHandler {
         private static String selBtn = "";
-        private static float clickOffset = 0.6f;
 
+        private static int clickOffset = Integer.parseInt(FitbitUserProfile.getmActiveUser().getmClickOffsetForBarSensibility());
+
+
+        //private static float clickOffset = 0.6f;
         private static int getWidth(RelativeLayout layout) {
             return layout.getRight() - layout.getLeft();
         }

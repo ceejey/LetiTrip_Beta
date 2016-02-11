@@ -2,6 +2,8 @@ package de.ehealth.project.letitrip_beta.view.fragment.settings;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.SettingsAdapter;
 import de.ehealth.project.letitrip_beta.view.adapter.SettingsRow;
@@ -33,7 +36,6 @@ public class Settings extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         ListView listSettings = (ListView) view.findViewById(R.id.listSettings);
-
         List<SettingsRow> itemList = new ArrayList<>();
         itemList.add(new SettingsRow("Allgemein", "test"));
         itemList.add(new SettingsRow("Profil", "test"));
@@ -51,19 +53,33 @@ public class Settings extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 SettingsRow row = (SettingsRow) arg0.getItemAtPosition(position);
-                if(row.getCustomItem().equals("Allgemein")){
+                if (row.getCustomItem().equals("Allgemein")) {
                     updateActivity(MainActivity.FragmentName.SETTINGS_GENERAL);
                 }
-                if(row.getCustomItem().equals("Profil")){
-                    updateActivity(MainActivity.FragmentName.SETTINGS_PROFILE);
+                if (row.getCustomItem().equals("Profil")) {
+                    if (!FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
+                        updateActivity(MainActivity.FragmentName.SETTINGS_PROFILE);
+                    }
+                    else{
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder //
+                                .setMessage("Bitte verbinden Sie sich mit einem Fitbitracker unter Einstellungen -> Geräte")
+                                        .setNegativeButton(getString(R.string.decline), new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                // TODO
+                                                dialog.dismiss();
+                                            }
+                                        });
+                        builder.show();
+                    }
                 }
-                if(row.getCustomItem().equals("Geräte")){
+                if (row.getCustomItem().equals("Geräte")) {
                     updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                 }
-                if(row.getCustomItem().equals("News")){
+                if (row.getCustomItem().equals("News")) {
                     updateActivity(MainActivity.FragmentName.NEWS_SETTINGS);
                 }
-                if(row.getCustomItem().equals("Hilfe")){
+                if (row.getCustomItem().equals("Hilfe")) {
                     updateActivity(MainActivity.FragmentName.SETTINGS_HELP);
                 }
             }

@@ -119,8 +119,8 @@ public class Device extends Fragment {
                             }
                             else {
                                 FitbitUserProfile.getmActiveUser().setmEncodedId("");
+                                FitbitUserProfile.saveUser(getActivity());
                                 FitBitUserDataSQLite.getInstance(getActivity()).newTable();
-                                itemList.remove(0);
                                 updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                             }
 

@@ -246,13 +246,13 @@ public class NewsSettings extends Fragment {
             if (cbBanken.isChecked()) {
                 currentTasks.add("banken");
             }
-            if (cbBildung.isChecked()) {
+            if (cbBauwesen.isChecked()) {
                 currentTasks.add("bauwesen");
             }
-            if (cbCelebrities.isChecked()) {
+            if (cbBildung.isChecked()) {
                 currentTasks.add("bildung");
             }
-            if (cbChemie.isChecked()) {
+            if (cbCelebrities.isChecked()) {
                 currentTasks.add("celebrities");
             }
             if (cbChemie.isChecked()) {
@@ -331,12 +331,10 @@ public class NewsSettings extends Fragment {
                 currentTasks.add("wissenschaft");
             }
         }
-
-
-
         set.addAll(currentTasks);
         FitbitUserProfile.getmActiveUser().setmNewsSettings(set);
         FitbitUserProfile.saveUser(getActivity());
+        updateActivity(MainActivity.FragmentName.SETTINGS);
     }
 
     private void checkSavedNewsSettings(){
@@ -346,123 +344,123 @@ public class NewsSettings extends Fragment {
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("auto")) {
-                cbAuto.setChecked(!cbArbeit.isChecked());
+                cbAuto.setChecked(!cbAuto.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("banken")){
-                cbBanken.setChecked(!cbArbeit.isChecked());
+                cbBanken.setChecked(!cbBanken.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("bauwesen")){
-                cbBauwesen.setChecked(!cbArbeit.isChecked());
+                cbBauwesen.setChecked(!cbBauwesen.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("bildung")){
-                cbBildung.setChecked(!cbArbeit.isChecked());
+                cbBildung.setChecked(!cbBildung.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("celebrities")){
-                cbCelebrities.setChecked(!cbArbeit.isChecked());
+                cbCelebrities.setChecked(!cbCelebrities.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("chemie")){
-                cbChemie.setChecked(!cbArbeit.isChecked());
+                cbChemie.setChecked(!cbChemie.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("computer")){
-                cbComputer.setChecked(!cbArbeit.isChecked());
+                cbComputer.setChecked(!cbComputer.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("energie")){
-                cbEnergie.setChecked(!cbArbeit.isChecked());
+                cbEnergie.setChecked(!cbEnergie.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("fernsehen")){
-                cbFernsehen.setChecked(!cbArbeit.isChecked());
+                cbFernsehen.setChecked(!cbFernsehen.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("fussball")){
-                cbFussball.setChecked(!cbArbeit.isChecked());
+                cbFussball.setChecked(!cbFussball.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("gesundheit")){
-                cbGesundheit.setChecked(!cbArbeit.isChecked());
+                cbGesundheit.setChecked(!cbGesundheit.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("handel")){
-                cbHandel.setChecked(!cbArbeit.isChecked());
+                cbHandel.setChecked(!cbHandel.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("immobilien")){
-                cbImmobilien.setChecked(!cbArbeit.isChecked());
+                cbImmobilien.setChecked(!cbImmobilien.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("kinder")){
-                cbKinder.setChecked(!cbArbeit.isChecked());
+                cbKinder.setChecked(!cbKinder.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("lebensmittel")){
-                cbLebensmittel.setChecked(!cbArbeit.isChecked());
+                cbLebensmittel.setChecked(!cbLebensmittel.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("lifestyle")){
-                cbLifestyle.setChecked(!cbArbeit.isChecked());
+                cbLifestyle.setChecked(!cbLifestyle.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("logistik")){
-                cbLogistik.setChecked(!cbArbeit.isChecked());
+                cbLogistik.setChecked(!cbLogistik.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("maschinenbau")){
-                cbMaschinenbau.setChecked(!cbArbeit.isChecked());
+                cbMaschinenbau.setChecked(!cbMaschinenbau.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("medien")){
-                cbMedien.setChecked(!cbArbeit.isChecked());
+                cbMedien.setChecked(!cbMedien.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("motorsport")){
-                cbMotorsport.setChecked(!cbArbeit.isChecked());
+                cbMotorsport.setChecked(!cbMotorsport.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("presseschau")){
-                cbPresseschau.setChecked(!cbArbeit.isChecked());
+                cbPresseschau.setChecked(!cbPresseschau.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("ratgeber")){
-                cbRatgeber.setChecked(!cbArbeit.isChecked());
+                cbRatgeber.setChecked(!cbRatgeber.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("recht")){
-                cbRecht.setChecked(!cbArbeit.isChecked());
+                cbRecht.setChecked(!cbRecht.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("soziales")){
-                cbSoziales.setChecked(!cbArbeit.isChecked());
+                cbSoziales.setChecked(!cbSoziales.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("telekommunikation")){
-                cbTelekommunikation.setChecked(!cbArbeit.isChecked());
+                cbTelekommunikation.setChecked(!cbTelekommunikation.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("touristik")){
-                cbTouristik.setChecked(!cbArbeit.isChecked());
+                cbTouristik.setChecked(!cbTouristik.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("umwelt")){
-                cbUmwelt.setChecked(!cbArbeit.isChecked());
+                cbUmwelt.setChecked(!cbUmwelt.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("unterhaltung")){
-                cbUnterhaltung.setChecked(!cbArbeit.isChecked());
+                cbUnterhaltung.setChecked(!cbUnterhaltung.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("versicherungen")){
-                cbVersicherungen.setChecked(!cbArbeit.isChecked());
+                cbVersicherungen.setChecked(!cbVersicherungen.isChecked());
                 newsSettingsFounded = true;
             }
             if(mCheckedList.get(i).equals("wissenschaft")){
-                cbWissenschaft.setChecked(!cbArbeit.isChecked());
+                cbWissenschaft.setChecked(!cbWissenschaft.isChecked());
                 newsSettingsFounded = true;
             }
         }

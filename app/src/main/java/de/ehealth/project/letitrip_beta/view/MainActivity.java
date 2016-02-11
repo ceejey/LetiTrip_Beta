@@ -164,8 +164,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 newTag = "settings";
 
                 expectedEntryCount = 1;
-                expectedEntry = "dashboard";
-                refillEntrys.add("dashboard");
+                expectedEntry = "settings";
+                refillEntrys.add("settings");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
@@ -177,7 +177,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             case SETTINGS_GENERAL:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_general";
-
+                /*
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
                 refillEntrys.add("dashboard");
@@ -187,7 +187,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     alreadyAdded = true;
-                else
+                else */
                     fragmentContent = new General();
                 break;
             case SETTINGS_PROFILE:
@@ -210,7 +210,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_device";
 
-                expectedEntryCount = 2;
+              /*  expectedEntryCount = 2;
                 expectedEntry = "settings";
                 refillEntrys.add("dashboard");
                 refillEntrys.add("settings");
@@ -219,7 +219,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     alreadyAdded = true;
-                else
+                else */
                     fragmentContent = new Device();
                 break;
             case SETTINGS_HELP:
@@ -242,7 +242,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_webview";
 
-                expectedEntryCount = 2;
+             /*   expectedEntryCount = 2;
                 expectedEntry = "settings_device";
                 refillEntrys.add("dashboard");
                 refillEntrys.add("settings");
@@ -252,13 +252,13 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     transaction.remove(fragmentContent);
-
+                */
                 fragmentContent = new WebviewOauth();
                 break;
             case FIT_BIT_INIT:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_fitbit";
-
+                /*
                 expectedEntryCount = 3;
                 expectedEntry = "settings_device";
                 refillEntrys.add("dashboard");
@@ -269,13 +269,13 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     alreadyAdded = true;
-                else
+                else */
                     fragmentContent = new FitBitInit();
                 break;
             case NEWS:
                 txtHeader.setText("Nachrichten");
                 newTag = "news";
-
+                /*
                 expectedEntryCount = 1;
                 expectedEntry = "dashboard";
                 refillEntrys.add("dashboard");
@@ -284,13 +284,13 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     transaction.remove(fragmentContent);
-
+                */
                 fragmentContent = new News();
                 break;
             case POLAR_DEVICE:
                 txtHeader.setText("Polar-Einstellungen");
                 newTag = "settings_polar";
-
+                /*
                 expectedEntryCount = 3;
                 expectedEntry = "settings_device";
                 refillEntrys.add("dashboard");
@@ -302,12 +302,13 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 if (fragmentContent != null)
                     alreadyAdded = true;
                 else
+                */
                     fragmentContent = new Polar();
                 break;
             case NEWS_SETTINGS:
                 txtHeader.setText("News-Einstellungen");
                 newTag = "settings_news";
-
+                /*
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
                 refillEntrys.add("dashboard");
@@ -318,6 +319,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 if (fragmentContent != null)
                     alreadyAdded = true;
                 else
+                */
                     fragmentContent = new NewsSettings();
         }
 

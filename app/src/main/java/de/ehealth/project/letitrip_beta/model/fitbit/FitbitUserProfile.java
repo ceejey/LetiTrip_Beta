@@ -93,8 +93,10 @@ public class FitbitUserProfile {
         SharedPreferences pref = context.getSharedPreferences("userprofile", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putString("UserId",mActiveUser.getmEncodedId() );
-        edit.putString("AccessToken", mActiveUser.getmAccessToken().getToken().toString());
-        edit.putString("Secret", mActiveUser.getmAccessToken().getSecret().toString() );
+        if(mActiveUser.getmAccessToken() != null) {
+            edit.putString("AccessToken", mActiveUser.getmAccessToken().getToken().toString());
+            edit.putString("Secret", mActiveUser.getmAccessToken().getSecret().toString());
+        }
         edit.putString("Fullname",mActiveUser.getmFullname() );
         edit.putString("DateOfBirth", mActiveUser.getmDateOfBirth() );
         edit.putString("Age", mActiveUser.getmAge() );
@@ -109,7 +111,7 @@ public class FitbitUserProfile {
         edit.putString("MemberSince", mActiveUser.getmMemberSince() );
         edit.putString("FahrradTyp", mFahrradTyp );
         edit.putString("ReifenTyp", mReifenTyp );
-        edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());
+        if(mActiveUser.getmNewsSettings() != null) {edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());}
         edit.putString("LastRecipeUpdate", mActiveUser.getmLastRezeptUpdateSince());
         edit.putString("ClickOffsetForBarSensibility", mActiveUser.getmClickOffsetForBarSensibility() );
 

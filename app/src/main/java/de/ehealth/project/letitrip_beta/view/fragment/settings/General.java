@@ -2,6 +2,8 @@ package de.ehealth.project.letitrip_beta.view.fragment.settings;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,7 +54,22 @@ public class General extends Fragment {
         mbtnResetApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetApp();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder //
+                        .setMessage("Sind Sie sicher ?")
+                        .setPositiveButton(getString(R.string.accept), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // TODO
+                                resetApp();
+                            }
+                        }) //
+                        .setNegativeButton(getString(R.string.decline), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // TODO
+                                dialog.dismiss();
+                            }
+                        });
+                builder.show();
             }
         });
         msbrTouchSensibility = (SeekBar)view.findViewById(R.id.sbrTouchSensibility);

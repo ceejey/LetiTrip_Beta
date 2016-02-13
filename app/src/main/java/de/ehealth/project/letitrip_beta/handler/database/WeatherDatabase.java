@@ -7,8 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 
 public class WeatherDatabase extends SQLiteOpenHelper {
 
@@ -37,7 +40,7 @@ public class WeatherDatabase extends SQLiteOpenHelper {
                 COLUMN4 + " INTEGER," +
                 COLUMN5 + " INTEGER," +
                 COLUMN6 + " REAL," +
-                COLUMN7 + " TEXT"+")");
+                COLUMN7 + " TEXT" + ")");
     }
 
     @Override
@@ -62,13 +65,16 @@ public class WeatherDatabase extends SQLiteOpenHelper {
         return (result != -1);
     }
 
-    public Cursor weatherOfTodayAvailable(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    /**
+     * refreshes weather every full hour
+     * @return cursor with the latest weather data
+     */
+    public Cursor getLatestWeather(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
         Date date = new Date();
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where "+ COLUMN1 + " like ?", new String[]{dateFormat.format(date)});
-        Log.w("bla","val:"+res.getCount());
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN1 + " like ?", new String[]{dateFormat.format(date)});
         return res;
     }
 
@@ -92,5 +98,30 @@ public class WeatherDatabase extends SQLiteOpenHelper {
             }
             res.close();
         }
+    }
+
+    /**
+     * Get the Weather entry of a specific run
+     * @param id the run ID
+     * @return an entry with the weather date; is null if no weather is available
+     */
+    public Cursor getWeatherOfRun(int id){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
+        SimpleDateFormat gpsDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+        Date timeStampFirstPosition = null;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = GPSDatabaseHandler.getInstance().getData().getRun(id);
+        res.moveToFirst();
+
+        try {
+            timeStampFirstPosition = gpsDateFormat.parse(res.getString(2));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        res.close();
+        res = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN1 + " like ?", new String[]{dateFormat.format(timeStampFirstPosition)});
+        return res;
     }
 }

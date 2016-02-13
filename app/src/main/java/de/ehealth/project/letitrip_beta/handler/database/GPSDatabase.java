@@ -110,7 +110,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
     public String getOverviewOfRun(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN1 + "=" + id, null);
+        Cursor res = getRun(id);
         String result = "";
 
         if ((res != null) && (res.getCount() > 0)) {
@@ -124,9 +124,19 @@ public class GPSDatabase extends SQLiteOpenHelper {
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
 
-            result+="Session #"+res.getInt(1)+" ("+minutes+":";
-            if (seconds < 10) result+="0";
-            result+=seconds+"; ";
+            SimpleDateFormat displayDateFormat = new SimpleDateFormat("HH:mm dd.MM.yyy");
+            SimpleDateFormat savedDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+            Date time = null;
+
+            try {
+                time = savedDateFormat.parse(res.getString(2));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            result+="Session #"+res.getInt(1)+" (Gestartet: "+displayDateFormat.format(time)+";"+
+            +minutes+":"+((seconds<10)?0:"")+
+            seconds+"; ";
             result+=res.getCount()+" Positionen; ";
             double meters = getWalkDistance(id);
             result+=((int)getWalkDistance(id))+" Meter; ";

@@ -393,28 +393,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         return true;
     }
 
-    /**
-     *  SessionOverview calls this method if a run should be shown on the map
-     */
-    /*@Override
-    public void setSelectedRunID(int id) {
-        Log.w("activity","setSelectedRunID called!");
-        SessionDetail newFragment = new SessionDetail();
-        Bundle args = new Bundle();
-        args.putInt("runID", id);
-        newFragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.contentContainer, newFragment).commit();
-
-        //gpsservice wont be able to stop anymore when this line is called
-        //transaction.addToBackStack(null); //to be able to use the back button
-
-        newFragment.setSelectedRunID(id);
-
-        //changeFragment(FragmentName.SESSION_DETAIL);
-    }*/
-
     @Override
     public void onBackPressed() {
         Log.d("Test", "Current backstack count: " + getSupportFragmentManager().getBackStackEntryCount());

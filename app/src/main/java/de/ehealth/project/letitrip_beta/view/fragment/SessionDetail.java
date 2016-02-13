@@ -42,6 +42,7 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
+import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class SessionDetail extends Fragment {
@@ -57,7 +58,8 @@ public class SessionDetail extends Fragment {
 
     private Button bt;
     private TextView infoBox;
-    private int showThisRun = SessionHandler.getSelectedRunId();
+
+    //private int showThisRun;
     private boolean bound = false;
     private int lastSpeedID = -1;
 
@@ -80,7 +82,7 @@ public class SessionDetail extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.w("sessiondetail","oncreateview");
+        Log.w("sessiondetail", "oncreateview");
 
         // Inflate the layout for this fragment
         View view  = inflater.inflate(R.layout.fragment_session_detail, container, false);
@@ -112,14 +114,14 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onDetach() {
-        Log.w("sessiondetail","ondeattach");
+        Log.w("sessiondetail", "ondeattach");
         super.onDetach();
         mListener = null;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.w("sessiondetail","oncreate"+ showThisRun + "");
+        Log.w("sessiondetail","oncreate"+ SessionHandler.getSelectedRunId() + "");
 
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -133,8 +135,8 @@ public class SessionDetail extends Fragment {
             int message = intent.getIntExtra("MapsActivity",-1);
             Log.w("sessionDetail","broadcast:"+message);
 
-            //new position received, add it to the route+update liveMarker
-            if ((message == 1) && (showThisRun == gps.getActiveRecordingID())) {
+            //new position received, add it to the route+update liveMarker if the active track is displayed
+            if ((message == 1) && (SessionHandler.getSelectedRunId() == gps.getActiveRecordingID())) {
                 Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfRun(gps.getActiveRecordingID());
                 res.moveToFirst();
 
@@ -142,8 +144,8 @@ public class SessionDetail extends Fragment {
                 if (lastSpeedID == -1) {
                     lastSpeedID = tempLastID;
                 } else {
-                    Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+showThisRun);
-                    updateInfoBox((GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastSpeedID,tempLastID)*3.6));
+                    Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+SessionHandler.getSelectedRunId());
+                    updateInfoBox();
                     lastSpeedID = tempLastID;
                 }
                 LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
@@ -156,27 +158,27 @@ public class SessionDetail extends Fragment {
                 liveMarker = mMap.addMarker(new MarkerOptions()
                         .position(temp)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                updateInfoBox(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun,0));
+                updateInfoBox();
             }
         }
     };
 
     @Override
     public void onStop() {
-        Log.w("sessiondetail","onstop");
+        Log.w("sessiondetail", "onstop");
         super.onStop();
     }
 
     @Override
     public void onStart() {
-        Log.w("sessiondetail", "showThisRunSTART"+showThisRun);
+        Log.w("sessiondetail", "showThisRunSTART" + SessionHandler.getSelectedRunId());
         bindToService();
         super.onStart();
     }
 
     @Override
     public void onResume() {
-        Log.w("sessiondetail","onresume");
+        Log.w("sessiondetail", "onresume");
         mapView.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
         super.onResume();
@@ -198,7 +200,7 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onDestroy() {
-        Log.w("sessiondetail","ondestroy");
+        Log.w("sessiondetail", "ondestroy");
         mapView.onDestroy();
         super.onDestroy();
     }
@@ -209,22 +211,39 @@ public class SessionDetail extends Fragment {
         super.onLowMemory();
     }
 
+    @Override
+    public void onDestroyView() {
+        Log.w("sessiondetail", "onDestroyView");
+        super.onDestroyView();
+    }
+
     /**
-     *
-     * @param averageSpeed
+     * updates the box underneath the map
      */
-    public void updateInfoBox(double averageSpeed){
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(showThisRun);
+    public void updateInfoBox(){
+        Log.w("sessionDetail","update info box");
+        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(SessionHandler.getSelectedRunId());
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
-        infoBox.setText("Session #" + showThisRun +
-                "\nDauer: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
-                "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun)) + " Meter" +
-                "\n\u00D8 Geschwindigkeit: " + decimalFormat.format(averageSpeed) + "km/h" +
-                "\nTemperatur: " +
-                "\nWind: ");
+        Cursor res = WeatherDatabaseHandler.getInstance().getData().getWeatherOfRun(SessionHandler.getSelectedRunId());
+        res.moveToFirst();
 
+        int temp = -300;
+        int wind = -1;
+        if (res.getCount()!=0){
+            res.moveToFirst();
+            temp = res.getInt(2);
+            wind = res.getInt(3);
+        }
+        res.close();
+
+        infoBox.setText("Session #" + SessionHandler.getSelectedRunId() +
+                "\nDauer: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
+                "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId())) + " Meter" +
+                "\n\u00D8 Geschwindigkeit: " + decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(SessionHandler.getSelectedRunId(), 0) * 3.6) + "km/h" +
+                ((temp!=-300)?("\nTemperatur: " +temp+"°C"+
+                "\nWind: "+wind+ "km/h"):""));
     }
 
     public void bindToService() {
@@ -257,11 +276,11 @@ public class SessionDetail extends Fragment {
             boolean endMarker = true;
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                Log.w("sessionDetail","showthisrun:" + showThisRun);
+                Log.w("sessionDetail","showthisrun:" + SessionHandler.getSelectedRunId());
 
                 //live
-                if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (showThisRun == -1)) {
-                    showThisRun = gps.getActiveRecordingID();
+                if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (SessionHandler.getSelectedRunId() == -1)) {
+                    SessionHandler.setSelectedRunId(gps.getActiveRecordingID());
                     endMarker = false;
                 }
 
@@ -272,6 +291,7 @@ public class SessionDetail extends Fragment {
 
     /**
      * This should only be called once and when we are sure that {@link #mMap} is not null.
+     * @param endMarker
      */
     private void setUpMap(boolean endMarker) {
         //add the live liveMarker initially
@@ -280,19 +300,19 @@ public class SessionDetail extends Fragment {
                 .visible(false));
 
         //is the int set to show a specific run at activity startup?
-        Log.w("sessiondetail","showthisrun:"+showThisRun);
+        Log.w("sessiondetail","showthisrun:"+SessionHandler.getSelectedRunId());
 
-        if (showThisRun != -1) {
-            showRunOnMap(endMarker, GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun, 0)*3.6);
+        if (SessionHandler.getSelectedRunId() != -1) {
+            showRunOnMap(endMarker);
         }
     }
 
-    public void showRunOnMap(boolean endMarker, double averageSpeed){
+    public void showRunOnMap(boolean endMarker){
         //save run data to an array
-        Cursor res = GPSDatabaseHandler.getInstance().getData().getRun(showThisRun);
+        Cursor res = GPSDatabaseHandler.getInstance().getData().getRun(SessionHandler.getSelectedRunId());
 
         //display the data
-        updateInfoBox(averageSpeed);
+        updateInfoBox();
         while (res.moveToNext()){
             route.add(new LatLng(res.getDouble(3), res.getDouble(4)));
         }
@@ -328,7 +348,7 @@ public class SessionDetail extends Fragment {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Log.w("CLICK","CLICK"+item.getOrder()+"-"+item.getGroupId()+"-"+item.getItemId()+"-"+item.getTitle());
+                Log.w("CLICK",item.getOrder()+"-"+item.getGroupId()+"-"+item.getItemId()+"-"+item.getTitle());
                 switch (item.getItemId()) {
                     case R.id.menuitem1:
                         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -347,7 +367,6 @@ public class SessionDetail extends Fragment {
             }
         });
         popup.show();
-
     }
 
     public void switchMapType() {
@@ -357,10 +376,5 @@ public class SessionDetail extends Fragment {
     public void updateActivity(MainActivity.FragmentName fn) {
         mListener.changeFragment(fn);
     }
-/*
-    @Override
-    public void setSelectedRunID(int id) {
-        showThisRun = id;
-    }
-    */
+
 }

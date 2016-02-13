@@ -7,7 +7,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class GPSTest {
+public class GPSHelper {
     public void updateTrackingUI(GPSService gps, ToggleButton tb1, TextView tv1, Switch bicycleSwitch, Button pauseButton){
         if (gps.getStatus()== GPSService.Status.SEARCHINGGPS) {
             tb1.setChecked(true);

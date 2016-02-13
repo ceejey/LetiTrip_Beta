@@ -8,6 +8,7 @@ public class SessionHandler {
     //Dann hast du wahrscheinlich keine Probleme mehr mit wechseln von Fragmenten und so, dadurch, dass sich alle
     //Views die gleichen Daten teilen können. Hab bei change fragment erstmal deine putint methode und so drin gelassen
     private static int mSelectedRunId = -1;
+
     public static int getSelectedRunId(){
         return mSelectedRunId;
     }

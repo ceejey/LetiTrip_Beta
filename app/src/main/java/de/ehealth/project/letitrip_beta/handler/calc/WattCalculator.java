@@ -3,6 +3,7 @@ package de.ehealth.project.letitrip_beta.handler.calc;
 /**
  * Created by Erich on 15.11.2015.
  */
+
 class WattCalculator {
 
     //TODO: Parameter names!

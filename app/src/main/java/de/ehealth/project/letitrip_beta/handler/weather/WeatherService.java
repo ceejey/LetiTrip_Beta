@@ -20,12 +20,12 @@ import de.ehealth.project.letitrip_beta.model.weather.Channel;
 
 public class WeatherService extends AsyncTask<String, Void, String> {
 
-        private WeatherCallback weatherServiveCallback;
-        private Exception ex;
+    private WeatherCallback weatherServiveCallback;
+    private Exception ex;
 
-        public WeatherService(WeatherCallback callback) {
-            this.weatherServiveCallback =callback;
-        }
+    public WeatherService(WeatherCallback callback) {
+        this.weatherServiveCallback = callback;
+    }
 
 
     @Override
@@ -55,20 +55,18 @@ public class WeatherService extends AsyncTask<String, Void, String> {
                 URLConnection connection = new URL(encodedURL).openConnection();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                StringBuffer builder = new StringBuffer();
+                StringBuffer stringBuffer = new StringBuffer();
                 String temp;
                 while ((temp = reader.readLine()) != null){
-                    builder.append(temp);
+                    stringBuffer.append(temp);
                 }
 
-                return builder.toString();
+                return stringBuffer.toString();
             } catch (MalformedURLException e) {
                 ex = e;
             } catch (IOException e) {
                 ex = e;
             }
-
-
         return null;
     }
 

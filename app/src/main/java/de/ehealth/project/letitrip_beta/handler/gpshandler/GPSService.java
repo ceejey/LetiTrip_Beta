@@ -27,7 +27,6 @@ public class GPSService extends Service {
     private LocationManager locationManager;
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
-    private boolean isPaused = false;
 
     private Status status;
     private NotificationManager notificationManager;
@@ -38,6 +37,8 @@ public class GPSService extends Service {
             return GPSService.this;
         }
     }
+
+    public enum Status {TRACKINGSTARTED, SEARCHINGGPS, IDLE, PAUSED;}
 
     @Override
     public void onDestroy() {
@@ -101,21 +102,24 @@ public class GPSService extends Service {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location l) {
-                if ((l != null) && (!isPaused)) {
-                    boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle);
-                    if (ins) {
-                        sendBroadcast("MapsActivity", 1);
-                        Toast.makeText(GPSService.this, "Accuaracy:" + l.getAccuracy(), Toast.LENGTH_SHORT).show();
-                    } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
+                if ((l != null) && (status != Status.PAUSED)) {
+                    //only insert data when accuaracy is good enough
+                    if (l.getAccuracy()<50){
+                        boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle);
+                        if (ins) {
+                            sendBroadcast("MapsActivity", 1);
+                            Toast.makeText(GPSService.this, "Accuaracy:" + l.getAccuracy(), Toast.LENGTH_SHORT).show();
+                        } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
 
-                    //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
-                    if (status != Status.TRACKINGSTARTED) {
-                        createNotification();
-                        Log.w("service", "Listen to id:" + activeRecordingID);
-                        status = Status.TRACKINGSTARTED;
-                        sendBroadcast("GPSActivity", 2);
-                    }
-                } else Log.w("gpsservice","paused or no location!");
+                        //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
+                        if (status != Status.TRACKINGSTARTED) {
+                            createNotification();
+                            Log.w("service", "Listen to id:" + activeRecordingID);
+                            status = Status.TRACKINGSTARTED;
+                            sendBroadcast("GPSActivity", 2);
+                        }
+                    } else Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
+                } else Log.w("gpsservice","paused or no location");
             }
 
             public void onProviderDisabled(String provider) {}
@@ -123,9 +127,8 @@ public class GPSService extends Service {
             public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
         try {
-           // locationManager.requestLocationUpdates("gps", 3000, 10, locationListener);
-            locationManager.requestLocationUpdates("gps", 100, 2, locationListener);
-
+                                                   //TODO set time to 3000
+            locationManager.requestLocationUpdates("gps", 1000, 2, locationListener);
             status = Status.SEARCHINGGPS;
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -154,8 +157,6 @@ public class GPSService extends Service {
         notificationManager.notify(0, notification);
     }
 
-    public enum Status {TRACKINGSTARTED, SEARCHINGGPS, IDLE;}
-
     public Status getStatus() {
         return status;
     }
@@ -169,10 +170,16 @@ public class GPSService extends Service {
     }
 
     public boolean isPaused() {
-        return isPaused;
+        return (status == Status.PAUSED);
     }
 
-    public void setIsPaused(boolean isPaused) {
-        this.isPaused = isPaused;
+    public void pause(){
+        status = Status.PAUSED;
+    }
+
+    public void resume(){
+        if ((status!= Status.IDLE) && (status != Status.SEARCHINGGPS)){
+            status = Status.TRACKINGSTARTED;
+        }
     }
 }

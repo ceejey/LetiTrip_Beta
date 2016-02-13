@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
+import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
@@ -37,7 +38,7 @@ public class Session extends Fragment {
     private boolean bound = false;
     private int showThisRun;
     private int lastID;
-    private Button bt;
+    private Button showOnMap;
     private DecimalFormat df;
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -48,7 +49,7 @@ public class Session extends Fragment {
             bound = true;
 
             showThisRun = gps.getActiveRecordingID();
-            Log.w("showthosrunset",showThisRun+"");
+            Log.w("showthisrunset",showThisRun+"");
 
             updateUI();
             updateStaticUI();
@@ -84,10 +85,11 @@ public class Session extends Fragment {
         geschwSession = (TextView) view.findViewById(R.id.textView15);
         zeit = (TextView) view.findViewById(R.id.textView16);
         laufFahrrad = (TextView) view.findViewById(R.id.textView17);
-        bt = (Button) view.findViewById(R.id.button2);
-        bt.setOnClickListener(new View.OnClickListener() {
+        showOnMap = (Button) view.findViewById(R.id.button2);
+        showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SessionHandler.setSelectedRunId(gps.getActiveRecordingID());
                 updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
             }
         });
@@ -147,7 +149,7 @@ public class Session extends Fragment {
 
         geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun,0))+" km/h");
 
-        Cursor res = WeatherDatabaseHandler.getInstance().getData().weatherOfTodayAvailable();
+        Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();
         if (res.getCount() == 1){
             temp.setText("Temperatur: "+res.getInt(2)+" °C");

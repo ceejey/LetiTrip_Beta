@@ -42,11 +42,19 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSCustomListItem;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSTest;
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSHelper;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
+
+/**
+ * Broadcastlist:
+ * message      value   meaning
+ * GPSActivity  1       GPS not enabled
+ * GPSActivity  2       Tracking initially started
+ * MapsActivity 1       new position inserted
+ */
 
 public class SessionOverview extends Fragment {
 
@@ -59,20 +67,14 @@ public class SessionOverview extends Fragment {
     private Button pauseButton;
 
     private ArrayAdapter<GPSCustomListItem> itemsAdapter;
-    private int selectedRun = -1;
+
     private NotificationManager myNotificationManager;
     private DialogInterface.OnClickListener dialogListener;
     private GPSService gps;
     boolean bound = false;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private GPSTest myGPSObject;
-/*
-    ShowRunOnMap interfaceSender;
+    private GPSHelper myGPSObject;
 
-    public interface ShowRunOnMap{
-        void setSelectedRunID(int id);
-    }
-*/
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -139,16 +141,16 @@ public class SessionOverview extends Fragment {
         sessionOverviewListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedRun = itemsAdapter.getItem(position).getID();
+                SessionHandler.setSelectedRunId(itemsAdapter.getItem(position).getID());
 
                 //the dialog menu is only available for finished sessions, live sessions will be shown in the "session" fragment
                 if (gps != null){
-                    if (gps.getActiveRecordingID() == selectedRun){
+                    if (gps.getActiveRecordingID() == SessionHandler.getSelectedRunId()){
                         updateActivity(MainActivity.FragmentName.SESSION);
                         return;
                     }
                 }
-                showRunDialog(selectedRun);
+                showRunDialog(SessionHandler.getSelectedRunId());
 
             }
         });
@@ -159,15 +161,15 @@ public class SessionOverview extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        int deletes = GPSDatabaseHandler.getInstance().getData().deleteRun(selectedRun);
+                        int deletes = GPSDatabaseHandler.getInstance().getData().deleteRun(SessionHandler.getSelectedRunId());
                         Toast.makeText(getActivity(), deletes + " Einträge gelöscht.", Toast.LENGTH_SHORT).show();
                         updateList();
                         Log.w("sessionoverview", GPSDatabaseHandler.getInstance().getData().getLastRunID() + "");
                         if (GPSDatabaseHandler.getInstance().getData().getLastRunID() != 0) {
-                            selectedRun = GPSDatabaseHandler.getInstance().getData().getLastRunID();
+                            SessionHandler.setSelectedRunId(GPSDatabaseHandler.getInstance().getData().getLastRunID());
                         }
                         if (GPSDatabaseHandler.getInstance().getData().getLastRunID() == 0) {
-                            selectedRun = -1;
+                            SessionHandler.setSelectedRunId(-1);
                         }
                         break;
 
@@ -190,9 +192,9 @@ public class SessionOverview extends Fragment {
                 if (bound) {
                     Button b = (Button) v;
                     if (gps.isPaused()) {
-                        gps.setIsPaused(false);
+                        gps.resume();
                     } else {
-                        gps.setIsPaused(true);
+                        gps.pause();
                     }
                     myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView,bicycleSwitch,pauseButton);
                 } else Log.w("sessionoverview", "bind error");
@@ -202,11 +204,11 @@ public class SessionOverview extends Fragment {
     }
 
     public void showRunDialog(int id) {
-            if (id > 0){
-                DialogFragment newFragment = RunSelectorDialog.newInstance(id);
-                newFragment.setTargetFragment(this, 1);
-                newFragment.show(getFragmentManager().beginTransaction(),"DialogTag");
-            }
+        if (id > 0){
+            DialogFragment newFragment = RunSelectorDialog.newInstance(id);
+            newFragment.setTargetFragment(this, 1);
+            newFragment.show(getFragmentManager().beginTransaction(),"DialogTag");
+        }
     }
 
     @Override
@@ -250,7 +252,7 @@ public class SessionOverview extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Log.d("sessionoverview", "onCreate");
-        myGPSObject = new GPSTest();
+        myGPSObject = new GPSHelper();
     }
 
     @Override
@@ -278,7 +280,7 @@ public class SessionOverview extends Fragment {
         if (Build.VERSION.SDK_INT >= 23) doPermissionCheck();
 
         if (GPSDatabaseHandler.getInstance().getData().getLastRunID() == 0) {
-            selectedRun = -1;
+            SessionHandler.setSelectedRunId(-1);
         }
     }
 
@@ -357,13 +359,6 @@ public class SessionOverview extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 
-    /**
-     * Broadcastlist:
-     * message      value   meaning
-     * GPSActivity  1       GPS not enabled
-     * GPSActivity  2       Tracking initially started
-     * MapsActivity 1       new position inserted
-     */
     //handler to receive broadcast messages from gps service
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -409,10 +404,10 @@ public class SessionOverview extends Fragment {
                 switch (resultCode){
                     case 0:
                         //only put the runID to the intent if map shouldnt show the current live session
-                        if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == selectedRun))) {
+                        if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == SessionHandler.getSelectedRunId()))) {
                             //TODO
                             //interfaceSender.setSelectedRunID(selectedRun); <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            SessionHandler.setSelectedRunId(selectedRun);
+                            SessionHandler.setSelectedRunId(SessionHandler.getSelectedRunId());
                             mListener.changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
                         } else updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
                         break;
@@ -422,8 +417,8 @@ public class SessionOverview extends Fragment {
                                 .setNegativeButton("Nein", dialogListener).show();
                         break;
                     case 2:
-                        myGPSObject.getRunOutput(selectedRun);
-                        Log.w("sessionoverview", "weatheravailable?" + WeatherDatabaseHandler.getInstance().getData().weatherOfTodayAvailable());
+                        myGPSObject.getRunOutput(SessionHandler.getSelectedRunId());
+                        Log.w("sessionoverview", "weatheravailable?" + WeatherDatabaseHandler.getInstance().getData().getLatestWeather());
                         WeatherDatabaseHandler.getInstance().getData().outPutAll();
                         break;
                     default:

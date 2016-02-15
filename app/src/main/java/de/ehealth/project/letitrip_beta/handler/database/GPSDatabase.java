@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+import de.ehealth.project.letitrip_beta.view.adapter.GPSCustomListItem;
+
 public class GPSDatabase extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "eHealthDb";
@@ -108,10 +110,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
         return db.delete(TABLE_NAME, COLUMN1 + " = ?", new String[]{String.valueOf(id)});
     }
 
-    public String getOverviewOfRun(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public GPSCustomListItem getOverviewOfRun(int id) {
         Cursor res = getRun(id);
-        String result = "";
+        //ArrayList<String> result = new ArrayList<>();
+        GPSCustomListItem result = new GPSCustomListItem();
 
         if ((res != null) && (res.getCount() > 0)) {
             DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -128,20 +130,33 @@ public class GPSDatabase extends SQLiteOpenHelper {
             SimpleDateFormat savedDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
             Date time = null;
 
+            //todo use model class
             try {
                 time = savedDateFormat.parse(res.getString(2));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            //0result+="Session #"+res.getInt(1)+
+            result.setVisibleID(res.getInt(1));
 
-            result+="Session #"+res.getInt(1)+" (Gestartet: "+displayDateFormat.format(time)+";"+
-            +minutes+":"+((seconds<10)?0:"")+
-            seconds+"; ";
-            result+=res.getCount()+" Positionen; ";
+            //1" (Gestartet: "+displayDateFormat.format(time)+";"+
+            result.setStarted(displayDateFormat.format(time));
+
+            //2+minutes+":"+((seconds<10)?0:"")+ seconds+"; ";
+            result.setDuration(minutes+":"+((seconds<10)?0:"")+ seconds);
+
             double meters = getWalkDistance(id);
-            result+=((int)getWalkDistance(id))+" Meter; ";
-            result+="\u00D8Geschwindigkeit: "+decimalFormat.format(3.6*(meters/(seconds+(minutes*60))))+" km/h; ";
-            result+=(bicycle == 0?"Lauf":"Fahrrad")+")";
+            //3result+=((int)getWalkDistance(id))+" Meter; ";
+            result.setDistanceMeter((int)getWalkDistance(id));
+
+            //4result+="\u00D8Geschwindigkeit: "+decimalFormat.format(3.6*(meters/(seconds+(minutes*60))))+" km/h; ";
+            result.setAverageSpeed(3.6 * (meters / (seconds + (minutes * 60))));
+
+            //5 bicycle == 0?"Lauf":"Fahrrad")
+            result.setType(bicycle==0);
+
+            //6 positions
+            result.setPositions(res.getCount());
             res.close();
             return result;
         } else return null;

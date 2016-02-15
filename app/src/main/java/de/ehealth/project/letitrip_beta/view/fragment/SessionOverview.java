@@ -26,9 +26,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -39,13 +40,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSCustomListItem;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSHelper;
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
+import de.ehealth.project.letitrip_beta.view.adapter.GPSCustomListItem;
+import de.ehealth.project.letitrip_beta.view.adapter.GPSListAdapter;
 import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
 
 /**
@@ -66,7 +68,7 @@ public class SessionOverview extends Fragment {
     private Switch bicycleSwitch;
     private Button pauseButton;
 
-    private ArrayAdapter<GPSCustomListItem> itemsAdapter;
+    //private ArrayAdapter<GPSCustomListItem> itemsAdapter;
 
     private NotificationManager myNotificationManager;
     private DialogInterface.OnClickListener dialogListener;
@@ -138,10 +140,11 @@ public class SessionOverview extends Fragment {
             }
         });
 
-        sessionOverviewListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        sessionOverviewListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SessionHandler.setSelectedRunId(itemsAdapter.getItem(position).getID());
+                GPSCustomListItem row = (GPSCustomListItem) parent.getItemAtPosition(position);
+                SessionHandler.setSelectedRunId(row.getID());
 
                 //the dialog menu is only available for finished sessions, live sessions will be shown in the "session" fragment
                 if (gps != null){
@@ -151,7 +154,6 @@ public class SessionOverview extends Fragment {
                     }
                 }
                 showRunDialog(SessionHandler.getSelectedRunId());
-
             }
         });
 
@@ -167,10 +169,10 @@ public class SessionOverview extends Fragment {
                         Log.w("sessionoverview", GPSDatabaseHandler.getInstance().getData().getLastRunID() + "");
                         if (GPSDatabaseHandler.getInstance().getData().getLastRunID() != 0) {
                             SessionHandler.setSelectedRunId(GPSDatabaseHandler.getInstance().getData().getLastRunID());
-                        }
-                        if (GPSDatabaseHandler.getInstance().getData().getLastRunID() == 0) {
+                        } else {
                             SessionHandler.setSelectedRunId(-1);
                         }
+
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -190,7 +192,7 @@ public class SessionOverview extends Fragment {
             @Override
             public void onClick(View v) {
                 if (bound) {
-                    Button b = (Button) v;
+                    //Button b = (Button) v;
                     if (gps.isPaused()) {
                         gps.resume();
                     } else {
@@ -219,13 +221,6 @@ public class SessionOverview extends Fragment {
         } else {
             Log.d("Fitbit", "Wrong interface implemented");
         }
-
-        //TODO
-        /*try { <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            interfaceSender = (ShowRunOnMap) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement ShowRunOnMap");
-        }*/
     }
 
     @Override
@@ -264,7 +259,7 @@ public class SessionOverview extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //Log.d("sessionoverview", "onStart");
+        Log.d("sessionoverview", "onStart");
         getActivity().bindService(new Intent(getActivity(), GPSService.class), mConnection, Context.BIND_AUTO_CREATE);
         testMethod();
 
@@ -284,27 +279,9 @@ public class SessionOverview extends Fragment {
         }
     }
 
-
+    //todo delete later
     public void testMethod() {
-//            DataHolder_Database.getInstance().getData().addData(2, 51.615970, 6.707983, 50,0);
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            DataHolder_Database.getInstance().getData().addData(2, 51.625980, 6.807983, 51, 0);
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            DataHolder_Database.getInstance().getData().addData(2, 51.635990, 6.707983, 52, 0);
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            DataHolder_Database.getInstance().getData().addData(2, 51.646960, 6.907983, 53, 0);
+
           GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50,0);
           GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50,0);
 
@@ -329,16 +306,24 @@ public class SessionOverview extends Fragment {
         int lastRun = GPSDatabaseHandler.getInstance().getData().getLastRunID();
 
         for (int i = 1; i <= lastRun; i++) {
-            String ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfRun(i);
+           GPSCustomListItem ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfRun(i);
             if (ins != null) {
                 if (gps.getStatus() == GPSService.Status.TRACKINGSTARTED){
-                    if (i == lastRun) ins = "(Tracking)" + "Session #" + i + " - Für Details hier klicken.";
+                    if (i == lastRun) {
+                        //ins.add("(Tracking)" + "Session #" + i + " - Für Details hier klicken.");
+                        ins.setLive(true);
+                    }
                 }
-                valueList.add(new GPSCustomListItem(i, ins));
+
+                //set id manually since the gpsdatabase doesn't know it
+                ins.setID(i);
+                valueList.add(ins);
             }
         }
-        itemsAdapter = new ArrayAdapter<GPSCustomListItem>(getActivity(), android.R.layout.simple_list_item_1, valueList);
-        sessionOverviewListView.setAdapter(itemsAdapter);
+        //itemsAdapter = new ArrayAdapter<GPSCustomListItem>(getActivity(), android.R.layout.simple_list_item_1, valueList);
+        ListAdapter customAdapter = new GPSListAdapter(getActivity(),valueList);
+
+        sessionOverviewListView.setAdapter(customAdapter);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -405,8 +390,6 @@ public class SessionOverview extends Fragment {
                     case 0:
                         //only put the runID to the intent if map shouldnt show the current live session
                         if (!((gps.getStatus() == GPSService.Status.TRACKINGSTARTED) && (gps.getActiveRecordingID() == SessionHandler.getSelectedRunId()))) {
-                            //TODO
-                            //interfaceSender.setSelectedRunID(selectedRun); <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             SessionHandler.setSelectedRunId(SessionHandler.getSelectedRunId());
                             mListener.changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
                         } else updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
@@ -427,5 +410,4 @@ public class SessionOverview extends Fragment {
             break;
         }
     }
-
 }

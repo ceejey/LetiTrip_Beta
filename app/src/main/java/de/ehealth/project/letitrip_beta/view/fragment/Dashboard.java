@@ -129,8 +129,8 @@ public class Dashboard extends Fragment implements WeatherCallback {
             res.moveToFirst();
             String description = res.getString(7);
             //channel.getItem().getCondition().getDescription();
-            if (DescriptionMapping.getMap().containsKey(description)){
-                txtWeatherSubHeading.setText(DescriptionMapping.getMap().get(description));
+            if (DescriptionMapping.getMap().containsKey(description.toLowerCase())){
+                txtWeatherSubHeading.setText(DescriptionMapping.getMap().get(description.toLowerCase()));
             } else {
                 txtWeatherSubHeading.setText(description);
             }

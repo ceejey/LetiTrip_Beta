@@ -108,7 +108,6 @@ public class GPSService extends Service {
                         boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle);
                         if (ins) {
                             sendBroadcast("MapsActivity", 1);
-                            Toast.makeText(GPSService.this, "Accuaracy:" + l.getAccuracy(), Toast.LENGTH_SHORT).show();
                         } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
 
                         //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
@@ -119,6 +118,7 @@ public class GPSService extends Service {
                             sendBroadcast("GPSActivity", 2);
                         }
                     } else Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
+
                 } else Log.w("gpsservice","paused or no location");
             }
 

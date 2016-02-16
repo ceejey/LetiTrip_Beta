@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,7 +19,9 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
+import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class GPSService extends Service {
@@ -27,7 +30,7 @@ public class GPSService extends Service {
     private LocationManager locationManager;
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
-    //final PolarHandler polar = new PolarHandler(this);
+    private PolarHandler polar;
 
     private Status status;
     private NotificationManager notificationManager;
@@ -51,6 +54,7 @@ public class GPSService extends Service {
         }
         Log.w("service", "destroyed");
         if (notificationManager != null) notificationManager.cancel(0);
+        polar.disconnectFromPolarDevice();
         super.onDestroy();
     }
 
@@ -64,6 +68,7 @@ public class GPSService extends Service {
     public void onCreate() {
         Log.w("service", "created");
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        polar = new PolarHandler(getApplicationContext());
         status = Status.IDLE;
         super.onCreate();
     }
@@ -82,6 +87,7 @@ public class GPSService extends Service {
             recordingAsBicycle = (intent.getIntExtra("bicycle", 0) == 0 ? 0 : 1);
             Log.w("gpsservice", "recordingAsBicycle=" + recordingAsBicycle);
         }
+        polar.searchPolarDevice();
 
         //gps enabled?
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -97,13 +103,20 @@ public class GPSService extends Service {
     }
 
     public void startTracking() {
+        //connect to polar
+        List<BluetoothDevice> deviceList = polar.getDeviceList();
+        if (deviceList.size() != 0){
+            polar.connectToPolarDevice(deviceList.get(0));
+            polar.receiveHeartRate();
+        }
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location l) {
                 if ((l != null) && (status != Status.PAUSED)) {
                     //only insert data when accuaracy is good enough
                     if (l.getAccuracy()<50){//todo add pulse
-                        boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle,0);
+                        boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle,PolarHandler.mHeartRate);
                         if (ins) {
                             sendBroadcast("MapsActivity", 1);
                         } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();

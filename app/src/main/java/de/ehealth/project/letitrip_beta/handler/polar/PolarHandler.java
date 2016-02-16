@@ -56,34 +56,42 @@ public class PolarHandler {
     }
 
     private Activity mActivity; //Which Activity shall get informed?
+    private Context mContext; //if its started via the service
     private TextView mTxtHeartRate; //Which Textview shall show the heartrate?
     public static int mHeartRate = 0;
     private TextView mTxtStatus; //TODO
 
     public PolarHandler(Activity activity, TextView txtHeartRate, TextView txtStatus){
         mActivity = activity;
+        mContext = mActivity;
         mTxtHeartRate = txtHeartRate;
         mTxtStatus = txtStatus;
     }
 
     public PolarHandler(Activity activity, TextView txtHeartRate){
         mActivity = activity;
+        mContext = mActivity;
         mTxtHeartRate = txtHeartRate;
     }
 
     public PolarHandler(Activity activity){
         mActivity = activity;
+        mContext = mActivity;
+    }
+
+    public PolarHandler(Context context){
+        mContext = context;
     }
 
     public boolean isBluetoothEnabled(){
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Log.d("Bluetooth Adapter", "Bluetooth is disabled");
-            Toast.makeText(mActivity, "Bluetooth is disabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Bluetooth is disabled", Toast.LENGTH_SHORT).show();
             return false;
         }
         else{
             Log.d("Bluetooth Adapter", "Bluetooth is enabled");
-            Toast.makeText(mActivity, "Bluetooth is enabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Bluetooth is enabled", Toast.LENGTH_SHORT).show();
             return true;
         }
     }
@@ -97,7 +105,7 @@ public class PolarHandler {
 
             filter.addAction(BluetoothDevice.ACTION_FOUND);
 
-            mActivity.registerReceiver(mReceiver, filter);
+            mContext.registerReceiver(mReceiver, filter);
 
             //Cancels discovery after 10 seconds.
             handler.postDelayed(new Runnable() {
@@ -107,14 +115,14 @@ public class PolarHandler {
                         mBluetoothAdapter.cancelDiscovery();
                         mDeviceSearch = false;
                         Log.d("Bluetooth Adapter", "Canceled Discovery");
-                        Toast.makeText(mActivity, "Canceled Discovery", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Canceled Discovery", Toast.LENGTH_SHORT).show();
                     }
                 }
             }, SCAN_PERIOD);
             mDeviceSearch = true;
             mBluetoothAdapter.startDiscovery();
             Log.d("Bluetooth Adapter", "Started Discovery");
-            Toast.makeText(mActivity, "Started Discovery", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Started Discovery", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -123,42 +131,42 @@ public class PolarHandler {
         mDeviceSearch = false;
         if(!mDeviceSearch && mDeviceFound && !mConnected && !mConnectionStateChanging) {
             mConnectionStateChanging = true;
-            Toast.makeText(mActivity, "Trying to connect..", Toast.LENGTH_SHORT).show();
-            mBluetoothGatt = device.connectGatt(mActivity, false, mGattCallback);
+            Toast.makeText(mContext, "Trying to connect..", Toast.LENGTH_SHORT).show();
+            mBluetoothGatt = device.connectGatt(mContext, false, mGattCallback);
         }
         else
-            Toast.makeText(mActivity, "Connection failed", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "Connection failed", Toast.LENGTH_LONG).show();
     }
 
     public void disconnectFromPolarDevice(){
         if(mConnected && !mConnectionStateChanging) {
             mConnectionStateChanging = true;
-            Toast.makeText(mActivity, "Trying to disconnect", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Trying to disconnect", Toast.LENGTH_SHORT).show();
             mBluetoothGatt.disconnect();
             mBluetoothGatt.close();
         }
         else
-            Toast.makeText(mActivity, "Device not connected yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Device not connected yet", Toast.LENGTH_SHORT).show();
     }
 
     public void receiveHeartRate(){
         if(mConnected && !mConnectionStateChanging && !mReceiveHeartRate) {
-            Toast.makeText(mActivity, "Receiving heart rate now", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Receiving heart rate now", Toast.LENGTH_SHORT).show();
             mReceiveHeartRate = true;
             mBluetoothGatt.discoverServices();
         }
         else
-            Toast.makeText(mActivity, "Already receiving heart rate", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Already receiving heart rate", Toast.LENGTH_SHORT).show();
     }
 
     public void stopReceivingHeartRate(){
         if(mConnected && !mConnectionStateChanging && mReceiveHeartRate){
-            Toast.makeText(mActivity, "Stop receiving heart rate", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Stop receiving heart rate", Toast.LENGTH_SHORT).show();
             mReceiveHeartRate = false;
             mBluetoothGatt.discoverServices();
         }
         else
-            Toast.makeText(mActivity, "Wasn't receiving heart rate", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Wasn't receiving heart rate", Toast.LENGTH_SHORT).show();
     }
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -169,7 +177,7 @@ public class PolarHandler {
                 mDevice = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (mDevice.getName().contains("Polar")) {
                     Log.d("Bluetooth Device", "Found: " + mDevice.getName());
-                    Toast.makeText(mActivity, "Found: " + mDevice.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Found: " + mDevice.getName(), Toast.LENGTH_SHORT).show();
                     mDeviceFound = true;
                     //Log.d("Bluetooth Adapter", "Canceled Discovery");
                     //mBluetoothAdapter.cancelDiscovery();
@@ -189,27 +197,31 @@ public class PolarHandler {
             Log.d("Statussss", "" + status);
             if(newState == BluetoothProfile.STATE_CONNECTED){
                 Log.d("BluetoothGatt", "Connected to GATT server.");
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(mTxtStatus != null)
-                            mTxtStatus.setText("Connected");
-                        Toast.makeText(mActivity, "Connected to device", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (mActivity != null){
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(mTxtStatus != null)
+                                mTxtStatus.setText("Connected");
+                            Toast.makeText(mContext, "Connected to device", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 mConnected = true;
             }
             else if(newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d("BluetoothGatt", "Disconnected from GATT server.");
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(mTxtStatus != null)
-                            mTxtStatus.setText("Disconnected");
-                        Toast.makeText(mActivity, "Disconnected from device", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (mActivity != null){
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(mTxtStatus != null)
+                                mTxtStatus.setText("Disconnected");
+                            Toast.makeText(mContext, "Disconnected from device", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 mConnected = false;
             }
@@ -250,14 +262,16 @@ public class PolarHandler {
                     format = BluetoothGattCharacteristic.FORMAT_UINT8;
                     final int heartRate = characteristic.getIntValue(format, 1);
                     Log.d("Receive", String.format("Received heart rate: %d", heartRate));
-                    mActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(mTxtHeartRate != null)
-                                mTxtHeartRate.setText(String.valueOf(heartRate));
-                            mHeartRate = heartRate;
-                        }
-                    });
+                    if (mActivity != null){
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mTxtHeartRate != null)
+                                    mTxtHeartRate.setText(String.valueOf(heartRate));
+                                mHeartRate = heartRate;
+                            }
+                        });
+                    }
 
                 }else Log.d("Receive", "Unsupported format.");
             }

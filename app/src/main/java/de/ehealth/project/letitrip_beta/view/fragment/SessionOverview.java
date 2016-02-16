@@ -55,6 +55,7 @@ import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
  * message      value   meaning
  * GPSActivity  1       GPS not enabled
  * GPSActivity  2       Tracking initially started
+ * GPSActivity  3       GPS accuracy too low
  * MapsActivity 1       new position inserted
  */
 
@@ -67,8 +68,6 @@ public class SessionOverview extends Fragment {
     private ListView sessionOverviewListView;
     private Switch bicycleSwitch;
     private Button pauseButton;
-
-    //private ArrayAdapter<GPSCustomListItem> itemsAdapter;
 
     private NotificationManager myNotificationManager;
     private DialogInterface.OnClickListener dialogListener;

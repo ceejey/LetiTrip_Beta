@@ -59,7 +59,6 @@ public class SessionDetail extends Fragment {
     private Button bt;
     private TextView infoBox;
 
-    //private int showThisRun;
     private boolean bound = false;
     private int lastSpeedID = -1;
 
@@ -79,6 +78,14 @@ public class SessionDetail extends Fragment {
             bound = false;
         }
     };
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.w("sessiondetail","saveinstance");
+
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -140,6 +147,7 @@ public class SessionDetail extends Fragment {
                 Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfRun(gps.getActiveRecordingID());
                 res.moveToFirst();
 
+                //todo vielleicht falsche werte
                 int tempLastID = GPSDatabaseHandler.getInstance().getData().getLastID();
                 if (lastSpeedID == -1) {
                     lastSpeedID = tempLastID;
@@ -171,7 +179,7 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onStart() {
-        Log.w("sessiondetail", "showThisRunSTART" + SessionHandler.getSelectedRunId());
+        Log.w("sessiondetail", "onstart");
         bindToService();
         super.onStart();
     }
@@ -276,8 +284,6 @@ public class SessionDetail extends Fragment {
             boolean endMarker = true;
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                Log.w("sessionDetail","showthisrun:" + SessionHandler.getSelectedRunId());
-
                 //live
                 if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (SessionHandler.getSelectedRunId() == -1)) {
                     SessionHandler.setSelectedRunId(gps.getActiveRecordingID());

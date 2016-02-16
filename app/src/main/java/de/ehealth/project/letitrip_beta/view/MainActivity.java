@@ -15,7 +15,6 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.database.GPSDatabase;
 import de.ehealth.project.letitrip_beta.handler.database.WeatherDatabase;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
-import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.Dashboard;
@@ -134,9 +133,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fragmentContent = new SessionDetail();
                 //TODO
-                Bundle args = new Bundle();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                args.putInt("runID", SessionHandler.getSelectedRunId());//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                fragmentContent.setArguments(args);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                //Bundle args = new Bundle();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                //args.putInt("runID", SessionHandler.getSelectedRunId());//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                //fragmentContent.setArguments(args);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
                 break;
             case SESSION:
@@ -399,12 +398,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if(fragmentManager.getBackStackEntryCount() >= 1) {
-            transaction.hide(fragmentManager.findFragmentByTag(mOldTag));
-
+            transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
             //There is no proper way to get the latest inserted fragment in the back stack
             String tag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
             transaction.show(fragmentManager.findFragmentByTag(tag)).commit();
-
             mOldTag = tag;
         }
         super.onBackPressed();

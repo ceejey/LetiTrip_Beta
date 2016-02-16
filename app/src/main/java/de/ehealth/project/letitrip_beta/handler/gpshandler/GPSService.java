@@ -113,11 +113,14 @@ public class GPSService extends Service {
                         //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
                         if (status != Status.TRACKINGSTARTED) {
                             createNotification();
-                            Log.w("service", "Listen to id:" + activeRecordingID);
+                            Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
                             status = Status.TRACKINGSTARTED;
                             sendBroadcast("GPSActivity", 2);
                         }
-                    } else Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
+                    } else {
+                        Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
+                        sendBroadcast("GPSActivity",3);
+                    }
 
                 } else Log.w("gpsservice","paused or no location");
             }

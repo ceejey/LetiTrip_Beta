@@ -32,7 +32,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
     private FragmentChanger mListener;
     private LayoutInflater mInflater;
-    private WeatherCallback mWeatherCallbackFragment;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mTaskComplete = false;
 
@@ -41,8 +40,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
-        mWeatherCallbackFragment = this;
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayoutDashboard);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -91,8 +88,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
         mInflater = inflater;
 
-        refreshWeather();
-
         //init for fitbit connection
         Oauth.getmOauth().initOauth("3444e1985fcecca0dd97ff85e4253c45", "e4263b0e379b61c4916e4427d594f5c2", "http://www.google.de", FitBitAPI.class);
         FitbitUserProfile.loadUser(getActivity());
@@ -111,6 +106,12 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
         res.close();
         mTaskComplete = true;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refreshWeather();
     }
 
     public void showWeather(Cursor res){

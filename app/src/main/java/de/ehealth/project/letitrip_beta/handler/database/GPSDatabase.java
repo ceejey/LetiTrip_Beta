@@ -126,7 +126,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
 
-            SimpleDateFormat displayDateFormat = new SimpleDateFormat("HH:mm dd.MM.yyy");
+            SimpleDateFormat displayDateFormat = new SimpleDateFormat("dd.MM.yyyy - HH:mm");
             SimpleDateFormat savedDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
             Date time = null;
 

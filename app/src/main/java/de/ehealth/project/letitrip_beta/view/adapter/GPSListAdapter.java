@@ -8,8 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.util.List;
+
 import de.ehealth.project.letitrip_beta.R;
 
 /**
@@ -36,31 +36,21 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
 
         if (gpsCustomListItem != null) {
             TextView txtHeading = (TextView) v.findViewById(R.id.txtHeading);
-            TextView txtDate = (TextView) v.findViewById(R.id.txtDate);
+            TextView txtSessionNumber = (TextView) v.findViewById(R.id.txtSessionNumber);
             TextView txtDuration = (TextView) v.findViewById(R.id.txtDuration);
-            TextView txtAvgSpeed = (TextView) v.findViewById(R.id.txtAvgSpeed);
+            TextView txtDistance = (TextView) v.findViewById(R.id.txtDistance);
             ImageView imgType = (ImageView) v.findViewById(R.id.imgType);
+
+            txtSessionNumber.setText("Session "+gpsCustomListItem.getVisibleID()+" (#pos:"+gpsCustomListItem.getPositions()+")");
 
             if (gpsCustomListItem.isLive()){
                 txtHeading.setText("(Live) Session #"+gpsCustomListItem.getVisibleID());
                 txtDuration.setText("");
-                txtAvgSpeed.setText("Klick für mehr Infos!");
+                txtDistance.setText("Klick für mehr Infos!");
             } else {
-                if (txtHeading != null) {
-                    txtHeading.setText("Session #"+gpsCustomListItem.getVisibleID()+" (#pos:"+gpsCustomListItem.getPositions()+")");
-                }
-
-                if (txtDuration != null) {
-                    txtDuration.setText(gpsCustomListItem.getDuration()+ " Minuten");
-                }
-
-                if (txtAvgSpeed != null) {
-                    txtAvgSpeed.setText("\u00D8Geschwindigkeit: "+new DecimalFormat("#.#").format(gpsCustomListItem.getAverageSpeed())+" km/h");
-                }
-            }
-
-            if (txtDate != null) {
-                txtDate.setText("Gestartet: "+gpsCustomListItem.getStarted());
+                txtHeading.setText(gpsCustomListItem.getStarted());
+                txtDuration.setText(gpsCustomListItem.getDuration()+ " Minuten");
+                txtDistance.setText(gpsCustomListItem.getDistanceMeter()+" Meter");
             }
 
             if (imgType != null) {

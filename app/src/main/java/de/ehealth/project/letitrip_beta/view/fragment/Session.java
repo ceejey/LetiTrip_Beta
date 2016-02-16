@@ -163,7 +163,7 @@ public class Session extends Fragment {
 
         distanz.setText("Distanz: " + df.format(((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun))) + " Meter");
 
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(showThisRun);
+        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(showThisRun);
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
         zeit.setText("Dauer: "+ minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");

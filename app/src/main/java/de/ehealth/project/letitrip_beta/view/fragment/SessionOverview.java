@@ -162,12 +162,12 @@ public class SessionOverview extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        int deletes = GPSDatabaseHandler.getInstance().getData().deleteRun(SessionHandler.getSelectedRunId());
+                        int deletes = GPSDatabaseHandler.getInstance().getData().deleteSession(SessionHandler.getSelectedRunId());
                         Toast.makeText(getActivity(), deletes + " Einträge gelöscht.", Toast.LENGTH_SHORT).show();
                         updateList();
-                        Log.w("sessionoverview", GPSDatabaseHandler.getInstance().getData().getLastRunID() + "");
-                        if (GPSDatabaseHandler.getInstance().getData().getLastRunID() != 0) {
-                            SessionHandler.setSelectedRunId(GPSDatabaseHandler.getInstance().getData().getLastRunID());
+                        Log.w("sessionoverview", GPSDatabaseHandler.getInstance().getData().getLastSessionID() + "");
+                        if (GPSDatabaseHandler.getInstance().getData().getLastSessionID() != 0) {
+                            SessionHandler.setSelectedRunId(GPSDatabaseHandler.getInstance().getData().getLastSessionID());
                         } else {
                             SessionHandler.setSelectedRunId(-1);
                         }
@@ -273,7 +273,7 @@ public class SessionOverview extends Fragment {
         //for >android 6.0
         if (Build.VERSION.SDK_INT >= 23) doPermissionCheck();
 
-        if (GPSDatabaseHandler.getInstance().getData().getLastRunID() == 0) {
+        if (GPSDatabaseHandler.getInstance().getData().getLastSessionID() == 0) {
             SessionHandler.setSelectedRunId(-1);
         }
     }
@@ -281,8 +281,8 @@ public class SessionOverview extends Fragment {
     //todo delete later
     public void testMethod() {
 
-          GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50,0);
-          GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50,0);
+          GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50,0,100);
+          GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50,0,120);
 
           //GPSDatabaseHandler.getInstance().getData().addData(1, 51.575960, 6.707983, 50,0);
           //GPSDatabaseHandler.getInstance().getData().addData(3, 51.500896, 6.890523, 50,1);
@@ -296,16 +296,16 @@ public class SessionOverview extends Fragment {
         //Log.w("sessionoverview","status" + gps.getStatus());
 
         //Log.w("sessionoverview",""+DataHolder_Database.getInstance().getData().getAverageSpeed(74,75));
-        //Log.w("gps",DataHolder_Database.getInstance().getData().getLastRunID()+"");
+        //Log.w("gps",DataHolder_Database.getInstance().getData().getLastSessionID()+"");
         //DataHolder_Database.getInstance().getData().getAverageSpeed(1,2);
     }
 
     public void updateList() {
         List valueList = new ArrayList<GPSCustomListItem>();
-        int lastRun = GPSDatabaseHandler.getInstance().getData().getLastRunID();
+        int lastRun = GPSDatabaseHandler.getInstance().getData().getLastSessionID();
 
         for (int i = 1; i <= lastRun; i++) {
-           GPSCustomListItem ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfRun(i);
+           GPSCustomListItem ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfSession(i);
             if (ins != null) {
                 if (gps.getStatus() == GPSService.Status.TRACKINGSTARTED){
                     if (i == lastRun) {

@@ -111,7 +111,7 @@ public class WeatherDatabase extends SQLiteOpenHelper {
         Date timeStampFirstPosition = null;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = GPSDatabaseHandler.getInstance().getData().getRun(id);
+        Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(id);
         res.moveToFirst();
 
         try {

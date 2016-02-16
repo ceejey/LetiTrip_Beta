@@ -27,6 +27,7 @@ public class GPSService extends Service {
     private LocationManager locationManager;
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
+    //final PolarHandler polar = new PolarHandler(this);
 
     private Status status;
     private NotificationManager notificationManager;
@@ -43,8 +44,6 @@ public class GPSService extends Service {
     @Override
     public void onDestroy() {
         try {
-            //TODO creates error "java.lang.IllegalArgumentException: invalid listener: null"
-            //if (locationManager != null) locationManager.removeUpdates(locationListener);
             if (locationListener != null) locationManager.removeUpdates(locationListener);
             status = Status.IDLE;
         } catch (IllegalArgumentException | SecurityException e) {
@@ -55,7 +54,6 @@ public class GPSService extends Service {
         super.onDestroy();
     }
 
-    //@Nullable
     @Override
     public IBinder onBind(Intent intent) {
         Log.w("service", "onbind");
@@ -79,7 +77,7 @@ public class GPSService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w("service", "started");
-        activeRecordingID = (GPSDatabaseHandler.getInstance().getData().getLastRunID()) + 1;
+        activeRecordingID = (GPSDatabaseHandler.getInstance().getData().getLastSessionID()) + 1;
         if (intent.hasExtra("bicycle")) {
             recordingAsBicycle = (intent.getIntExtra("bicycle", 0) == 0 ? 0 : 1);
             Log.w("gpsservice", "recordingAsBicycle=" + recordingAsBicycle);
@@ -104,8 +102,8 @@ public class GPSService extends Service {
             public void onLocationChanged(Location l) {
                 if ((l != null) && (status != Status.PAUSED)) {
                     //only insert data when accuaracy is good enough
-                    if (l.getAccuracy()<50){
-                        boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle);
+                    if (l.getAccuracy()<50){//todo add pulse
+                        boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle,0);
                         if (ins) {
                             sendBroadcast("MapsActivity", 1);
                         } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();

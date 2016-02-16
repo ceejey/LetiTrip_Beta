@@ -144,7 +144,7 @@ public class SessionDetail extends Fragment {
 
             //new position received, add it to the route+update liveMarker if the active track is displayed
             if ((message == 1) && (SessionHandler.getSelectedRunId() == gps.getActiveRecordingID())) {
-                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfRun(gps.getActiveRecordingID());
+                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(gps.getActiveRecordingID());
                 res.moveToFirst();
 
                 //todo vielleicht falsche werte
@@ -230,7 +230,7 @@ public class SessionDetail extends Fragment {
      */
     public void updateInfoBox(){
         Log.w("sessionDetail","update info box");
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfRun(SessionHandler.getSelectedRunId());
+        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -315,7 +315,7 @@ public class SessionDetail extends Fragment {
 
     public void showRunOnMap(boolean endMarker){
         //save run data to an array
-        Cursor res = GPSDatabaseHandler.getInstance().getData().getRun(SessionHandler.getSelectedRunId());
+        Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(SessionHandler.getSelectedRunId());
 
         //display the data
         updateInfoBox();

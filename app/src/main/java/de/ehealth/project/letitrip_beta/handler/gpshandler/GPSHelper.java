@@ -33,7 +33,7 @@ public class GPSHelper {
     }
 
     public void getRunOutput(int selectedRun) {
-        Cursor res = GPSDatabaseHandler.getInstance().getData().getRun(Integer.parseInt(selectedRun+""));
+        Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(Integer.parseInt(selectedRun + ""));
 
         if (res != null){
             String str="";

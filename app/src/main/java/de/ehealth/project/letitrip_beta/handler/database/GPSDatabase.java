@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,12 +21,13 @@ public class GPSDatabase extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "eHealthDb";
     public static final String TABLE_NAME = "GPSDataTable";
     public static final String COLUMN0 = "ID";
-    public static final String COLUMN1 = "RunNumber";
+    public static final String COLUMN1 = "SessionNumber";
     public static final String COLUMN2 = "Time";
     public static final String COLUMN3 = "Latitude";
     public static final String COLUMN4 = "Longitude";
     public static final String COLUMN5 = "Altitude";
     public static final String COLUMN6 = "Bicycle"; //1=bicycle, 0=walking
+    public static final String COLUMN7 = "Pulse";
 
     public GPSDatabase(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -42,7 +42,8 @@ public class GPSDatabase extends SQLiteOpenHelper {
                 COLUMN3 + " REAL," +
                 COLUMN4 + " REAL," +
                 COLUMN5 + " REAL," +
-                COLUMN6 + " INTEGER)");
+                COLUMN6 + " INTEGER," +
+                COLUMN7 + " INTEGER)");
     }
 
     @Override
@@ -51,37 +52,42 @@ public class GPSDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public Cursor getRun (int id){
+    public Cursor getSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN1 + " = " + id, null);
         return res;
     }
 
-    public Cursor getLastPosOfRun(int id){
+    public Cursor getLastPosOfSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         //SELECT Latitude, Longitude FROM  GPSDataTable WHERE ((RunNumber=1) AND (ID=(SELECT MAX(ID) FROM GPSDataTable))
         Cursor res = db.rawQuery("select " + COLUMN3 + ", " + COLUMN4 + " from " + TABLE_NAME + " where ((" + COLUMN1 + " = " + id + ") and (" + COLUMN0 + "=(select max(" + COLUMN0 + ") from " + TABLE_NAME + ")))", null);
         return res;
     }
 
-    public boolean addData(int runNumber, double latitude, double longitude, double altitude, int bicycle){
+    public boolean addData(int sessionNumber, double latitude, double longitude, double altitude, int bicycle, int pulse){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
         Date date = new Date();
 
-        contentValues.put(COLUMN1, runNumber);
+        contentValues.put(COLUMN1, sessionNumber);
         contentValues.put(COLUMN2, dateFormat.format(date));
         contentValues.put(COLUMN3, latitude);
         contentValues.put(COLUMN4, longitude);
         contentValues.put(COLUMN5, altitude);
         contentValues.put(COLUMN6, bicycle);
+        contentValues.put(COLUMN7, pulse);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
         return (result != -1);
     }
 
-    public int getLastRunID(){
+    /**
+     *
+     * @return
+     */
+    public int getLastSessionID(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select distinct " + COLUMN1 + " from " + TABLE_NAME + " where " + COLUMN1 + "=(select max(" + COLUMN1 + ") from " + TABLE_NAME + ")", null);
 
@@ -93,6 +99,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
         } else return 0; else return 0;
     }
 
+    /**
+     * get the last id
+     * @return the last stored ID
+     */
     public int getLastID(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select max(" + COLUMN0 + ") from " + TABLE_NAME, null);
@@ -105,24 +115,33 @@ public class GPSDatabase extends SQLiteOpenHelper {
         } else return 0; else return 0;
     }
 
-    public int deleteRun(int id){
+    /**
+     * delete a session
+     * @param id the session id
+     * @return number of entries deleted
+     */
+    public int deleteSession(int id){
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, COLUMN1 + " = ?", new String[]{String.valueOf(id)});
     }
 
-    public GPSCustomListItem getOverviewOfRun(int id) {
-        Cursor res = getRun(id);
+    /**
+     * creates an overview of the run
+     * @param id the session id
+     * @return a GPSCustomListView model class filled with all necessary information
+     */
+    public GPSCustomListItem getOverviewOfSession(int id) {
+        Cursor res = getSession(id);
         //ArrayList<String> result = new ArrayList<>();
         GPSCustomListItem result = new GPSCustomListItem();
 
         if ((res != null) && (res.getCount() > 0)) {
-            DecimalFormat decimalFormat = new DecimalFormat("0.0");
             res.moveToFirst();
 
             //0=walk; 1=bicycle
             int bicycle = res.getInt(6);
 
-            long duration = getDurationOfRun(id);
+            long duration = getDurationOfSession(id);
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
 
@@ -130,39 +149,33 @@ public class GPSDatabase extends SQLiteOpenHelper {
             SimpleDateFormat savedDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
             Date time = null;
 
-            //todo use model class
             try {
                 time = savedDateFormat.parse(res.getString(2));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            //0result+="Session #"+res.getInt(1)+
+
             result.setVisibleID(res.getInt(1));
-
-            //1" (Gestartet: "+displayDateFormat.format(time)+";"+
             result.setStarted(displayDateFormat.format(time));
-
-            //2+minutes+":"+((seconds<10)?0:"")+ seconds+"; ";
             result.setDuration(minutes+":"+((seconds<10)?0:"")+ seconds);
 
             double meters = getWalkDistance(id);
-            //3result+=((int)getWalkDistance(id))+" Meter; ";
             result.setDistanceMeter((int)getWalkDistance(id));
-
-            //4result+="\u00D8Geschwindigkeit: "+decimalFormat.format(3.6*(meters/(seconds+(minutes*60))))+" km/h; ";
             result.setAverageSpeed(3.6 * (meters / (seconds + (minutes * 60))));
-
-            //5 bicycle == 0?"Lauf":"Fahrrad")
             result.setType(bicycle==0);
-
-            //6 positions
             result.setPositions(res.getCount());
+
             res.close();
             return result;
         } else return null;
     }
 
-    public long getDurationOfRun(int id){
+    /**
+     * get the duration in of one run
+     * @param id the session id
+     * @return the duration in milliseconds
+     */
+    public long getDurationOfSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + "=" + id, null);
 
@@ -184,6 +197,11 @@ public class GPSDatabase extends SQLiteOpenHelper {
         return (endTime.getTime() - startTime.getTime());
     }
 
+    /**
+     * get the distance in meters of one run
+     * @param id the session id
+     * @return the distance of this run in meters
+     */
     public double getWalkDistance (int id){
         double distance = 0;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -236,11 +254,11 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     *
+     * get the distance of all stored locations of one day
      * @param date in format: yyyy-MM-dd
      * @return total walkdistance of the whole day in meters
      */
-    public int getRunDistanceOfDay(String date){
+    public int getDistanceOfDay(String date){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select " + COLUMN1 + ", MIN(" + COLUMN2 + ") from " + TABLE_NAME + " group by " + COLUMN1, null);
 
@@ -269,7 +287,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     *
+     * get the altitude difference between two location points
      * @param ID1 ID of the first entry
      * @param ID2 ID of the second entry
      * @return the altitude difference between two records
@@ -348,10 +366,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     *
+     * get the direction between two locations
      * @param ID1
      * @param ID2
-     * @return
+     * @return the direction in degrees (0;360)
      */
     public double getWalkDirection(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();

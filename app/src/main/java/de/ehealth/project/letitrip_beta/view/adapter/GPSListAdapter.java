@@ -50,7 +50,7 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
             } else {
                 txtHeading.setText(gpsCustomListItem.getStarted());
                 txtDuration.setText(gpsCustomListItem.getDuration()+ " Minuten");
-                txtDistance.setText(gpsCustomListItem.getDistanceMeter()+" Meter");
+                txtDistance.setText(gpsCustomListItem.getDistanceMeter() + " Meter");
             }
 
             if (imgType != null) {

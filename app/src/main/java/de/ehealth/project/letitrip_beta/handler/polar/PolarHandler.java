@@ -57,6 +57,7 @@ public class PolarHandler {
 
     private Activity mActivity; //Which Activity shall get informed?
     private TextView mTxtHeartRate; //Which Textview shall show the heartrate?
+    public static int mHeartRate = 0;
     private TextView mTxtStatus; //TODO
 
     public PolarHandler(Activity activity, TextView txtHeartRate, TextView txtStatus){
@@ -254,6 +255,7 @@ public class PolarHandler {
                         public void run() {
                             if(mTxtHeartRate != null)
                                 mTxtHeartRate.setText(String.valueOf(heartRate));
+                            mHeartRate = heartRate;
                         }
                     });
 

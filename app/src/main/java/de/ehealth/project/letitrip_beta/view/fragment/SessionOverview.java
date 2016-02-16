@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -43,6 +44,7 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSHelper;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
+import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -146,8 +148,8 @@ public class SessionOverview extends Fragment {
                 SessionHandler.setSelectedRunId(row.getID());
 
                 //the dialog menu is only available for finished sessions, live sessions will be shown in the "session" fragment
-                if (gps != null){
-                    if (gps.getActiveRecordingID() == SessionHandler.getSelectedRunId()){
+                if (gps != null) {
+                    if (gps.getActiveRecordingID() == SessionHandler.getSelectedRunId()) {
                         updateActivity(MainActivity.FragmentName.SESSION);
                         return;
                     }
@@ -197,10 +199,11 @@ public class SessionOverview extends Fragment {
                     } else {
                         gps.pause();
                     }
-                    myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView,bicycleSwitch,pauseButton);
+                    myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch, pauseButton);
                 } else Log.w("sessionoverview", "bind error");
             }
         });
+
         return view;
     }
 

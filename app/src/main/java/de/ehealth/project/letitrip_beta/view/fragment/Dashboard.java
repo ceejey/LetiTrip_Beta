@@ -42,6 +42,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
         final View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayoutDashboard);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -78,13 +79,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
             }
         });
 
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                NewsHandler.fillNewsFeed(view, inflater, getActivity());
-            }
-        };
-        thread.start();
+
 
         mInflater = inflater;
 
@@ -92,8 +87,24 @@ public class Dashboard extends Fragment implements WeatherCallback {
         Oauth.getmOauth().initOauth("3444e1985fcecca0dd97ff85e4253c45", "e4263b0e379b61c4916e4427d594f5c2", "http://www.google.de", FitBitAPI.class);
         FitbitUserProfile.loadUser(getActivity());
 
+        refreshWeather();
+
         return view;
     }
+
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        refreshWeather();
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run(){
+                NewsHandler.fillNewsFeed(view, mInflater, getActivity());
+            }
+        });
+        thread.start();
+    }
+
     public void refreshWeather(){
         //only check weather if no weather information are in the database
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
@@ -106,12 +117,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
         res.close();
         mTaskComplete = true;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        refreshWeather();
     }
 
     public void showWeather(Cursor res){

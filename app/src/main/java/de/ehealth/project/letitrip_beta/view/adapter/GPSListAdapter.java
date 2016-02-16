@@ -1,6 +1,7 @@
 package de.ehealth.project.letitrip_beta.view.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,24 +42,26 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
             TextView txtDistance = (TextView) v.findViewById(R.id.txtDistance);
             ImageView imgType = (ImageView) v.findViewById(R.id.imgType);
 
-            txtSessionNumber.setText("Session "+gpsCustomListItem.getVisibleID()+" (#pos:"+gpsCustomListItem.getPositions()+")");
+            txtSessionNumber.setText(gpsCustomListItem.getVisibleID()+" (#pos:"+gpsCustomListItem.getPositions()+")");
 
             if (gpsCustomListItem.isLive()){
-                txtHeading.setText("(Live) Session #"+gpsCustomListItem.getVisibleID());
+                //txtHeading.setText("(Live) "+gpsCustomListItem.getVisibleID());
+                txtHeading.setText("(Läuft) Klicke hier für Details!");
                 txtDuration.setText("");
-                txtDistance.setText("Klick für mehr Infos!");
+                txtDistance.setText("");
             } else {
                 txtHeading.setText(gpsCustomListItem.getStarted());
-                txtDuration.setText(gpsCustomListItem.getDuration()+ " Minuten");
-                txtDistance.setText(gpsCustomListItem.getDistanceMeter() + " Meter");
+                txtDuration.setText(gpsCustomListItem.getDuration()+ " min");
+                txtDistance.setText(gpsCustomListItem.getDistanceMeter() + " m");
             }
 
             if (imgType != null) {
                 if (!gpsCustomListItem.isType()){
-                    imgType.setImageResource(R.drawable.ic_directions_bike_black_48dp);
+                    imgType.setImageResource(R.drawable.ic_directions_bike_white_24dp);
                 } else {
-                    imgType.setImageResource(R.drawable.ic_directions_run_black_48dp);
+                    imgType.setImageResource(R.drawable.ic_directions_run_white_24dp);
                 }
+                imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
             }
         }
 

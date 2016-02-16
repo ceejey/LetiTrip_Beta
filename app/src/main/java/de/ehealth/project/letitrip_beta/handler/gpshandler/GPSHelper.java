@@ -8,20 +8,20 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class GPSHelper {
-    public void updateTrackingUI(GPSService gps, ToggleButton tb1, TextView tv1, Switch bicycleSwitch, Button pauseButton){
+    public void updateTrackingUI(GPSService gps, Button btnSession, TextView txtStatus, Switch bicycleSwitch, Button pauseButton){
         if (gps.getStatus()== GPSService.Status.SEARCHINGGPS) {
-            tb1.setChecked(true);
-            tv1.setText("Aufnahme startet bald...");
+            btnSession.setText("Session beenden");
+            txtStatus.setText("Aufnahme startet bald...");
             pauseButton.setText("Pause");
             pauseButton.setEnabled(false);
         } else if (gps.getStatus()== GPSService.Status.TRACKINGSTARTED) {
-            tb1.setChecked(true);
-            tv1.setText("Aufnahme läuft.");
+            btnSession.setText("Session beenden");
+            txtStatus.setText("Aufnahme läuft.");
             if (gps.isPaused()) pauseButton.setText("Fortfahren"); else pauseButton.setText("Pause");
             pauseButton.setEnabled(true);
         } else {
-            tb1.setChecked(false);
-            tv1.setText("Aufnahme deaktiviert.");
+            btnSession.setText("Session starten");
+            txtStatus.setText("Aufnahme deaktiviert.");
             pauseButton.setText("Pause");
             pauseButton.setEnabled(false);
         }

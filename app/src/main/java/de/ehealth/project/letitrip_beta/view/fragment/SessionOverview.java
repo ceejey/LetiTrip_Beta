@@ -5,7 +5,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,7 +34,6 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +42,6 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSHelper;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
-import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -66,10 +63,10 @@ public class SessionOverview extends Fragment {
     private FragmentChanger mListener;
     private TextView gpsStatusTextView;
 
-    private ToggleButton gpsEnabledToggle;
+    private Button btnStartSession;
     private ListView sessionOverviewListView;
     private Switch bicycleSwitch;
-    private Button pauseButton;
+    private Button btnPauseSession;
 
     private NotificationManager myNotificationManager;
     private DialogInterface.OnClickListener dialogListener;
@@ -77,6 +74,8 @@ public class SessionOverview extends Fragment {
     boolean bound = false;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSHelper myGPSObject;
+
+    private boolean isRunning = false;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -87,7 +86,7 @@ public class SessionOverview extends Fragment {
             bound = true;
             Log.w("sessionoverview", "bound - status:" + gps.getStatus() + "");
 
-            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch,pauseButton);
+            myGPSObject.updateTrackingUI(gps, btnStartSession, gpsStatusTextView, bicycleSwitch, btnPauseSession);
             updateList();
         }
 
@@ -107,24 +106,25 @@ public class SessionOverview extends Fragment {
         View view = inflater.inflate(R.layout.fragment_session_overview, container, false);
 
         gpsStatusTextView = (TextView) view.findViewById(R.id.gpsStatusTextView);
-        gpsEnabledToggle = (ToggleButton) view.findViewById(R.id.gpsEnabledToggle);
+        btnStartSession = (Button) view.findViewById(R.id.gpsEnabledToggle);
         sessionOverviewListView = (ListView) view.findViewById(R.id.sessionOverviewListView);
         bicycleSwitch = (Switch) view.findViewById(R.id.bycicleSwitch);
-        pauseButton = (Button) view.findViewById(R.id.pauseButton);
-
+        btnPauseSession = (Button) view.findViewById(R.id.pauseButton);
+        btnPauseSession.setVisibility(View.GONE);
         //tracking on/off
-        gpsEnabledToggle.setOnClickListener(new View.OnClickListener() {
+        btnStartSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("sessionoverview", "bound:" + bound);
 
                 if (bound) {
-                    if (gpsEnabledToggle.isChecked()) {
+                    if (!isRunning) {
                         Log.w("soverview", "checked");
                         Intent i = new Intent(getActivity(), GPSService.class);
                         i.putExtra("bicycle", (bicycleSwitch.isChecked() ? 1 : 0));
                         getActivity().startService(i);
                         gpsStatusTextView.setText("Aufnahme startet bald...");
+                        btnPauseSession.setVisibility(View.VISIBLE);
                     } else {
                         Log.w("sessionoverview", "stopping...");
                         //unbind from service to be able to stop it
@@ -136,7 +136,9 @@ public class SessionOverview extends Fragment {
 
                         //bind again
                         getActivity().bindService(new Intent(getActivity(), GPSService.class), mConnection, Context.BIND_AUTO_CREATE);
+                        btnPauseSession.setVisibility(View.GONE);
                     }
+                    isRunning = !isRunning;
                 } else Log.w("sessionoverview", "bind error");
             }
         });
@@ -189,7 +191,7 @@ public class SessionOverview extends Fragment {
             }
         });
 
-        pauseButton.setOnClickListener(new View.OnClickListener() {
+        btnPauseSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (bound) {
@@ -199,7 +201,7 @@ public class SessionOverview extends Fragment {
                     } else {
                         gps.pause();
                     }
-                    myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch, pauseButton);
+                    myGPSObject.updateTrackingUI(gps, btnStartSession, gpsStatusTextView, bicycleSwitch, btnPauseSession);
                 } else Log.w("sessionoverview", "bind error");
             }
         });
@@ -270,7 +272,7 @@ public class SessionOverview extends Fragment {
             updateList();
             //has to be called again. when opening map and returning to this fragment the service is already bound and
             //"updatTrackingUI" wont be called
-            myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch,pauseButton);
+            myGPSObject.updateTrackingUI(gps, btnStartSession, gpsStatusTextView, bicycleSwitch, btnPauseSession);
         }
 
         //for >android 6.0
@@ -352,9 +354,9 @@ public class SessionOverview extends Fragment {
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("GPSActivity", -1);
             Log.w("sessionoverview", "broadcast:" + message);
-            if (message == 1) myGPSObject.updateTrackingUI(gps, gpsEnabledToggle, gpsStatusTextView, bicycleSwitch,pauseButton);
+            if (message == 1) myGPSObject.updateTrackingUI(gps, btnStartSession, gpsStatusTextView, bicycleSwitch, btnPauseSession);
             if (message == 2) {
-                myGPSObject.updateTrackingUI(gps,gpsEnabledToggle,gpsStatusTextView, bicycleSwitch,pauseButton);
+                myGPSObject.updateTrackingUI(gps, btnStartSession,gpsStatusTextView, bicycleSwitch, btnPauseSession);
                 updateList(); //tracking started in service
             }
         }

@@ -6,68 +6,121 @@
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="6dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="12dp"
         >
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_column="0">
 
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="1302.2000 - 10:10 "
-                android:id="@+id/txtHeading"
-                android:textColor="#000000" />
+                android:id="@+id/imgType"
+                android:src="@drawable/ic_directions_run_white_24dp" />
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp"
+                    android:text="13.02.2000 - 10:10 "
+                    android:id="@+id/txtHeading"
+                    android:textColor="#000000"/>
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/imgType"
-                        android:src="@drawable/ic_directions_run_black_48dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
 
                     <LinearLayout
                         android:orientation="vertical"
+                        android:layout_weight="0.3"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:id="@+id/txtSessionHeader"
+                            android:fontFamily="sans-serif"
+                            android:textSize="14sp"
+                            android:text="Session" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:id="@+id/txtSessionNumber"
-                            android:text="Session 0" />
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="14sp"
+                            android:textColor="#000000"
+                            android:text="0"
+                            android:layout_marginTop="5dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="0.3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="0:00 minutes"
-                            android:id="@+id/txtDuration" />
+                            android:fontFamily="sans-serif"
+                            android:textSize="14sp"
+                            android:text="Dauer (h)"
+                            android:id="@+id/txtDurationHeader" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="123 Meter"
-                            android:id="@+id/txtDistance" />
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="14sp"
+                            android:textColor="#000000"
+                            android:text="0:00"
+                            android:id="@+id/txtDuration"
+                            android:layout_marginTop="5dp"/>
 
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="0.3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:textSize="14sp"
+                            android:text="Distanz (m)"
+                            android:id="@+id/txtDistanceHeater" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="14sp"
+                            android:textColor="#000000"
+                            android:text="123"
+                            android:id="@+id/txtDistance"
+                            android:layout_marginTop="5dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

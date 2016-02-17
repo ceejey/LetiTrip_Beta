@@ -1,14 +1,17 @@
 package de.ehealth.project.letitrip_beta.handler.gpshandler;
 
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Switch;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
+
 public class GPSHelper {
-    public void updateTrackingUI(GPSService gps, Button btnSession, Button btnPause, TextView txtStatus, Switch bicycleSwitch){
+    public void updateTrackingUI(GPSService gps, Button btnSession, Button btnPause, TextView txtStatus, ImageView imgRun, ImageView imgBike){
         if (gps.getStatus()== GPSService.Status.SEARCHINGGPS) {
             btnSession.setText("Session beenden");
             txtStatus.setText("Aufnahme startet bald...");
@@ -31,9 +34,12 @@ public class GPSHelper {
             btnPause.setVisibility(View.GONE);
         }
 
-        if (gps.getRecordingAsBicycle() == 1){
-            bicycleSwitch.setChecked(true);
-            bicycleSwitch.setText("Fahrrad");
+        if (SessionHandler.getRunType() == 1){
+            imgRun.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+            imgBike.setColorFilter(0xff5c6bc0, PorterDuff.Mode.MULTIPLY);
+        } else {
+            imgRun.setColorFilter(0xff5c6bc0, PorterDuff.Mode.MULTIPLY);
+            imgBike.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
         }
     }
 

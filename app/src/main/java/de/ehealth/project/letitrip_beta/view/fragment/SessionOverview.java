@@ -25,10 +25,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,38 +61,16 @@ public class SessionOverview extends Fragment {
 
     private Button btnStartSession;
     private ListView sessionOverviewListView;
-    private Switch bicycleSwitch;
+    private ImageView imgRun, imgBike;
     private Button btnPauseSession;
 
     private NotificationManager myNotificationManager;
     private DialogInterface.OnClickListener dialogListener;
-    //private GPSService gps;
-   //boolean bound = false;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSHelper myGPSObject;
 
     private boolean isRunning = false;
-/*
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
-            gps = binder.getService();
-            bound = true;
-            Log.w("sessionoverview", "bound - status:" + gps.getStatus());
 
-            myGPSObject.updateTrackingUI(gps, btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
-            updateList();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w("sessionoverview", "unbound");
-            bound = false;
-        }
-    };
-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,7 +82,8 @@ public class SessionOverview extends Fragment {
         gpsStatusTextView = (TextView) view.findViewById(R.id.gpsStatusTextView);
         btnStartSession = (Button) view.findViewById(R.id.gpsEnabledToggle);
         sessionOverviewListView = (ListView) view.findViewById(R.id.sessionOverviewListView);
-        bicycleSwitch = (Switch) view.findViewById(R.id.bycicleSwitch);
+        imgRun = (ImageView) view.findViewById(R.id.imgRun);
+        imgBike = (ImageView) view.findViewById(R.id.imgBike);
         btnPauseSession = (Button) view.findViewById(R.id.pauseButton);
         btnPauseSession.setVisibility(View.GONE);
 
@@ -119,25 +97,21 @@ public class SessionOverview extends Fragment {
                 if (!isRunning) {
                     Log.w("soverview", "checked");
                     Intent i = new Intent(getActivity(), GPSService.class);
-                    i.putExtra("bicycle", (bicycleSwitch.isChecked() ? 1 : 0));
                     getActivity().startService(i);
                     gpsStatusTextView.setText("Aufnahme startet bald...");
                     btnStartSession.setText("Session beenden");
                 } else {
                     Log.w("sessionoverview", "stopping...");
                     //unbindFromService from service to be able to stop it
-                    //getActivity().unbindService(mConnection);
                     ((MainActivity)getActivity()).unbindFromService();
                     ((MainActivity)getActivity()).stopService();
 
                     //bind again
                     ((MainActivity)getActivity()).bindToService();
-                    //getActivity().bindService(new Intent(getActivity(), GPSService.class), mConnection, Context.BIND_AUTO_CREATE);
                     gpsStatusTextView.setText("Aufnahme deaktiviert.");
                     btnStartSession.setText("Session starten");
                     btnPauseSession.setText("Pause");
                     btnPauseSession.setVisibility(View.GONE);
-                    //updateList();
                 }
                 isRunning = !isRunning;
             } else Log.w("sessionoverview", "bind error");
@@ -184,10 +158,19 @@ public class SessionOverview extends Fragment {
             }
         };
 
-        bicycleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        imgRun.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                bicycleSwitch.setText(isChecked ? "Fahrrad" : "Lauf");
+            public void onClick(View v) {
+                SessionHandler.setRunType(0);
+                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+            }
+        });
+
+        imgBike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SessionHandler.setRunType(1);
+                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
             }
         });
 
@@ -201,7 +184,7 @@ public class SessionOverview extends Fragment {
                     } else {
                         ((MainActivity)getActivity()).getGps().pause();
                     }
-                    myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
+                    myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
                 } else Log.w("sessionoverview", "bind error");
             }
         });
@@ -229,7 +212,6 @@ public class SessionOverview extends Fragment {
 
     @Override
     public void onDestroy() {
-        //getActivity().unbindService(mConnection);
         super.onDestroy();
         //Log.w("sessionoverview","ondestroy");
     }
@@ -271,7 +253,7 @@ public class SessionOverview extends Fragment {
             updateList();
             //has to be called again. when opening map and returning to this fragment the service is already bound and
             //"updatTrackingUI" wont be called
-            myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
+            myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
         }
 
         //for >= android 6.0
@@ -281,7 +263,7 @@ public class SessionOverview extends Fragment {
             SessionHandler.setSelectedRunId(-1);
         }
 
-        myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
+        myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
         updateList();
     }
 
@@ -297,8 +279,8 @@ public class SessionOverview extends Fragment {
         List valueList = new ArrayList<GPSCustomListItem>();
         int lastRun = GPSDatabaseHandler.getInstance().getData().getLastSessionID();
 
-        for (int i = 1; i <= lastRun; i++) {
-           GPSCustomListItem ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfSession(i);
+        for (int i = lastRun; i > 0; i--) {
+            GPSCustomListItem ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfSession(i);
             if (ins != null) {
                 if (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED){
                     if (i == lastRun) {
@@ -311,8 +293,8 @@ public class SessionOverview extends Fragment {
                 valueList.add(ins);
             }
         }
-        ListAdapter customAdapter = new GPSListAdapter(getActivity(),valueList);
 
+        ListAdapter customAdapter = new GPSListAdapter(getActivity(),valueList);
         sessionOverviewListView.setAdapter(customAdapter);
     }
 
@@ -340,9 +322,9 @@ public class SessionOverview extends Fragment {
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("GPSActivity", -1);
             //Log.w("sessionoverview", "broadcast:" + message);
-            if (message == 1) myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
+            if (message == 1)  myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
             if (message == 2) {
-                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
+                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
                 updateList(); //tracking started/stopped in service
             } else if (message == 3) {
                 gpsStatusTextView.setText("GPS zu ungenau...");
@@ -380,16 +362,6 @@ public class SessionOverview extends Fragment {
                     case 0:
                         SessionHandler.setSelectedRunId(SessionHandler.getSelectedRunId());
                         mListener.changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
-                        /*
-                        //only put the runID to the intent if map shall not show the current live session
-                        if (!((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED) && (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()))) {
-                            Log.w("sessionoverview","case0-1");
-                            SessionHandler.setSelectedRunId(SessionHandler.getSelectedRunId());
-                            mListener.changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
-                        } else {
-                            updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
-                            Log.w("sessionoverview", "case0-2");
-                        }*/
                         break;
                     case 1:
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

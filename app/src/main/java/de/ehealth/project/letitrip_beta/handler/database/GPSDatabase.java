@@ -162,7 +162,8 @@ public class GPSDatabase extends SQLiteOpenHelper {
             double meters = getWalkDistance(id);
             result.setDistanceMeter((int)getWalkDistance(id));
             result.setAverageSpeed(3.6 * (meters / (seconds + (minutes * 60))));
-            result.setType(bicycle==0);
+            Log.w("gpsDB",bicycle+"");
+            result.setType(bicycle);
             result.setPositions(res.getCount());
 
             res.close();

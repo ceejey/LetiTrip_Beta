@@ -45,7 +45,6 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
             txtSessionNumber.setText(gpsCustomListItem.getVisibleID()+" (#pos:"+gpsCustomListItem.getPositions()+")");
 
             if (gpsCustomListItem.isLive()){
-                //txtHeading.setText("(Live) "+gpsCustomListItem.getVisibleID());
                 txtHeading.setText("(Läuft) Klicke hier für Details!");
                 txtDuration.setText("");
                 txtDistance.setText("");
@@ -56,7 +55,7 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
             }
 
             if (imgType != null) {
-                if (!gpsCustomListItem.isType()){
+                if (gpsCustomListItem.getType() == 1){
                     imgType.setImageResource(R.drawable.ic_directions_bike_white_24dp);
                 } else {
                     imgType.setImageResource(R.drawable.ic_directions_run_white_24dp);

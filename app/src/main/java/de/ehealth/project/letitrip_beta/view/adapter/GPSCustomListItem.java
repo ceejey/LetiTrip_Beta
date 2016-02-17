@@ -9,7 +9,7 @@ public class GPSCustomListItem {
     private int positions;
     private int distanceMeter;
     private double averageSpeed;
-    private boolean type;
+    private int type;
 
     public boolean isLive() {
         return live;
@@ -21,7 +21,7 @@ public class GPSCustomListItem {
 
     private boolean live;
 
-    public GPSCustomListItem(int ID, int visibleID, String started, String duration, int distanceMeter, double averageSpeed, boolean type, int positions) {
+    public GPSCustomListItem(int ID, int visibleID, String started, String duration, int distanceMeter, double averageSpeed, int type, int positions) {
         this.ID = ID;
         this.visibleID = visibleID;
         this.started = started;
@@ -92,11 +92,11 @@ public class GPSCustomListItem {
         this.averageSpeed = averageSpeed;
     }
 
-    public boolean isType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(boolean type) {
+    public void setType(int type) {
         this.type = type;
     }
 }

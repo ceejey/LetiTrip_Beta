@@ -31,37 +31,9 @@ public class Session extends Fragment {
 
     private FragmentChanger mListener;
     private TextView puls, watt, geschw, laufRichtung, temp, wind, distanz, geschwSession, zeit, laufFahrrad;
-    //private GPSService gps;
-    //private boolean bound = false;
-    //private int showThisRun;
     private int lastID;
     private Button showOnMap;
     private DecimalFormat df;
-
-    /*
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
-            gps = binder.getService();
-            GPSServiceHandler.getInstance().setBound(true);//
-            // bound = true;
-
-            showThisRun = gps.getActiveRecordingID();
-            Log.w("showthisrunset",showThisRun+"");
-
-            updateUI();
-            updateStaticUI();
-            Log.w("session", "GEBUNDEN");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w("session","ungebunden");
-            //bound = false;
-            GPSServiceHandler.getInstance().setBound(false);
-        }
-    };*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,12 +58,11 @@ public class Session extends Fragment {
         zeit = (TextView) view.findViewById(R.id.textView16);
         laufFahrrad = (TextView) view.findViewById(R.id.textView17);
         showOnMap = (Button) view.findViewById(R.id.button2);
+
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO falsch?
-                ((MainActivity)getActivity()).changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
-                //updateActivity();
+            updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
             }
         });
         return view;
@@ -122,8 +93,8 @@ public class Session extends Fragment {
         Log.w("session", "onStart");
         //bindToService();
         lastID = GPSDatabaseHandler.getInstance().getData().getLastID();
-        updateUI();
         updateStaticUI();
+        updateUI();
         super.onStart();
     }
 
@@ -185,12 +156,6 @@ public class Session extends Fragment {
     public void onPause() {
         Log.w("session", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-        /*
-        if (bound) {
-            Log.w("session","UNBINDING");
-            getActivity().unbindService(mConnection);
-            bound = false;
-        }*/
         super.onPause();
     }
 
@@ -207,9 +172,4 @@ public class Session extends Fragment {
             }
         }
     };
-/*
-    public void bindToService() {
-        Intent i = new Intent(getActivity(), de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.class);
-        getActivity().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
-    }*/
 }

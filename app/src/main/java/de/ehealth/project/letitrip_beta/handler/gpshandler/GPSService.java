@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
+import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class GPSService extends Service {
@@ -85,10 +86,8 @@ public class GPSService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w("service", "started");
         activeRecordingID = (GPSDatabaseHandler.getInstance().getData().getLastSessionID()) + 1;
-        if (intent.hasExtra("bicycle")) {
-            recordingAsBicycle = (intent.getIntExtra("bicycle", 0) == 0 ? 0 : 1);
-            Log.w("gpsservice", "recordingAsBicycle=" + recordingAsBicycle);
-        }
+        recordingAsBicycle = SessionHandler.getRunType();
+
         polar.searchPolarDevice();
 
         //gps enabled?
@@ -134,7 +133,6 @@ public class GPSService extends Service {
                         Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
                         sendBroadcast("GPSActivity",3);
                     }
-
                 } else Log.w("gpsservice","paused or no location");
             }
 

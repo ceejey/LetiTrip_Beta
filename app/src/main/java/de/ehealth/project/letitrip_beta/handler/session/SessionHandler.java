@@ -9,6 +9,18 @@ public class SessionHandler {
     //Views die gleichen Daten teilen können. Hab bei change fragment erstmal deine putint methode und so drin gelassen
     private static int mSelectedRunId = -1;
 
+    private static int mRunType = 0; //1=bike; 0=walking
+
+    public static int getRunType() {
+        return mRunType;
+    }
+
+    public static void setRunType(int mRunType) {
+        SessionHandler.mRunType = mRunType;
+    }
+
+
+
     public static int getSelectedRunId(){
         return mSelectedRunId;
     }

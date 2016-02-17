@@ -194,9 +194,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 txtHeader.setText("Session Details");
                 newTag = "session_details";
 
-                expectedEntryCount = 1;
-                expectedEntry = "dashboard";
+                expectedEntryCount = 2;
+                expectedEntry = "session_overview";
                 refillEntrys.add("dashboard");
+                refillEntrys.add("session_overview");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
@@ -209,9 +210,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 txtHeader.setText("Session");
                 newTag = "session";
 
-                expectedEntryCount = 1;
-                expectedEntry = "dashboard";
+                expectedEntryCount = 2;
+                expectedEntry = "session_overview";
                 refillEntrys.add("dashboard");
+                refillEntrys.add("session_overview");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
@@ -392,6 +394,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             if(fragmentManager.findFragmentByTag(mOldTag) != null) {
                 Log.d("TEST", "HIDE FRAGMENT: " + mOldTag);
                 transaction.hide(fragmentManager.findFragmentByTag(mOldTag));
+                //transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
             }
             Log.d("TEST", "SHOW FRAGMENT: " + newTag);
             transaction.show(fragmentManager.findFragmentByTag(newTag)).commit();
@@ -400,6 +403,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             if(fragmentManager.findFragmentByTag(mOldTag) != null) {
                 Log.d("TEST", "HIDE FRAGMENT: " + mOldTag);
                 transaction.hide(fragmentManager.findFragmentByTag(mOldTag));
+                //transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
+
             }
             Log.d("TEST", "INIT FRAGMENT: " + newTag);
             transaction.add(R.id.contentContainer, fragmentContent, newTag).commit();

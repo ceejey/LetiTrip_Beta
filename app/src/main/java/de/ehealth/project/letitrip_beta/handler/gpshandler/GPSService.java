@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class GPSService extends Service {
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
     private PolarHandler polar;
+
+    private boolean standing = false;
+    private boolean firstPoint = true;
+    private List<Float> bearingList = new ArrayList<>();
 
     private Status status;
     private NotificationManager notificationManager;
@@ -116,18 +121,26 @@ public class GPSService extends Service {
             public void onLocationChanged(Location l) {
                 if ((l != null) && (status != Status.PAUSED)) {
                     //only insert data when accuaracy is good enough
-                    if (l.getAccuracy() < 50){
-                        boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle,PolarHandler.mHeartRate);
-                        if (ins) {
-                            sendBroadcast("MapsActivity", 1);
-                        } else Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
+                    if (l.getAccuracy() < 25){
 
-                        //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
-                        if (status != Status.TRACKINGSTARTED) {
-                            createNotification();
-                            Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
-                            status = Status.TRACKINGSTARTED;
-                            sendBroadcast("GPSActivity", 2);
+                        Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
+                        if(!standing || l.getSpeed() >= 2.5f) { //Also take the first standing point
+                            standing = false;
+                            boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate);
+                            if (ins) {
+                                sendBroadcast("MapsActivity", 1);
+                            } else
+                                Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
+
+                            //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
+                            if (status != Status.TRACKINGSTARTED) {
+                                createNotification();
+                                Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
+                                status = Status.TRACKINGSTARTED;
+                                sendBroadcast("GPSActivity", 2);
+                            }
+                        } else if(l.getSpeed() <= 2.5F && standing == false){
+                            standing = true;
                         }
                     } else {
                         Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
@@ -142,7 +155,7 @@ public class GPSService extends Service {
         };
         try {
                                                    //TODO set time to 2000
-            locationManager.requestLocationUpdates("gps", 1000, 2, locationListener);
+            locationManager.requestLocationUpdates("gps", 1000, 0, locationListener);
             status = Status.SEARCHINGGPS;
         } catch (SecurityException e) {
             e.printStackTrace();

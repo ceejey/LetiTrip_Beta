@@ -209,15 +209,15 @@ public class Dashboard extends Fragment implements WeatherCallback {
     }
 
     public void setSessionOnDashBoard(){
-        if ((((MainActivity)getActivity()).getGps()) != null){
+        /*if ((((MainActivity)getActivity()).getGps()) != null){
             if ((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED) || (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.PAUSED)){
-            /*
+
             if (gpsPlaceHolder != null) {
                 if (gpsPlaceHolder.getVisibility() == View.VISIBLE) {
                     ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
                     gpsPlaceHolder = null;
                 }
-            }*/
+            }
                 if (gpsPlaceHolder != null){
                     ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
                 }
@@ -240,7 +240,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
                 gpsPlaceHolder = null;
             }
-        }
+        }*/
     }
 
     public void failure(Exception exc) {

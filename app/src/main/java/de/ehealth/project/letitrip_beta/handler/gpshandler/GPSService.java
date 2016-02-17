@@ -117,7 +117,7 @@ public class GPSService extends Service {
             public void onLocationChanged(Location l) {
                 if ((l != null) && (status != Status.PAUSED)) {
                     //only insert data when accuaracy is good enough
-                    if (l.getAccuracy()<50){//todo add pulse
+                    if (l.getAccuracy() < 50){
                         boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle,PolarHandler.mHeartRate);
                         if (ins) {
                             sendBroadcast("MapsActivity", 1);
@@ -143,7 +143,7 @@ public class GPSService extends Service {
             public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
         try {
-                                                   //TODO set time to 3000
+                                                   //TODO set time to 2000
             locationManager.requestLocationUpdates("gps", 1000, 2, locationListener);
             status = Status.SEARCHINGGPS;
         } catch (SecurityException e) {

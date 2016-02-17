@@ -136,34 +136,34 @@ public class SessionDetail extends Fragment {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int message = intent.getIntExtra("MapsActivity",-1);
-            //Log.w("sessionDetail","broadcast:"+message);
+        int message = intent.getIntExtra("MapsActivity",-1);
+        //Log.w("sessionDetail","broadcast:"+message);
 
-            //new position received, add it to the route+update liveMarker if the active track is displayed
-            if ((message == 1) && (SessionHandler.getSelectedRunId() == ((MainActivity)getActivity()).getGps().getActiveRecordingID())) {
-                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(((MainActivity)getActivity()).getGps().getActiveRecordingID());
-                res.moveToFirst();
+        //new position received, add it to the route+update liveMarker if the active track is displayed
+        if ((message == 1) && (SessionHandler.getSelectedRunId() == ((MainActivity)getActivity()).getGps().getActiveRecordingID())) {
+            Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(((MainActivity)getActivity()).getGps().getActiveRecordingID());
+            res.moveToFirst();
 
-                //todo vielleicht falsche werte
-                int tempLastID = GPSDatabaseHandler.getInstance().getData().getLastID();
-                if (lastSpeedID == -1) {
-                    lastSpeedID = tempLastID;
-                } else {
-                    //Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+SessionHandler.getSelectedRunId());
-                    lastSpeedID = tempLastID;
-                }
-                LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
-
-                res.close();
-
-                route.add(temp);
-                mMap.addPolyline(route);
-                liveMarker.remove();
-                liveMarker = mMap.addMarker(new MarkerOptions()
-                        .position(temp)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                updateInfoBox();
+            //todo vielleicht falsche werte
+            int tempLastID = GPSDatabaseHandler.getInstance().getData().getLastID();
+            if (lastSpeedID == -1) {
+                lastSpeedID = tempLastID;
+            } else {
+                //Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+SessionHandler.getSelectedRunId());
+                lastSpeedID = tempLastID;
             }
+            LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
+
+            res.close();
+
+            route.add(temp);
+            mMap.addPolyline(route);
+            liveMarker.remove();
+            liveMarker = mMap.addMarker(new MarkerOptions()
+                    .position(temp)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+            updateInfoBox();
+        }
         }
     };
 

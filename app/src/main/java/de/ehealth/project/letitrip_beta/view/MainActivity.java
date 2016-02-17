@@ -54,15 +54,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         return gps;
     }
 
-    private GPSService gps;
-
     public boolean isBound() {
         return bound;
     }
-
-    public interface TestInter{
-        void doSth();
-    }
+    private GPSService gps;
 
     boolean bound = false;
 
@@ -81,7 +76,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             bound = true;
             //GPSServiceHandler.getInstance().setData(binder.getService());
             //GPSServiceHandler.getInstance().setBound(true);
-
+            sendBroadcast("GPSActivity", 2);
             Log.w("mainactivity", "bound - status:" + gps.getStatus());
         }
 
@@ -138,6 +133,12 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
         GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
         WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
+    }
+
+    @Override
+    protected void onStop() {
+        unbindFromService();
+        super.onStop();
     }
 
     @Override

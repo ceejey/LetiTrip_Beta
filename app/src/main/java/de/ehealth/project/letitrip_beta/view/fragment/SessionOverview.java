@@ -155,9 +155,8 @@ public class SessionOverview extends Fragment {
                     if (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()) {
                         updateActivity(MainActivity.FragmentName.SESSION);
                         return;
-                    }
+                    } else showRunDialog(SessionHandler.getSelectedRunId());
                 }
-                showRunDialog(SessionHandler.getSelectedRunId());
             }
         });
 
@@ -344,7 +343,7 @@ public class SessionOverview extends Fragment {
             if (message == 1) myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
             if (message == 2) {
                 myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
-                updateList(); //tracking started in service
+                updateList(); //tracking started/stopped in service
             } else if (message == 3) {
                 gpsStatusTextView.setText("GPS zu ungenau...");
             }

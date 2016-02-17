@@ -49,7 +49,7 @@ import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
  * Broadcastlist:
  * message      value   meaning
  * GPSActivity  1       GPS not enabled/refresh UI
- * GPSActivity  2       Tracking initially started / stopped
+ * GPSActivity  2       Tracking initially started / stopped; Main connected to gps
  * GPSActivity  3       GPS accuracy too low
  * MapsActivity 1       new position inserted
  */
@@ -323,7 +323,7 @@ public class SessionOverview extends Fragment {
             int message = intent.getIntExtra("GPSActivity", -1);
             //Log.w("sessionoverview", "broadcast:" + message);
             if (message == 1)  myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
-            if (message == 2) {
+            if (message == 2){
                 myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
                 updateList(); //tracking started/stopped in service
             } else if (message == 3) {

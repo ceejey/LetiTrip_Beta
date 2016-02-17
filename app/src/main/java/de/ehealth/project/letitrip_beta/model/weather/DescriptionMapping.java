@@ -58,6 +58,7 @@ public class DescriptionMapping {
             descriptionMap.put("isolated thundershowers", "Isoliert Gewitter");
             //added manually
             descriptionMap.put("clear", "Klar");
+            descriptionMap.put("mostly cloudy", "Größtenteils bewölkt");
         }
         return descriptionMap;
     }

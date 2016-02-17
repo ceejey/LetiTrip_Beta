@@ -320,7 +320,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
         }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-
         //get start and end time
         Date time1 = null;
         Date time2 = null;
@@ -336,6 +335,8 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
         long totalSeconds = TimeUnit.MILLISECONDS.toSeconds(time2.getTime() - time1.getTime());
         double totalDistance = 0;
+
+        res.moveToFirst();
         double lat1 = res.getDouble(1);
         double lon1 = res.getDouble(2);
         double alt1 = res.getDouble(3);
@@ -344,11 +345,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         double lon2;
         double alt2;
 
-        res.moveToFirst();
-        int count = 1;
-
-        while (count < res.getCount()){
-
+        while(res.moveToNext()){
             lat2 = res.getDouble(1);
             lon2 = res.getDouble(2);
             alt2 = res.getDouble(3);
@@ -358,11 +355,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             lat1 = res.getDouble(1);
             lon1 = res.getDouble(2);
             alt1 = res.getDouble(3);
-
-            count++;
-            res.moveToNext();
         }
-
         return totalDistance/totalSeconds;
     }
 

@@ -76,7 +76,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             bound = true;
             //GPSServiceHandler.getInstance().setData(binder.getService());
             //GPSServiceHandler.getInstance().setBound(true);
-            sendBroadcast("GPSActivity", 2);
+            sendBroadcast("GPSActivity", 4);
             Log.w("mainactivity", "bound - status:" + gps.getStatus());
         }
 

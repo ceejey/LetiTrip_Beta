@@ -1,14 +1,21 @@
 package de.ehealth.project.letitrip_beta.view.fragment;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +25,7 @@ import java.util.Date;
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
@@ -34,6 +42,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
     private LayoutInflater mInflater;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mTaskComplete = false;
+    private LinearLayout gpsPlaceHolder = null;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -75,6 +84,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 };
                 thread.start();
 
+                setSessionOnDashBoard();
                 refreshWeather();
             }
         });
@@ -91,6 +101,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setSessionOnDashBoard();
         refreshWeather();
         Thread thread = new Thread(new Runnable(){
             @Override
@@ -164,6 +175,72 @@ public class Dashboard extends Fragment implements WeatherCallback {
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         showWeather(res);
         res.close();
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+        super.onPause();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden){
+            setSessionOnDashBoard();
+        }
+        super.onHiddenChanged(hidden);
+    }
+
+    //Receiver to add gps status when service located the position
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int message = intent.getIntExtra("GPSActivity", -1);
+            if (message == 2){ //MainActivity connected to gps;tacking started/stopped
+                setSessionOnDashBoard();
+            }
+        }
+    };
+
+    @Override
+    public void onResume() {
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
+        super.onResume();
+    }
+
+    public void setSessionOnDashBoard(){
+        if ((((MainActivity)getActivity()).getGps()) != null){
+            if ((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED) || (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.PAUSED)){
+            /*
+            if (gpsPlaceHolder != null) {
+                if (gpsPlaceHolder.getVisibility() == View.VISIBLE) {
+                    ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
+                    gpsPlaceHolder = null;
+                }
+            }*/
+                if (gpsPlaceHolder != null){
+                    ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
+                }
+                gpsPlaceHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+                mInflater.inflate(R.layout.gps_view, gpsPlaceHolder);
+                ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(gpsPlaceHolder,0);
+                TextView txtHeading = (TextView) gpsPlaceHolder.findViewById(R.id.txtHeading);
+                ImageView imgType = (ImageView) gpsPlaceHolder.findViewById(R.id.imgType);
+                imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+
+                if (((MainActivity)getActivity()).getGps().getRecordingAsBicycle()==1){
+                    imgType.setImageResource(R.drawable.ic_directions_bike_white_48dp);
+                } else {
+                    imgType.setImageResource(R.drawable.ic_directions_run_white_48dp);
+                }
+
+                txtHeading.setText("Session "+((MainActivity)getActivity()).getGps().getActiveRecordingID()+" aktiv.");
+
+            } else {
+                ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
+                gpsPlaceHolder = null;
+            }
+        }
     }
 
     public void failure(Exception exc) {

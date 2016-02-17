@@ -109,17 +109,17 @@ public class Session extends Fragment {
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
         if (currentID != lastID){
-            geschw.setText("Geschwindigkeit: "+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastID,currentID))+" km/h");
+            geschw.setText("Geschwindigkeit: "+df.format(3.6*GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastID,currentID))+" km/h");
             double degrees = GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
             laufRichtung.setText("Laufrichtung: "+ GPSDatabaseHandler.getInstance().getData().getDirectionLetter(degrees)+" ("+df.format(degrees)+")");
         } else {
             geschw.setText("Geschwindigkeit: Warte...");
             laufRichtung.setText("Laufrichtung: Warte...");
-
         }
+
         lastID = currentID;
 
-        geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(SessionHandler.getSelectedRunId(),0))+" km/h");
+        geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(3.6*GPSDatabaseHandler.getInstance().getData().getAverageSpeed((((MainActivity)(getActivity())).getGps().getActiveRecordingID()),0))+" km/h");
 
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();

@@ -53,6 +53,7 @@ public class GPSService extends Service {
             e.printStackTrace();
         }
         Log.w("service", "DESTROYED");
+        activeRecordingID = -1;
         sendBroadcast("GPSActivity",2); //let the UI refresh
         if (notificationManager != null) notificationManager.cancel(0);
         polar.disconnectFromPolarDevice();

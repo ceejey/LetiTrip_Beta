@@ -39,7 +39,6 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSHelper;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSServiceHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -114,9 +113,9 @@ public class SessionOverview extends Fragment {
         btnStartSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Log.d("sessionoverview", "bound:" + GPSServiceHandler.getInstance().isBound());
+            Log.d("sessionoverview", "bound:" + ((MainActivity) getActivity()).isBound());
 
-            if (GPSServiceHandler.getInstance().isBound()) {
+            if (((MainActivity)getActivity()).isBound()) {
                 if (!isRunning) {
                     Log.w("soverview", "checked");
                     Intent i = new Intent(getActivity(), GPSService.class);
@@ -138,7 +137,7 @@ public class SessionOverview extends Fragment {
                     btnStartSession.setText("Session starten");
                     btnPauseSession.setText("Pause");
                     btnPauseSession.setVisibility(View.GONE);
-                    updateList();
+                    //updateList();
                 }
                 isRunning = !isRunning;
             } else Log.w("sessionoverview", "bind error");
@@ -152,8 +151,8 @@ public class SessionOverview extends Fragment {
                 SessionHandler.setSelectedRunId(row.getID());
 
                 //the dialog menu is only available for finished sessions, live sessions will be shown in the "session" fragment
-                if (GPSServiceHandler.getInstance().getData() != null) {
-                    if (GPSServiceHandler.getInstance().getData().getActiveRecordingID() == SessionHandler.getSelectedRunId()) {
+                if (((MainActivity)getActivity()).getGps() != null) {
+                    if (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()) {
                         updateActivity(MainActivity.FragmentName.SESSION);
                         return;
                     }
@@ -196,14 +195,14 @@ public class SessionOverview extends Fragment {
         btnPauseSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (GPSServiceHandler.getInstance().isBound()) {
-                    if (GPSServiceHandler.getInstance().getData().isPaused()) {
+                if (((MainActivity)getActivity()).isBound()) {
+                    if (((MainActivity)getActivity()).getGps().isPaused()) {
                         Log.w("soverview","isPaused");
-                        GPSServiceHandler.getInstance().getData().resume();
+                        ((MainActivity)getActivity()).getGps().resume();
                     } else {
-                        GPSServiceHandler.getInstance().getData().pause();
+                        ((MainActivity)getActivity()).getGps().pause();
                     }
-                    myGPSObject.updateTrackingUI(GPSServiceHandler.getInstance().getData(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
+                    myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
                 } else Log.w("sessionoverview", "bind error");
             }
         });
@@ -269,11 +268,11 @@ public class SessionOverview extends Fragment {
         testMethod();
 
         //only gets called when user returns to this fragment via back button
-        if ((GPSServiceHandler.getInstance().getData() != null) && (sessionOverviewListView.getAdapter() == null)){
+        if ((((MainActivity)getActivity()).getGps() != null) && (sessionOverviewListView.getAdapter() == null)){
             updateList();
             //has to be called again. when opening map and returning to this fragment the service is already bound and
             //"updatTrackingUI" wont be called
-            myGPSObject.updateTrackingUI(GPSServiceHandler.getInstance().getData(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
+            myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
         }
 
         //for >= android 6.0
@@ -283,7 +282,7 @@ public class SessionOverview extends Fragment {
             SessionHandler.setSelectedRunId(-1);
         }
 
-        myGPSObject.updateTrackingUI(GPSServiceHandler.getInstance().getData(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
+        myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, bicycleSwitch);
         updateList();
     }
 
@@ -294,7 +293,7 @@ public class SessionOverview extends Fragment {
     }
 
     public void updateList() {
-        Log.w("sessionoverview","update list - status: "+GPSServiceHandler.getInstance().getData().getStatus().toString());
+        Log.w("sessionoverview","update list - status: "+((MainActivity)getActivity()).getGps().getStatus().toString());
 
         List valueList = new ArrayList<GPSCustomListItem>();
         int lastRun = GPSDatabaseHandler.getInstance().getData().getLastSessionID();
@@ -302,7 +301,7 @@ public class SessionOverview extends Fragment {
         for (int i = 1; i <= lastRun; i++) {
            GPSCustomListItem ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfSession(i);
             if (ins != null) {
-                if (GPSServiceHandler.getInstance().getData().getStatus() == GPSService.Status.TRACKINGSTARTED){
+                if (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED){
                     if (i == lastRun) {
                         ins.setLive(true);
                     }
@@ -342,9 +341,9 @@ public class SessionOverview extends Fragment {
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("GPSActivity", -1);
             //Log.w("sessionoverview", "broadcast:" + message);
-            if (message == 1) myGPSObject.updateTrackingUI(GPSServiceHandler.getInstance().getData(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
+            if (message == 1) myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
             if (message == 2) {
-                myGPSObject.updateTrackingUI(GPSServiceHandler.getInstance().getData(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
+                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession,gpsStatusTextView, bicycleSwitch);
                 updateList(); //tracking started in service
             } else if (message == 3) {
                 gpsStatusTextView.setText("GPS zu ungenau...");
@@ -380,11 +379,18 @@ public class SessionOverview extends Fragment {
             case 1:
                 switch (resultCode){
                     case 0:
-                        //only put the runID to the intent if map shouldnt show the current live session
-                        if (!((GPSServiceHandler.getInstance().getData().getStatus() == GPSService.Status.TRACKINGSTARTED) && (GPSServiceHandler.getInstance().getData().getActiveRecordingID() == SessionHandler.getSelectedRunId()))) {
+                        SessionHandler.setSelectedRunId(SessionHandler.getSelectedRunId());
+                        mListener.changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
+                        /*
+                        //only put the runID to the intent if map shall not show the current live session
+                        if (!((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED) && (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()))) {
+                            Log.w("sessionoverview","case0-1");
                             SessionHandler.setSelectedRunId(SessionHandler.getSelectedRunId());
                             mListener.changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
-                        } else updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
+                        } else {
+                            updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
+                            Log.w("sessionoverview", "case0-2");
+                        }*/
                         break;
                     case 1:
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -395,8 +401,8 @@ public class SessionOverview extends Fragment {
                         myGPSObject.getRunOutput(SessionHandler.getSelectedRunId());
                         Log.w("sessionoverview", "weatheravailable?" + WeatherDatabaseHandler.getInstance().getData().getLatestWeather());
                         WeatherDatabaseHandler.getInstance().getData().outPutAll();
-                        Log.w("sessionoverview", "bound:" + GPSServiceHandler.getInstance().isBound());
-                        Log.w("sessionoverview", "status:" + GPSServiceHandler.getInstance().getData().getStatus());
+                        Log.w("sessionoverview", "bound:" + ((MainActivity)getActivity()).isBound());
+                        Log.w("sessionoverview", "status:" + ((MainActivity)getActivity()).getGps().getStatus());
 
                         break;
                     default:

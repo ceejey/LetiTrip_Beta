@@ -37,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSServiceHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -56,7 +55,7 @@ public class SessionDetail extends Fragment {
     private Button btnSwitchMapType;
     private TextView infoBox;
 
-    private boolean bound = false;
+    //private boolean bound = false;
     private int lastSpeedID = -1;
 
     /*
@@ -141,8 +140,8 @@ public class SessionDetail extends Fragment {
             //Log.w("sessionDetail","broadcast:"+message);
 
             //new position received, add it to the route+update liveMarker if the active track is displayed
-            if ((message == 1) && (SessionHandler.getSelectedRunId() == GPSServiceHandler.getInstance().getData().getActiveRecordingID())) {
-                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(GPSServiceHandler.getInstance().getData().getActiveRecordingID());
+            if ((message == 1) && (SessionHandler.getSelectedRunId() == ((MainActivity)getActivity()).getGps().getActiveRecordingID())) {
+                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(((MainActivity)getActivity()).getGps().getActiveRecordingID());
                 res.moveToFirst();
 
                 //todo vielleicht falsche werte
@@ -260,7 +259,7 @@ public class SessionDetail extends Fragment {
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap(boolean)} once when {@link #mMap} is not null.
+     * call {@link #setUpMap()} once when {@link #mMap} is not null.
      * <p/>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
@@ -283,21 +282,20 @@ public class SessionDetail extends Fragment {
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 //live
-                if ((GPSServiceHandler.getInstance().getData().getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (SessionHandler.getSelectedRunId() == -1)) {
-                    SessionHandler.setSelectedRunId(GPSServiceHandler.getInstance().getData().getActiveRecordingID());
+                /*if ((((MainActivity)getActivity()).getGps().getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (SessionHandler.getSelectedRunId() == -1)) {
+                    //SessionHandler.setSelectedRunId(((MainActivity)getActivity()).getGps().getActiveRecordingID());
                     endMarker = false;
-                }
+                }*/
 
-                setUpMap(endMarker);
+                setUpMap();
             }
         }
     }
 
     /**
      * This should only be called once and when we are sure that {@link #mMap} is not null.
-     * @param endMarker
      */
-    private void setUpMap(boolean endMarker) {
+    private void setUpMap() {
         //add the live liveMarker initially
         liveMarker = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(0, 0))
@@ -307,15 +305,14 @@ public class SessionDetail extends Fragment {
         Log.w("sessiondetail","showthisrun:"+SessionHandler.getSelectedRunId());
 
         if (SessionHandler.getSelectedRunId() != -1) {
-            showRunOnMap(endMarker);
+            showRunOnMap();
         }
     }
 
     /**
      * shows the selected run on the map
-     * @param endMarker specifies if there shall be an endmarker (live tracks dont have an endmarker)
      */
-    public void showRunOnMap(boolean endMarker){
+    public void showRunOnMap(){
         //save run data to an array
         Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(SessionHandler.getSelectedRunId());
 
@@ -335,7 +332,10 @@ public class SessionDetail extends Fragment {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(res.getDouble(3), res.getDouble(4)), 15));
 
         //only set end liveMarker for non-live track
-        if (endMarker) {
+        if (!(
+                (((MainActivity)getActivity()).getGps().getActiveRecordingID() == GPSDatabaseHandler.getInstance().getData().getLastSessionID()) &&
+                (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId())
+            )) {
             res.moveToLast();
             mMap.addMarker(new MarkerOptions()
                     .title("End")

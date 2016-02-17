@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -21,7 +22,6 @@ import de.ehealth.project.letitrip_beta.handler.database.GPSDatabase;
 import de.ehealth.project.letitrip_beta.handler.database.WeatherDatabase;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSServiceHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.Dashboard;
@@ -50,6 +50,22 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
     String mOldTag = "";
 
+    public GPSService getGps() {
+        return gps;
+    }
+
+    private GPSService gps;
+
+    public boolean isBound() {
+        return bound;
+    }
+
+    public interface TestInter{
+        void doSth();
+    }
+
+    boolean bound = false;
+
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT,
@@ -61,18 +77,27 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
-            GPSServiceHandler.getInstance().setData(binder.getService());
-            GPSServiceHandler.getInstance().setBound(true);
-            Log.w("mainactivity", "bound - status:" + GPSServiceHandler.getInstance().getData().getStatus());
+            gps = binder.getService();
+            bound = true;
+            //GPSServiceHandler.getInstance().setData(binder.getService());
+            //GPSServiceHandler.getInstance().setBound(true);
+
+            Log.w("mainactivity", "bound - status:" + gps.getStatus());
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             Log.w("mainactivity", "unbound");
-            GPSServiceHandler.getInstance().setBound(false);
-            GPSServiceHandler.getInstance().setData(null);
+            bound = false;
+            //GPSServiceHandler.getInstance().setBound(false);
+            //GPSServiceHandler.getInstance().setData(null);
         }
     };
+
+    public void sendBroadcast(String msg, int ID){
+        Intent intent = new Intent("gps-event").putExtra(msg, ID);;
+        LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(intent);
+    }
 
     @Override
     protected void onStart() {
@@ -81,9 +106,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     }
 
     public void unbindFromService(){
-        Log.w("main", "unbinding.. bound:" + GPSServiceHandler.getInstance().isBound());
+       // Log.w("main", "unbinding.. bound:" + GPSServiceHandler.getInstance().isBound());
         getApplicationContext().unbindService(mConnection);
-        GPSServiceHandler.getInstance().setBound(false);
+        bound = false;
+//        GPSServiceHandler.getInstance().setBound(false);
     }
 
     public void stopService(){
@@ -366,8 +392,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         if(alreadyAdded){
             if(fragmentManager.findFragmentByTag(mOldTag) != null) {
                 Log.d("TEST", "HIDE FRAGMENT: " + mOldTag);
-                //transaction.hide(fragmentManager.findFragmentByTag(mOldTag));
-                transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
+                transaction.hide(fragmentManager.findFragmentByTag(mOldTag));
+                //transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
             }
             Log.d("TEST", "SHOW FRAGMENT: " + newTag);
             transaction.show(fragmentManager.findFragmentByTag(newTag)).commit();

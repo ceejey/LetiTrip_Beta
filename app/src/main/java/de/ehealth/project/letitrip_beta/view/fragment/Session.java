@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSServiceHandler;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
@@ -38,6 +37,7 @@ public class Session extends Fragment {
     private int lastID;
     private Button showOnMap;
     private DecimalFormat df;
+
     /*
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -128,7 +128,7 @@ public class Session extends Fragment {
     }
 
     public void updateStaticUI(){
-        laufFahrrad.setText("Art:"+(GPSServiceHandler.getInstance().getData().getRecordingAsBicycle()==0?"Lauf":"Fahrrad"));
+        laufFahrrad.setText("Art:"+(((MainActivity)getActivity()).getGps().getRecordingAsBicycle()==0?"Lauf":"Fahrrad"));
     }
 
     private void updateUI() {

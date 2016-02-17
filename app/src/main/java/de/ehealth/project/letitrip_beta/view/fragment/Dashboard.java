@@ -87,8 +87,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
         Oauth.getmOauth().initOauth("3444e1985fcecca0dd97ff85e4253c45", "e4263b0e379b61c4916e4427d594f5c2", "http://www.google.de", FitBitAPI.class);
         FitbitUserProfile.loadUser(getActivity());
 
-        refreshWeather();
-
         return view;
     }
 
@@ -225,28 +223,3 @@ public class Dashboard extends Fragment implements WeatherCallback {
         mListener.changeFragment(fn);
     }
 }
-
-
-/*
-        if (getView() != null) { //if the fragment gets changed before the task complete, the view becomes a null object reference.
-
-            LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
-            mInflater.inflate(R.layout.weather_view, placeHolder);
-            ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder);
-
-
-            TextView txtWeatherSubHeading = (TextView) placeHolder.findViewById(R.id.txtWeatherSubheading);
-            TextView txtWeatherTemp = (TextView) placeHolder.findViewById(R.id.txtWeatherTemp);
-            TextView txtWeatherWind = (TextView) placeHolder.findViewById(R.id.txtWeatherWind);
-            TextView txtWeatherHumidity = (TextView) placeHolder.findViewById(R.id.txtWeatherHumidity);
-            TextView txtWeatherPressure = (TextView) placeHolder.findViewById(R.id.txtWeatherPressure);
-            String description = channel.getItem().getCondition().getDescription();
-            if (DescriptionMapping.getMap().containsKey(description))
-                txtWeatherSubHeading.setText(DescriptionMapping.getMap().get(description));
-            else
-                txtWeatherSubHeading.setText(description);
-            txtWeatherTemp.setText(channel.getItem().getCondition().getTemperature() + " °" + channel.getUnits().getTemperature());
-            txtWeatherWind.setText(channel.getWind().getSpeed() + " " + channel.getUnits().getSpeed());
-            txtWeatherHumidity.setText(channel.getAtmosphere().getHumidity() + " %");
-            txtWeatherPressure.setText(channel.getAtmosphere().getPressure() + " " + channel.getUnits().getPressure());
-        }*/

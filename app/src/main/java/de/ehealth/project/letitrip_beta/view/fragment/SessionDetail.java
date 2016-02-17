@@ -3,15 +3,12 @@ package de.ehealth.project.letitrip_beta.view.fragment;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.PopupMenu;
@@ -40,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSServiceHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -54,14 +51,15 @@ public class SessionDetail extends Fragment {
     private PolylineOptions route;
     private Marker liveMarker;
 
-    private GPSService gps;
+    //private GPSService gps;
 
-    private Button bt;
+    private Button btnSwitchMapType;
     private TextView infoBox;
 
     private boolean bound = false;
     private int lastSpeedID = -1;
 
+    /*
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -77,7 +75,7 @@ public class SessionDetail extends Fragment {
             Log.w("sessiondetail","ungebunden");
             bound = false;
         }
-    };
+    };*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -95,8 +93,8 @@ public class SessionDetail extends Fragment {
         View view  = inflater.inflate(R.layout.fragment_session_detail, container, false);
         infoBox = (TextView)view.findViewById(R.id.infoBox);
 
-        bt = (Button) view.findViewById(R.id.button);
-        bt.setOnClickListener(new View.OnClickListener() {
+        btnSwitchMapType = (Button) view.findViewById(R.id.button);
+        btnSwitchMapType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switchMapType();
@@ -140,11 +138,11 @@ public class SessionDetail extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("MapsActivity",-1);
-            Log.w("sessionDetail","broadcast:"+message);
+            //Log.w("sessionDetail","broadcast:"+message);
 
             //new position received, add it to the route+update liveMarker if the active track is displayed
-            if ((message == 1) && (SessionHandler.getSelectedRunId() == gps.getActiveRecordingID())) {
-                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(gps.getActiveRecordingID());
+            if ((message == 1) && (SessionHandler.getSelectedRunId() == GPSServiceHandler.getInstance().getData().getActiveRecordingID())) {
+                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(GPSServiceHandler.getInstance().getData().getActiveRecordingID());
                 res.moveToFirst();
 
                 //todo vielleicht falsche werte
@@ -152,8 +150,7 @@ public class SessionDetail extends Fragment {
                 if (lastSpeedID == -1) {
                     lastSpeedID = tempLastID;
                 } else {
-                    Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+SessionHandler.getSelectedRunId());
-                    updateInfoBox();
+                    //Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+SessionHandler.getSelectedRunId());
                     lastSpeedID = tempLastID;
                 }
                 LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
@@ -180,7 +177,8 @@ public class SessionDetail extends Fragment {
     @Override
     public void onStart() {
         Log.w("sessiondetail", "onstart");
-        bindToService();
+        //bindToService();
+        setUpMapIfNeeded();
         super.onStart();
     }
 
@@ -196,12 +194,12 @@ public class SessionDetail extends Fragment {
     public void onPause() {
         Log.w("sessiondetail", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-
+/*
         if (bound) {
             Log.w("sessiondetail","UNBINDING");
             getActivity().getApplicationContext().unbindService(mConnection);
             bound = false;
-        }
+        }*/
         //getActivity().getSupportFragmentManager().popBackStack();
         super.onPause();
     }
@@ -229,7 +227,7 @@ public class SessionDetail extends Fragment {
      * updates the box underneath the map
      */
     public void updateInfoBox(){
-        Log.w("sessionDetail","update info box");
+        //Log.w("sessionDetail","update info box");
         long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
@@ -253,12 +251,12 @@ public class SessionDetail extends Fragment {
                 ((temp!=-300)?("\nTemperatur: " +temp+"°C"+
                 "\nWind: "+wind+ "km/h"):""));
     }
-
+/*
     public void bindToService() {
         Intent i = new Intent(getActivity(), de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.class);
         getActivity().getApplicationContext().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
-
+*/
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -285,8 +283,8 @@ public class SessionDetail extends Fragment {
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 //live
-                if ((gps.getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (SessionHandler.getSelectedRunId() == -1)) {
-                    SessionHandler.setSelectedRunId(gps.getActiveRecordingID());
+                if ((GPSServiceHandler.getInstance().getData().getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (SessionHandler.getSelectedRunId() == -1)) {
+                    SessionHandler.setSelectedRunId(GPSServiceHandler.getInstance().getData().getActiveRecordingID());
                     endMarker = false;
                 }
 
@@ -313,6 +311,10 @@ public class SessionDetail extends Fragment {
         }
     }
 
+    /**
+     * shows the selected run on the map
+     * @param endMarker specifies if there shall be an endmarker (live tracks dont have an endmarker)
+     */
     public void showRunOnMap(boolean endMarker){
         //save run data to an array
         Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(SessionHandler.getSelectedRunId());
@@ -347,6 +349,10 @@ public class SessionDetail extends Fragment {
         mMap.addPolyline(route);
     }
 
+    /**
+     * change the map view
+     * @param v
+     */
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
         MenuInflater inflater = popup.getMenuInflater();

@@ -57,9 +57,9 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
 
             if (imgType != null) {
                 if (!gpsCustomListItem.isType()){
-                    imgType.setImageResource(R.drawable.ic_directions_bike_white_24dp);
+                    imgType.setImageResource(R.drawable.ic_directions_bike_white_48dp);
                 } else {
-                    imgType.setImageResource(R.drawable.ic_directions_run_white_24dp);
+                    imgType.setImageResource(R.drawable.ic_directions_run_white_48dp);
                 }
                 imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
             }

@@ -97,7 +97,8 @@
                     android:textColor="#5c6bc0"
                     style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
                     android:elegantTextHeight="false"
-                    android:clickable="false" />
+                    android:clickable="false"
+                    android:allowUndo="true" />
 
             </LinearLayout>
             <View

@@ -2,28 +2,33 @@ package de.ehealth.project.letitrip_beta.handler.gpshandler;
 
 import android.database.Cursor;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 public class GPSHelper {
-    public void updateTrackingUI(GPSService gps, Button btnSession, TextView txtStatus, Switch bicycleSwitch, Button pauseButton){
+    public void updateTrackingUI(GPSService gps, Button btnSession, Button btnPause, TextView txtStatus, Switch bicycleSwitch){
         if (gps.getStatus()== GPSService.Status.SEARCHINGGPS) {
             btnSession.setText("Session beenden");
             txtStatus.setText("Aufnahme startet bald...");
-            pauseButton.setText("Pause");
-            pauseButton.setEnabled(false);
+            btnPause.setText("Pause");
+            btnPause.setVisibility(View.GONE);
         } else if (gps.getStatus()== GPSService.Status.TRACKINGSTARTED) {
             btnSession.setText("Session beenden");
             txtStatus.setText("Aufnahme läuft.");
-            if (gps.isPaused()) pauseButton.setText("Fortfahren"); else pauseButton.setText("Pause");
-            pauseButton.setEnabled(true);
+            btnPause.setText("Pause");
+            btnPause.setVisibility(View.VISIBLE);
+        } else if (gps.getStatus() == GPSService.Status.PAUSED) {
+            btnSession.setText("Session beenden");
+            txtStatus.setText("Aufnahme pausiert.");
+            btnPause.setText("Fortfahren");
+            btnPause.setVisibility(View.VISIBLE);
         } else {
             btnSession.setText("Session starten");
             txtStatus.setText("Aufnahme deaktiviert.");
-            pauseButton.setText("Pause");
-            pauseButton.setEnabled(false);
+            btnPause.setText("Pause");
+            btnPause.setVisibility(View.GONE);
         }
 
         if (gps.getRecordingAsBicycle() == 1){
@@ -46,6 +51,7 @@ public class GPSHelper {
                 str+=("Longitude:"+res.getString(4)+"\t");
                 str+=("Altitude:"+res.getString(5)+"\t");
                 str+=("bicycle:"+res.getString(6)+"\n");
+                str+=("pulse:"+res.getString(7));
                 Log.w("gps", str);
             }
             res.close();

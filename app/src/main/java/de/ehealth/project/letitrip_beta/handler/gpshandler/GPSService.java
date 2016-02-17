@@ -52,7 +52,8 @@ public class GPSService extends Service {
         } catch (IllegalArgumentException | SecurityException e) {
             e.printStackTrace();
         }
-        Log.w("service", "destroyed");
+        Log.w("service", "DESTROYED");
+        sendBroadcast("GPSActivity",2); //let the UI refresh
         if (notificationManager != null) notificationManager.cancel(0);
         polar.disconnectFromPolarDevice();
         super.onDestroy();

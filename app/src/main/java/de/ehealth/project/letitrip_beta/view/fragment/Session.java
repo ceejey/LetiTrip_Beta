@@ -3,14 +3,11 @@ package de.ehealth.project.letitrip_beta.view.fragment;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -25,7 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSServiceHandler;
+import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -34,19 +32,20 @@ public class Session extends Fragment {
 
     private FragmentChanger mListener;
     private TextView puls, watt, geschw, laufRichtung, temp, wind, distanz, geschwSession, zeit, laufFahrrad;
-    private GPSService gps;
-    private boolean bound = false;
-    private int showThisRun;
+    //private GPSService gps;
+    //private boolean bound = false;
+    //private int showThisRun;
     private int lastID;
     private Button showOnMap;
     private DecimalFormat df;
-
+    /*
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
             gps = binder.getService();
-            bound = true;
+            GPSServiceHandler.getInstance().setBound(true);//
+            // bound = true;
 
             showThisRun = gps.getActiveRecordingID();
             Log.w("showthisrunset",showThisRun+"");
@@ -59,14 +58,15 @@ public class Session extends Fragment {
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             Log.w("session","ungebunden");
-            bound = false;
+            //bound = false;
+            GPSServiceHandler.getInstance().setBound(false);
         }
-    };
+    };*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         df = new DecimalFormat("0.0");
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -89,8 +89,9 @@ public class Session extends Fragment {
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SessionHandler.setSelectedRunId(gps.getActiveRecordingID());
-                updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
+                //TODO falsch?
+                ((MainActivity)getActivity()).changeFragment(MainActivity.FragmentName.SESSION_DETAIL);
+                //updateActivity();
             }
         });
         return view;
@@ -119,19 +120,19 @@ public class Session extends Fragment {
     @Override
     public void onStart() {
         Log.w("session", "onStart");
-        bindToService();
-
+        //bindToService();
         lastID = GPSDatabaseHandler.getInstance().getData().getLastID();
-
+        updateUI();
+        updateStaticUI();
         super.onStart();
     }
 
     public void updateStaticUI(){
-        laufFahrrad.setText("Art:"+(gps.getRecordingAsBicycle()==0?"Lauf":"Fahrrad"));
+        laufFahrrad.setText("Art:"+(GPSServiceHandler.getInstance().getData().getRecordingAsBicycle()==0?"Lauf":"Fahrrad"));
     }
 
     private void updateUI() {
-        puls.setText("Puls nicht verfügbar");
+        puls.setText((PolarHandler.mHeartRate==0)?"Puls nicht verfügbar":"Puls: "+PolarHandler.mHeartRate);
 
         watt.setText("Watt nicht verfügbar");
 
@@ -147,7 +148,7 @@ public class Session extends Fragment {
         }
         lastID = currentID;
 
-        geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(showThisRun,0))+" km/h");
+        geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(SessionHandler.getSelectedRunId(),0))+" km/h");
 
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();
@@ -160,10 +161,9 @@ public class Session extends Fragment {
         }
         res.close();
 
+        distanz.setText("Distanz: " + df.format(((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId()))) + " Meter");
 
-        distanz.setText("Distanz: " + df.format(((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(showThisRun))) + " Meter");
-
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(showThisRun);
+        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
         zeit.setText("Dauer: "+ minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
@@ -176,18 +176,23 @@ public class Session extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        Log.w("session","onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
     public void onPause() {
         Log.w("session", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-
+        /*
         if (bound) {
-            Log.w("sessiondetail","UNBINDING");
+            Log.w("session","UNBINDING");
             getActivity().unbindService(mConnection);
             bound = false;
-        }
+        }*/
         super.onPause();
     }
-
 
     //handler to receive broadcast messages from gps service
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -202,9 +207,9 @@ public class Session extends Fragment {
             }
         }
     };
-
+/*
     public void bindToService() {
         Intent i = new Intent(getActivity(), de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.class);
         getActivity().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
-    }
+    }*/
 }

@@ -56,6 +56,8 @@ public class DescriptionMapping {
             descriptionMap.put("thundershowers", "Gewitter");
             descriptionMap.put("snow showers", "Schneeschauer");
             descriptionMap.put("isolated thundershowers", "Isoliert Gewitter");
+            //added manually
+            descriptionMap.put("clear", "Klar");
         }
         return descriptionMap;
     }

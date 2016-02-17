@@ -6,8 +6,11 @@ package de.ehealth.project.letitrip_beta.handler.calc;
 public class WattHandler {
 
     //TODO: Cleanup and Parameter!
-    public double calcWatts() {
-        Float mFahrer = 75F;        //Gewicht Fahrer
+    public double calcWatts(Float weightPerson, Float weightBike, Float heightPerson, Float gravityAcceleration,
+                            Float speed, Float attitudeGain, Float distance, Float windSpeed, Float angleToWind,
+                            Float temperatureCelcius, Float airPressure, Float humidity, Float rollingResistCoeff,
+                            Float projectionBodyArea, Float dragCoeff) {
+        /*Float mFahrer = 75F;        //Gewicht Fahrer
         Float mFahrrad = 10F;       //Gewicht Fahrrad
         Float gr = 180F;            //Größe Fahrer
         Float g = 9.81F;            //Schwerebeschleunigung
@@ -21,20 +24,20 @@ public class WattHandler {
         Float phi = 0.83F;          //Luftfeuchtigkeit
         Float cr = 0.007F;          //Rollwiderstandskonstante
         Float af = 0.276F;          //Anteil Projektionsfläche Oberkörperfläche
-        Float cd = 1.1F;            //Luftwiderstandskonstante
+        Float cd = 1.1F;            //Luftwiderstandskonstante*/
 
         WattCalculator wc = new WattCalculator();
 
-        Double fg = wc.calculateWeightForce(mFahrer + mFahrrad, g);
-        Double Cr = wc.calculateRollingResistance(cr, fg);
-        Double Cg = wc.calculateUphillResistance(mFahrer + mFahrrad, g, h, d);
+        Double fg = wc.calculateWeightForce(weightPerson + weightBike, gravityAcceleration);
+        Double Cr = wc.calculateRollingResistance(rollingResistCoeff, fg);
+        Double Cg = wc.calculateUphillResistance(weightPerson + weightBike, gravityAcceleration, attitudeGain, distance);
         Double a = Cr + Cg;
-        Double es = wc.calculateSaturationVapour(tc);
-        Double rf = wc.calculateGasConstant(phi, es, p);
-        Double rho = wc.calculateAirDensity(p, rf, (tc + 273.15F));
-        Double A = wc.calculateProjectionSurface(af, gr, mFahrer + mFahrrad);
-        Double b = wc.calculateAirResistance(cd, A, rho);
-        Double pMech = wc.calculateMechWatts(a, b, v, vl, gamma);
+        Double es = wc.calculateSaturationVapour(temperatureCelcius);
+        Double rf = wc.calculateGasConstant(humidity, es, airPressure);
+        Double rho = wc.calculateAirDensity(airPressure, rf, (temperatureCelcius + 273.15F));
+        Double A = wc.calculateProjectionSurface(projectionBodyArea, heightPerson, weightPerson + weightBike);
+        Double b = wc.calculateAirResistance(dragCoeff, A, rho);
+        Double pMech = wc.calculateMechWatts(a, b, speed, windSpeed, angleToWind);
 
         return pMech;
     }

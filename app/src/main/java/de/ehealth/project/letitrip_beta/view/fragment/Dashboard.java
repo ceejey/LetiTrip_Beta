@@ -79,8 +79,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
             }
         });
 
-
-
         mInflater = inflater;
 
         //init for fitbit connection

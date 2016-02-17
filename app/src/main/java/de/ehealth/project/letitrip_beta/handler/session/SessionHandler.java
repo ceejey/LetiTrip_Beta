@@ -1,8 +1,5 @@
 package de.ehealth.project.letitrip_beta.handler.session;
 
-/**
- * Created by eHealth on 31.12.2015.
- */
 public class SessionHandler {
     //Kannst du vllt den ganzen Daten- und Methodenkram aus den Views in Handler- und Modelklassen packen?
     //Dann hast du wahrscheinlich keine Probleme mehr mit wechseln von Fragmenten und so, dadurch, dass sich alle
@@ -18,8 +15,6 @@ public class SessionHandler {
     public static void setRunType(int mRunType) {
         SessionHandler.mRunType = mRunType;
     }
-
-
 
     public static int getSelectedRunId(){
         return mSelectedRunId;

@@ -80,7 +80,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         contentValues.put(COLUMN7, pulse);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
-        return (result != -1);
+        return (result !=-1);
     }
 
     /**

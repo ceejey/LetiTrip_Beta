@@ -148,7 +148,6 @@ public class Session extends Fragment {
 
     @Override
     public void onDestroyView() {
-        Log.w("session","onDestroyView");
         super.onDestroyView();
     }
 

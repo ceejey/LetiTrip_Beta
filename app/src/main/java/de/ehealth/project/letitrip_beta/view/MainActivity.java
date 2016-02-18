@@ -88,6 +88,12 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         }
     };
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.w("blablalb","blabla");
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     /**
      * sends a broadcast with given parameters
      * @param msg
@@ -141,6 +147,17 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
         GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
         WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
+
+        //TODO doesnt work
+        if (getIntent().hasExtra("notification")){
+            int extra = getIntent().getIntExtra("notification",-1);
+            Log.w("main","extra"+extra);
+            if (extra == 1){
+                changeFragment(FragmentName.SESSION);
+            }
+        } else {
+            Log.w("no extra","main");
+        }
     }
 
     @Override
@@ -151,7 +168,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
     @Override
     public void changeFragment(FragmentName fn) {
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
@@ -485,5 +501,4 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         }
         super.onBackPressed();
     }
-
 }

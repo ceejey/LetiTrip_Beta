@@ -290,17 +290,24 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     * get the altitude difference between two location points
-     * @param ID1 ID of the first entry
-     * @param ID2 ID of the second entry
-     * @return the altitude difference between two records
+     * pass id1=X and id2=-1 to get the altitude difference of session X
+     * pass id1=x and id2=y to get the altitude difference between those points
+     * @param ID1 first point or session ID
+     * @param ID2 second point or -1
+     * @return altitude difference in meters
      */
     public int getAltitudeDifference(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
+        Cursor res;
+        if (ID2 == -1){
+            res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + ID1, null);
+        } else {
+            res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
+        }
+
         res.moveToFirst();
         int val1 = res.getInt(0);
-        res.moveToNext();
+        res.moveToLast();
         int result = res.getInt(0)-val1;
         res.close();
         return result;

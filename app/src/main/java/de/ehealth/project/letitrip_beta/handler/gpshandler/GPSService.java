@@ -188,7 +188,10 @@ public class GPSService extends Service {
      * creates a notification when tracking started
      */
     public void createNotification() {
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+        //on click
+        Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("notification",1);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, 0);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Calendar calender = Calendar.getInstance();

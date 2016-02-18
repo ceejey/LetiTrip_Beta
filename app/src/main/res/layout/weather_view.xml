@@ -27,7 +27,7 @@
             android:layout_marginLeft="20dp"
             android:orientation="vertical">
 
-            <LinearLayout
+            <GridLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -39,18 +39,18 @@
                     android:fontFamily="sans-serif"
                     android:text="Subheading"
                     android:textColor="#000000"
-                    android:textSize="16sp" />
-
-                <Space
-                    android:layout_width="115dp"
-                    android:layout_height="match_parent" />
+                    android:textSize="16sp"
+                    android:layout_row="0"
+                    android:layout_column="0" />
 
                 <ImageView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgYahooWeather"
-                    android:src="@drawable/yahoo_weather" />
-            </LinearLayout>
+                    android:src="@drawable/yahoo_weather"
+                    android:layout_row="0"
+                    android:layout_column="2" />
+            </GridLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

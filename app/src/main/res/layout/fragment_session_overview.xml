@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <LinearLayout
+            <GridLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -34,12 +34,9 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_weight="0.5"/>
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5" />
+                    android:layout_weight="0.5"
+                    android:layout_row="0"
+                    android:layout_column="0" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -47,7 +44,9 @@
                     android:id="@+id/imgRun"
                     android:src="@drawable/ic_directions_run_white_24dp"
                     android:layout_marginTop="12dp"
-                    android:layout_margin="12dp" />
+                    android:layout_margin="12dp"
+                    android:layout_row="0"
+                    android:layout_column="7" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -56,9 +55,11 @@
                     android:src="@drawable/ic_directions_bike_white_24dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginRight="30dp"
-                    android:layout_marginLeft="12dp" />
+                    android:layout_marginLeft="12dp"
+                    android:layout_row="0"
+                    android:layout_column="8" />
 
-            </LinearLayout>
+            </GridLayout>
             <View
                 android:id="@+id/linearLayoutHeader"
                 android:layout_width="match_parent"

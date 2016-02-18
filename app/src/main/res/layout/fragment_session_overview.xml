@@ -36,13 +36,18 @@
                     android:layout_marginLeft="20dp"
                     android:layout_weight="0.5"/>
 
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgRun"
                     android:src="@drawable/ic_directions_run_white_24dp"
                     android:layout_marginTop="12dp"
-                    android:layout_weight="0.8"/>
+                    android:layout_margin="12dp" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -50,8 +55,8 @@
                     android:id="@+id/imgBike"
                     android:src="@drawable/ic_directions_bike_white_24dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_weight="0.8"/>
+                    android:layout_marginRight="30dp"
+                    android:layout_marginLeft="12dp" />
 
             </LinearLayout>
             <View

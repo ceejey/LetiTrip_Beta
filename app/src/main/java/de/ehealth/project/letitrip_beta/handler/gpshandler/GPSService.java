@@ -48,8 +48,15 @@ public class GPSService extends Service {
         }
     }
 
+    /**
+     * status of the service
+     */
     public enum Status {TRACKINGSTARTED, SEARCHINGGPS, IDLE, PAUSED;}
 
+    /**
+     * service was stopped
+     * stop location updates, remove notification, disconnect from polar
+     */
     @Override
     public void onDestroy() {
         try {
@@ -60,9 +67,9 @@ public class GPSService extends Service {
         }
         Log.w("service", "DESTROYED");
         activeRecordingID = -1;
-        sendBroadcast("GPSActivity",2); //let the UI refresh
         if (notificationManager != null) notificationManager.cancel(0);
         polar.disconnectFromPolarDevice();
+        sendBroadcast("GPSService",2); //let the UI refresh
         super.onDestroy();
     }
 
@@ -87,6 +94,13 @@ public class GPSService extends Service {
         Log.w("service", "rebind");
     }
 
+    /**
+     * initializes the service
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.w("service", "started");
@@ -98,16 +112,24 @@ public class GPSService extends Service {
         //gps enabled?
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toast.makeText(GPSService.this, "GPS aktivieren!", Toast.LENGTH_LONG).show();
-            sendBroadcast("GPSActivity", 1);
+            sendBroadcast("GPSService", 1);
         } else startTracking();
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * sends a broadcast with given parameters
+     * @param msg
+     * @param ID
+     */
     public void sendBroadcast(String msg, int ID){
         Intent intent = new Intent("gps-event").putExtra(msg, ID);;
         LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(intent);
     }
 
+    /**
+     * connects to the polar device and starts the gps tracking
+     */
     public void startTracking() {
         //connect to polar
         List<BluetoothDevice> deviceList = polar.getDeviceList();
@@ -123,12 +145,12 @@ public class GPSService extends Service {
                     //only insert data when accuaracy is good enough
                     if (l.getAccuracy() < 25){
 
-                        Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
+                        //Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
                         if(!standing || l.getSpeed() >= 2.5f) { //Also take the first standing point
                             standing = false;
                             boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate);
                             if (ins) {
-                                sendBroadcast("MapsActivity", 1);
+                                sendBroadcast("GPSService", 5);
                             } else
                                 Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
 
@@ -137,14 +159,14 @@ public class GPSService extends Service {
                                 createNotification();
                                 Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
                                 status = Status.TRACKINGSTARTED;
-                                sendBroadcast("GPSActivity", 2);
+                                sendBroadcast("GPSService", 4);
                             }
                         } else if(l.getSpeed() <= 2.5F && standing == false){
                             standing = true;
                         }
                     } else {
                         Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
-                        sendBroadcast("GPSActivity",3);
+                        sendBroadcast("GPSService",3);
                     }
                 } else Log.w("gpsservice","paused or no location");
             }
@@ -162,6 +184,9 @@ public class GPSService extends Service {
         }
     }
 
+    /**
+     * creates a notification when tracking started
+     */
     public void createNotification() {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
@@ -170,10 +195,10 @@ public class GPSService extends Service {
         String time = dateFormat.format(calender.getTime());
 
         Notification notification = new NotificationCompat.Builder(this)
-                .setTicker("GPS Tracking started")
+                .setTicker("Tracking ist gestartet")
                 .setSmallIcon(android.R.drawable.presence_online)
-                .setContentTitle("GPS Tracking running (#" + activeRecordingID + ")")
-                .setContentText("since " + time)
+                .setContentTitle("Session "+activeRecordingID+" aktiv")
+                .setContentText("seit " + time)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
@@ -200,10 +225,16 @@ public class GPSService extends Service {
         return (status == Status.PAUSED);
     }
 
+    /**
+     * pauses the service
+     */
     public void pause(){
         status = Status.PAUSED;
     }
 
+    /**
+     * resumes the service if possible
+     */
     public void resume(){
         if ((status!= Status.IDLE) && (status != Status.SEARCHINGGPS)){
             status = Status.TRACKINGSTARTED;

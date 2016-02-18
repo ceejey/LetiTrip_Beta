@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -30,15 +33,40 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class Session extends Fragment {
 
     private FragmentChanger mListener;
-    private TextView puls, watt, geschw, laufRichtung, temp, wind, distanz, geschwSession, zeit, laufFahrrad;
+    private TextView puls, watt, geschw, laufRichtung, temp, wind, distanz, geschwSession, zeit;
+    private ImageView imgType;
     private int lastID;
     private Button showOnMap;
     private DecimalFormat df;
+    private Handler handler;
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
+            long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+            zeit.setText("Dauer: "+ minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
+            handler.postDelayed(this, 1000);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         df = new DecimalFormat("0.0");
+        handler = new Handler();
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        Log.w("session", "onStart");
+        //bindToService();
+        lastID = -1;
+        updateStaticUI();
+        updateUI();
+        handler.postDelayed(runnable, 1000);
+        super.onStart();
     }
 
     @Override
@@ -56,16 +84,22 @@ public class Session extends Fragment {
         distanz = (TextView) view.findViewById(R.id.textView14);
         geschwSession = (TextView) view.findViewById(R.id.textView15);
         zeit = (TextView) view.findViewById(R.id.textView16);
-        laufFahrrad = (TextView) view.findViewById(R.id.textView17);
+        imgType = (ImageView) view.findViewById(R.id.imgType);
         showOnMap = (Button) view.findViewById(R.id.button2);
 
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
+                updateActivity(MainActivity.FragmentName.SESSION_DETAIL);
             }
         });
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -78,38 +112,42 @@ public class Session extends Fragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     public void updateActivity(MainActivity.FragmentName fn) {
         mListener.changeFragment(fn);
     }
 
     @Override
-    public void onStart() {
-        Log.w("session", "onStart");
-        //bindToService();
-        lastID = GPSDatabaseHandler.getInstance().getData().getLastID();
-        updateStaticUI();
-        updateUI();
-        super.onStart();
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden){
+
+        }
+        super.onHiddenChanged(hidden);
     }
 
+
+    /**
+     * updates ui elements that only need one update at startup
+     */
     public void updateStaticUI(){
-        laufFahrrad.setText("Art:"+(((MainActivity)getActivity()).getGps().getRecordingAsBicycle()==0?"Lauf":"Fahrrad"));
+        imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+        if (((MainActivity) getActivity()).getGps().getRecordingAsBicycle() == 1){
+            imgType.setImageResource(R.drawable.ic_directions_bike_white_48dp);
+        } else {
+            imgType.setImageResource(R.drawable.ic_directions_run_white_48dp);
+        }
     }
 
+    /**
+     * updates all visible UI elements
+     */
     private void updateUI() {
         puls.setText((PolarHandler.mHeartRate==0)?"Puls nicht verfügbar":"Puls: "+PolarHandler.mHeartRate);
 
         watt.setText("Watt nicht verfügbar");
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
-        if (currentID != lastID){
-            geschw.setText("Geschwindigkeit: "+df.format(3.6*GPSDatabaseHandler.getInstance().getData().getAverageSpeed(lastID,currentID))+" km/h");
+        if ((currentID != lastID) && (lastID != -1)){
+            geschw.setText("Geschwindigkeit: "+df.format(3.6*GPSDatabaseHandler.getInstance().getData().getSpeed(lastID, currentID))+" km/h");
             double degrees = GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
             laufRichtung.setText("Laufrichtung: "+ GPSDatabaseHandler.getInstance().getData().getDirectionLetter(degrees)+" ("+df.format(degrees)+")");
         } else {
@@ -119,7 +157,7 @@ public class Session extends Fragment {
 
         lastID = currentID;
 
-        geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(3.6*GPSDatabaseHandler.getInstance().getData().getAverageSpeed((((MainActivity)(getActivity())).getGps().getActiveRecordingID()),0))+" km/h");
+        geschwSession.setText("\u00D8Geschwindigkeit (Session):"+df.format(3.6*GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1))+" km/h");
 
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();
@@ -132,12 +170,7 @@ public class Session extends Fragment {
         }
         res.close();
 
-        distanz.setText("Distanz: " + df.format(((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId()))) + " Meter");
-
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
-        long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        zeit.setText("Dauer: "+ minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
+        distanz.setText("Distanz: " + df.format(((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(((MainActivity) (getActivity())).getGps().getActiveRecordingID()))) + " Meter");
     }
 
     @Override
@@ -162,11 +195,9 @@ public class Session extends Fragment {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int message = intent.getIntExtra("MapsActivity",-1);
-            Log.w("session","broadcast:"+message);
-
-            //new position received, add it to the route+update liveMarker
-            if (message == 1) {
+            int message = intent.getIntExtra("GPSService",-1);
+            //new position received
+            if (message == 5) {
                 updateUI();
             }
         }

@@ -48,10 +48,12 @@ import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
 /**
  * Broadcastlist:
  * message      value   meaning
- * GPSActivity  1       GPS not enabled/refresh UI
- * GPSActivity  2       Tracking initially started / stopped; Main connected to gps
- * GPSActivity  3       GPS accuracy too low
- * MapsActivity 1       new position inserted
+ * GPSService   1       GPS not enabled
+ * GPSService   2       Tracking stopped; Main connected to gps
+ * GPSService   3       GPS accuracy too low
+ * GPSService   4       Tracking initially started
+ * GPSService   5       new position inserted
+ * MainActivity 1       bound to gps
  */
 
 public class SessionOverview extends Fragment {
@@ -69,13 +71,16 @@ public class SessionOverview extends Fragment {
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSHelper myGPSObject;
 
-    private boolean isRunning = false;
-
+    /**
+     * creates all ui elements and their listeners
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //Log.w("sessionoverview","oncreateview called");
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_session_overview, container, false);
 
@@ -94,8 +99,8 @@ public class SessionOverview extends Fragment {
             Log.d("sessionoverview", "bound:" + ((MainActivity) getActivity()).isBound());
 
             if (((MainActivity)getActivity()).isBound()) {
-                if (!isRunning) {
-                    Log.w("soverview", "checked");
+                if ((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.IDLE)) {
+                    Log.w("sessionoverview", "starting...");
                     Intent i = new Intent(getActivity(), GPSService.class);
                     getActivity().startService(i);
                     gpsStatusTextView.setText("Aufnahme startet bald...");
@@ -113,7 +118,6 @@ public class SessionOverview extends Fragment {
                     btnPauseSession.setText("Pause");
                     btnPauseSession.setVisibility(View.GONE);
                 }
-                isRunning = !isRunning;
             } else Log.w("sessionoverview", "bind error");
             }
         });
@@ -242,19 +246,14 @@ public class SessionOverview extends Fragment {
         Log.d("sessionoverview", "onStop");
     }
 
+    /**
+     * initializes the ui
+     */
     @Override
     public void onStart() {
         super.onStart();
         Log.d("sessionoverview", "onStart");
         testMethod();
-
-        //only gets called when user returns to this fragment via back button
-        if ((((MainActivity)getActivity()).getGps() != null) && (sessionOverviewListView.getAdapter() == null)){
-            updateList();
-            //has to be called again. when opening map and returning to this fragment the service is already bound and
-            //"updatTrackingUI" wont be called
-            myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
-        }
 
         //for >= android 6.0
         if (Build.VERSION.SDK_INT >= 23) doPermissionCheck();
@@ -263,7 +262,7 @@ public class SessionOverview extends Fragment {
             SessionHandler.setSelectedRunId(-1);
         }
 
-        myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+        myGPSObject.updateTrackingUI(((MainActivity) getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
         updateList();
     }
 
@@ -273,6 +272,9 @@ public class SessionOverview extends Fragment {
       GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50,0,120);
     }
 
+    /**
+     * adds all available sessions (also live sessions) in descending order to the listview
+     */
     public void updateList() {
         Log.w("sessionoverview","update list - status: "+((MainActivity)getActivity()).getGps().getStatus().toString());
 
@@ -320,12 +322,15 @@ public class SessionOverview extends Fragment {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int message = intent.getIntExtra("GPSActivity", -1);
-            //Log.w("sessionoverview", "broadcast:" + message);
+            int message = intent.getIntExtra("GPSService", -1);
             if (message == 1)  myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
-            if (message == 2){
-                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
-                updateList(); //tracking started/stopped in service
+            if ((message == 2) ||(message == 4)){ //tracking started/stopped in service
+                myGPSObject.updateTrackingUI(((MainActivity) getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+                updateList();
+                if (message == 4){
+                    SessionHandler.setSelectedRunId(((MainActivity)getActivity()).getGps().getActiveRecordingID());
+                    mListener.changeFragment(MainActivity.FragmentName.SESSION);
+                }
             } else if (message == 3) {
                 gpsStatusTextView.setText("GPS zu ungenau...");
             }
@@ -353,6 +358,12 @@ public class SessionOverview extends Fragment {
         }
     }
 
+    /**
+     * handles the result code of the clicked listview popup
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 

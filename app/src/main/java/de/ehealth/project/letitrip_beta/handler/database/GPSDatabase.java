@@ -132,7 +132,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
      */
     public GPSCustomListItem getOverviewOfSession(int id) {
         Cursor res = getSession(id);
-        //ArrayList<String> result = new ArrayList<>();
         GPSCustomListItem result = new GPSCustomListItem();
 
         if ((res != null) && (res.getCount() > 0)) {
@@ -157,12 +156,11 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
             result.setVisibleID(res.getInt(1));
             result.setStarted(displayDateFormat.format(time));
-            result.setDuration(minutes+":"+((seconds<10)?0:"")+ seconds);
+            result.setDuration(minutes + ":" + ((seconds < 10) ? 0 : "") + seconds);
 
             double meters = getWalkDistance(id);
-            result.setDistanceMeter((int)getWalkDistance(id));
+            result.setDistanceMeter((int) getWalkDistance(id));
             result.setAverageSpeed(3.6 * (meters / (seconds + (minutes * 60))));
-            Log.w("gpsDB",bicycle+"");
             result.setType(bicycle);
             result.setPositions(res.getCount());
 
@@ -207,6 +205,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
         double distance = 0;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select " + COLUMN3 + ", " + COLUMN4 + "," + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN1 + "=" + id, null);
+
+        if (res.getCount() < 2){
+            return 0;
+        }
 
         res.moveToFirst();
         double lat = res.getDouble(0);
@@ -305,15 +307,16 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     * pass id1=X and id2=0 to get the average speed of run X
-     * @param ID1
-     * @param ID2
-     * @return average speed in !!!meters per second!!! from the track in between those two points (multiply with 3.6 to get km/h)
+     * pass id1=X and id2=-1 to get the average speed of run X
+     * pass id1=x and id2=y to get the average speed between those points
+     * @param ID1 first point or session ID
+     * @param ID2 second point or -1
+     * @return speed in !!!meters per second!!! from the track in between those two points (multiply with 3.6 to get km/h)/the session
      */
-    public double getAverageSpeed(int ID1, int ID2){
+    public double getSpeed(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res;
-        if (ID2 == 0){
+        if (ID2 == -1){
             res = db.rawQuery("select " + COLUMN2 +","+COLUMN3+","+COLUMN4+","+COLUMN5+ " from " + TABLE_NAME + " where " + COLUMN1 + "="+ID1, null);
         } else {
             res = db.rawQuery("select " + COLUMN2 +","+COLUMN3+","+COLUMN4+","+COLUMN5+ " from " + TABLE_NAME + " where " + COLUMN0+" >= "+ID1+" and "+COLUMN0+ " <= "+ID2, null);

@@ -141,25 +141,19 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
             res.moveToFirst();
             String description = res.getString(7);
-            //channel.getItem().getCondition().getDescription();
             if (DescriptionMapping.getMap().containsKey(description.toLowerCase())){
                 txtWeatherSubHeading.setText(DescriptionMapping.getMap().get(description.toLowerCase()));
             } else {
                 txtWeatherSubHeading.setText(description);
             }
-            //channel.getItem().getCondition().getTemperature()
             txtWeatherTemp.setText(res.getInt(2)+ " °C");
-            //channel.getWind().getSpeed()
             txtWeatherWind.setText(res.getInt(3) + " km/h ("+ GPSDatabaseHandler.getInstance().getData().getDirectionLetter(res.getInt(4))+")");
-            //channel.getAtmosphere().getHumidity()
             txtWeatherHumidity.setText(res.getInt(5)+ " %");
-            //channel.getAtmosphere().getPressure()
             txtWeatherPressure.setText(res.getDouble(6)+ " mb");
         }
     }
 
     public void success(Channel channel) {
-        Log.w("weather", "success");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
         Date date = new Date();
 
@@ -195,8 +189,8 @@ public class Dashboard extends Fragment implements WeatherCallback {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int message = intent.getIntExtra("GPSActivity", -1);
-            if (message == 2){ //MainActivity connected to gps;tacking started/stopped
+            int message = intent.getIntExtra("MainActivity", -1);
+            if (message == 1){ //MainActivity connected to gps;tacking started/stopped
                 setSessionOnDashBoard();
             }
         }
@@ -222,6 +216,12 @@ public class Dashboard extends Fragment implements WeatherCallback {
                     ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
                 }
                 gpsPlaceHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+                gpsPlaceHolder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mListener.changeFragment(MainActivity.FragmentName.SESSION);
+                    }
+                });
                 mInflater.inflate(R.layout.gps_view, gpsPlaceHolder);
                 ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(gpsPlaceHolder,0);
                 TextView txtHeading = (TextView) gpsPlaceHolder.findViewById(R.id.txtHeading);
@@ -229,12 +229,12 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
 
                 if (((MainActivity)getActivity()).getGps().getRecordingAsBicycle()==1){
-                    imgType.setImageResource(R.drawable.ic_directions_bike_white_48dp);
+                    imgType.setImageResource(R.drawable.ic_directions_bike_white_24dp);
                 } else {
-                    imgType.setImageResource(R.drawable.ic_directions_run_white_48dp);
+                    imgType.setImageResource(R.drawable.ic_directions_run_white_24dp);
                 }
 
-                txtHeading.setText("Session "+((MainActivity)getActivity()).getGps().getActiveRecordingID()+" aktiv.");
+                txtHeading.setText("Session "+((MainActivity)getActivity()).getGps().getActiveRecordingID()+" aktiv");
 
             } else {
                 ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);

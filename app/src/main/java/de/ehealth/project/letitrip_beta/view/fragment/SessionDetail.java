@@ -56,7 +56,7 @@ public class SessionDetail extends Fragment {
     private TextView infoBox;
 
     //private boolean bound = false;
-    private int lastSpeedID = -1;
+   // private int lastSpeedID = -1;
 
     /*
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -136,24 +136,14 @@ public class SessionDetail extends Fragment {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-        int message = intent.getIntExtra("MapsActivity",-1);
+        int message = intent.getIntExtra("GPSService",-1);
         //Log.w("sessionDetail","broadcast:"+message);
 
         //new position received, add it to the route+update liveMarker if the active track is displayed
-        if ((message == 1) && (SessionHandler.getSelectedRunId() == ((MainActivity)getActivity()).getGps().getActiveRecordingID())) {
+        if ((message == 5) && (SessionHandler.getSelectedRunId() == ((MainActivity)getActivity()).getGps().getActiveRecordingID())) {
             Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(((MainActivity)getActivity()).getGps().getActiveRecordingID());
             res.moveToFirst();
-
-            //todo vielleicht falsche werte
-            int tempLastID = GPSDatabaseHandler.getInstance().getData().getLastID();
-            if (lastSpeedID == -1) {
-                lastSpeedID = tempLastID;
-            } else {
-                //Log.w("sessiondetail","lastSpeedID="+lastSpeedID+"-tempLastID="+tempLastID+"-showthisrun:"+SessionHandler.getSelectedRunId());
-                lastSpeedID = tempLastID;
-            }
             LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
-
             res.close();
 
             route.add(temp);
@@ -193,12 +183,6 @@ public class SessionDetail extends Fragment {
     public void onPause() {
         Log.w("sessiondetail", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-/*
-        if (bound) {
-            Log.w("sessiondetail","UNBINDING");
-            getActivity().getApplicationContext().unbindService(mConnection);
-            bound = false;
-        }*/
         //getActivity().getSupportFragmentManager().popBackStack();
         super.onPause();
     }
@@ -246,16 +230,11 @@ public class SessionDetail extends Fragment {
         infoBox.setText("Session #" + SessionHandler.getSelectedRunId() +
                 "\nDauer: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
                 "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId())) + " Meter" +
-                "\n\u00D8 Geschwindigkeit: " + decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getAverageSpeed(SessionHandler.getSelectedRunId(), 0) * 3.6) + "km/h" +
+                "\n\u00D8 Geschwindigkeit: " + decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h" +
                 ((temp!=-300)?("\nTemperatur: " +temp+"°C"+
                 "\nWind: "+wind+ "km/h"):""));
     }
-/*
-    public void bindToService() {
-        Intent i = new Intent(getActivity(), de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.class);
-        getActivity().getApplicationContext().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
-    }
-*/
+
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -281,12 +260,6 @@ public class SessionDetail extends Fragment {
             boolean endMarker = true;
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                //live
-                /*if ((((MainActivity)getActivity()).getGps().getStatus() == de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.Status.TRACKINGSTARTED) && (SessionHandler.getSelectedRunId() == -1)) {
-                    //SessionHandler.setSelectedRunId(((MainActivity)getActivity()).getGps().getActiveRecordingID());
-                    endMarker = false;
-                }*/
-
                 setUpMap();
             }
         }

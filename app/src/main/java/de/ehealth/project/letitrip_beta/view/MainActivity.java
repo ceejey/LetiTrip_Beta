@@ -67,6 +67,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         NEWS, POLAR_DEVICE, NEWS_SETTINGS
     }
 
+    /**
+     * creates a connection to the gps service
+     */
     public ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -74,21 +77,22 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
             gps = binder.getService();
             bound = true;
-            //GPSServiceHandler.getInstance().setData(binder.getService());
-            //GPSServiceHandler.getInstance().setBound(true);
-            sendBroadcast("GPSActivity", 4);
-            Log.w("mainactivity", "bound - status:" + gps.getStatus());
+            sendBroadcast("MainActivity", 1);
+            Log.w("mainactivity", "bound to service - status:" + gps.getStatus());
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             Log.w("mainactivity", "unbound");
             bound = false;
-            //GPSServiceHandler.getInstance().setBound(false);
-            //GPSServiceHandler.getInstance().setData(null);
         }
     };
 
+    /**
+     * sends a broadcast with given parameters
+     * @param msg
+     * @param ID
+     */
     public void sendBroadcast(String msg, int ID){
         Intent intent = new Intent("gps-event").putExtra(msg, ID);;
         LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(intent);
@@ -100,13 +104,17 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         super.onStart();
     }
 
+    /**
+     * removes the binding from the gps ervice
+     */
     public void unbindFromService(){
-       // Log.w("main", "unbinding.. bound:" + GPSServiceHandler.getInstance().isBound());
         getApplicationContext().unbindService(mConnection);
         bound = false;
-//        GPSServiceHandler.getInstance().setBound(false);
     }
 
+    /**
+     * stops the gps service (if unbound)
+     */
     public void stopService(){
         stopService(new Intent(this, GPSService.class));
     }

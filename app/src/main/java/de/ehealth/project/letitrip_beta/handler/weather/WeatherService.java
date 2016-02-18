@@ -23,6 +23,7 @@ public class WeatherService extends AsyncTask<String, Void, String> {
     private WeatherCallback weatherServiveCallback;
     private Exception ex;
 
+    //register callback
     public WeatherService(WeatherCallback callback) {
         this.weatherServiveCallback = callback;
     }
@@ -32,7 +33,7 @@ public class WeatherService extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         String encodedURL = null;
         String yqlQuery = null;
-        int count=0;
+        int count = 0;
 
         //varargs to String array
         String[] args = new String[params.length];

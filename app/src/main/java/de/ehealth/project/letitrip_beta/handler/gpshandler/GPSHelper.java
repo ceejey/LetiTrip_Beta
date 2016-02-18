@@ -11,6 +11,16 @@ import android.widget.TextView;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 
 public class GPSHelper {
+
+    /**
+     * updates all UI components of SessionOverview
+     * @param gps
+     * @param btnSession
+     * @param btnPause
+     * @param txtStatus
+     * @param imgRun
+     * @param imgBike
+     */
     public void updateTrackingUI(GPSService gps, Button btnSession, Button btnPause, TextView txtStatus, ImageView imgRun, ImageView imgBike){
         if (gps.getStatus()== GPSService.Status.SEARCHINGGPS) {
             btnSession.setText("Session beenden");
@@ -43,8 +53,12 @@ public class GPSHelper {
         }
     }
 
-    public void getRunOutput(int selectedRun) {
-        Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(Integer.parseInt(selectedRun + ""));
+    /**
+     * debug method. prints all information of a specific session
+     * @param selectedSession
+     */
+    public void getRunOutput(int selectedSession) {
+        Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(Integer.parseInt(selectedSession + ""));
 
         if (res != null){
             String str="";

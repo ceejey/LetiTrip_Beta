@@ -59,6 +59,9 @@ public class DescriptionMapping {
             //added manually
             descriptionMap.put("clear", "Klar");
             descriptionMap.put("mostly cloudy", "Größtenteils bewölkt");
+            descriptionMap.put("light rain", "Leichter Regen");
+            descriptionMap.put("rain", "Regen");
+
         }
         return descriptionMap;
     }

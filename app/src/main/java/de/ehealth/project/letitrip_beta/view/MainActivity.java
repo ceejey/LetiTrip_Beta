@@ -90,7 +90,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.w("blablalb","blabla");
         super.onActivityResult(requestCode, resultCode, data);
     }
 

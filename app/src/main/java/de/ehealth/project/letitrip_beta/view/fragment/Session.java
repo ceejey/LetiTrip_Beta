@@ -55,8 +55,9 @@ public class Session extends Fragment {
         public void run() {
             long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-            txtzeit.setText("Dauer: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
+            long hours = TimeUnit.MILLISECONDS.toHours(duration);
+            txtzeit.setText("Dauer: "+ (hours != 0?Long.toString(hours):"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
             handler.postDelayed(this, 1000);
         }
     };

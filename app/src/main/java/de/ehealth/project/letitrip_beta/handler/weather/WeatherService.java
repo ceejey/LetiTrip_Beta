@@ -28,7 +28,6 @@ public class WeatherService extends AsyncTask<String, Void, String> {
         this.weatherServiveCallback = callback;
     }
 
-
     @Override
     protected String doInBackground(String... params) {
         String encodedURL = null;
@@ -41,7 +40,7 @@ public class WeatherService extends AsyncTask<String, Void, String> {
             args[count++] = temp;
         }
 
-        //yql query contains coordinates
+        //query contains coordinates (instead of a city name)
         if (args.length > 1){
             yqlQuery = "select * from weather.forecast where woeid in (SELECT woeid FROM geo.placefinder WHERE text=\""+args[0]+","+args[1]+"\" and gflags=\"R\") and u='c' ";
         } else {
@@ -50,19 +49,19 @@ public class WeatherService extends AsyncTask<String, Void, String> {
 
         //build the encoded URL
         encodedURL = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json", Uri.encode(yqlQuery));
-
         Log.w("URL:",encodedURL);
+
             try {
                 URLConnection connection = new URL(encodedURL).openConnection();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                StringBuffer stringBuffer = new StringBuffer();
-                String temp;
-                while ((temp = reader.readLine()) != null){
-                    stringBuffer.append(temp);
+                String in;
+                String temp = "";
+                while ((in = reader.readLine()) != null){
+                    temp+=in;
                 }
 
-                return stringBuffer.toString();
+                return temp;
             } catch (MalformedURLException e) {
                 ex = e;
             } catch (IOException e) {
@@ -88,17 +87,18 @@ public class WeatherService extends AsyncTask<String, Void, String> {
                 weatherServiveCallback.failure(new Exception("Location not found."));
                 return;
             }
-            //if coordinates don't match to a known location
+            //if coordinates doesn't match to a known location
             if (queryResults.optJSONObject("results").optJSONObject("channel").optString("title").contains("Error")){
                 weatherServiveCallback.failure(new Exception("Coordinates not found."));
                 return;
             }
 
+            //all weather data is stored in the "channel" jsonObject
             Channel channel = new Channel();
             channel.receive(queryResults.optJSONObject("results").optJSONObject("channel"));
 
+            //call the callback function
             weatherServiveCallback.success(channel);
-
         } catch (JSONException e) {
             weatherServiveCallback.failure(e);
         }

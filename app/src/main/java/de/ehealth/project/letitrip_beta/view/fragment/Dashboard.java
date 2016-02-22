@@ -59,6 +59,8 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.layoutDashboard);
                 viewGroup.removeAllViews();
 
+                showActivityScoreView();
+
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
@@ -101,6 +103,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        showActivityScoreView();
         setSessionOnDashBoard();
         refreshWeather();
         Thread thread = new Thread(new Runnable(){
@@ -112,12 +115,18 @@ public class Dashboard extends Fragment implements WeatherCallback {
         thread.start();
     }
 
+    public void showActivityScoreView(){
+        LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+        mInflater.inflate(R.layout.score_view, placeHolder);
+        ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder,0);
+    }
+
     public void refreshWeather(){
         //only check weather if no weather information are in the database
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         if (res.getCount() == 0){
             Log.w("dashboard", "lade wetter von yahoo");
-            new WeatherService(this).execute("Oberhausen");
+            new WeatherService(this).execute("Oberhausen"); //todo set city in settings
         } else {
             Log.w("dashboard", "wetter schon vorhanden! lade aus DB");
             showWeather(res);
@@ -159,12 +168,12 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
         WeatherDatabaseHandler.getInstance().getData().addData(
                 dateFormat.format(date),
-                channel.getItem().getCondition().getTemperature(),
+                channel.getItem().getCondition().getTemp(),
                 channel.getWind().getSpeed(),
                 channel.getWind().getDirection(),
                 channel.getAtmosphere().getHumidity(),
                 channel.getAtmosphere().getPressure(),
-                channel.getItem().getCondition().getDescription()
+                channel.getItem().getCondition().getText()
         );
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         showWeather(res);
@@ -223,7 +232,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                     }
                 });
                 mInflater.inflate(R.layout.gps_view, gpsPlaceHolder);
-                ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(gpsPlaceHolder,0);
+                ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(gpsPlaceHolder,1);
                 TextView txtHeading = (TextView) gpsPlaceHolder.findViewById(R.id.txtHeading);
                 ImageView imgType = (ImageView) gpsPlaceHolder.findViewById(R.id.imgType);
                 imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);

@@ -142,7 +142,8 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
             long duration = getDurationOfSession(id);
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
+            long hours = TimeUnit.MILLISECONDS.toHours(duration);
 
             SimpleDateFormat displayDateFormat = new SimpleDateFormat("dd.MM.yyyy - HH:mm");
             SimpleDateFormat savedDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -156,7 +157,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
             result.setVisibleID(res.getInt(1));
             result.setStarted(displayDateFormat.format(time));
-            result.setDuration(minutes + ":" + ((seconds < 10) ? 0 : "") + seconds);
+            result.setDuration((hours != 0?Long.toString(hours):"")+minutes + ":" + ((seconds < 10) ? 0 : "") + seconds);
 
             double meters = getWalkDistance(id);
             result.setDistanceMeter((int) getWalkDistance(id));

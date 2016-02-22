@@ -210,28 +210,30 @@ public class SessionDetail extends Fragment {
      * updates the box underneath the map
      */
     public void updateInfoBox(){
-        //Log.w("sessionDetail","update info box");
         long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
+        long hours = TimeUnit.MILLISECONDS.toHours(duration);
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getWeatherOfRun(SessionHandler.getSelectedRunId());
         res.moveToFirst();
 
-        int temp = -300;
+        int temperature = -300;
         int wind = -1;
-        if (res.getCount()!=0){
+        String description = null;
+        if (res.getCount() != 0){
             res.moveToFirst();
-            temp = res.getInt(2);
+            temperature = res.getInt(2);
             wind = res.getInt(3);
+            description = res.getString(7);
         }
         res.close();
 
-        infoBox.setText("Session #" + SessionHandler.getSelectedRunId() +
-                "\nDauer: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
+        infoBox.setText("Session " + SessionHandler.getSelectedRunId() +
+                "\nDauer: " + (hours != 0?hours:"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
                 "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId())) + " Meter" +
                 "\n\u00D8 Geschwindigkeit: " + decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h" +
-                ((temp!=-300)?("\nTemperatur: " +temp+"°C"+
+                ((temperature!=-300)?(description+"\nTemperatur: " +temperature+"°C"+
                 "\nWind: "+wind+ "km/h"):""));
     }
 
@@ -257,7 +259,6 @@ public class SessionDetail extends Fragment {
             mMap = mapView.getMap();
             MapsInitializer.initialize(this.getActivity());
 
-            boolean endMarker = true;
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();

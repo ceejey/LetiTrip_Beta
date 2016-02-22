@@ -24,22 +24,22 @@ public class GPSHelper {
     public void updateTrackingUI(GPSService gps, Button btnSession, Button btnPause, TextView txtStatus, ImageView imgRun, ImageView imgBike){
         if (gps.getStatus()== GPSService.Status.SEARCHINGGPS) {
             btnSession.setText("Session beenden");
-            txtStatus.setText("Aufnahme startet bald...");
+            txtStatus.setText("Session startet bald...");
             btnPause.setText("Pause");
             btnPause.setVisibility(View.GONE);
         } else if (gps.getStatus()== GPSService.Status.TRACKINGSTARTED) {
             btnSession.setText("Session beenden");
-            txtStatus.setText("Aufnahme läuft.");
+            txtStatus.setText("Session läuft.");
             btnPause.setText("Pause");
             btnPause.setVisibility(View.VISIBLE);
         } else if (gps.getStatus() == GPSService.Status.PAUSED) {
             btnSession.setText("Session beenden");
-            txtStatus.setText("Aufnahme pausiert.");
+            txtStatus.setText("Session pausiert.");
             btnPause.setText("Fortfahren");
             btnPause.setVisibility(View.VISIBLE);
         } else {
             btnSession.setText("Session starten");
-            txtStatus.setText("Aufnahme deaktiviert.");
+            txtStatus.setText("Session deaktiviert.");
             btnPause.setText("Pause");
             btnPause.setVisibility(View.GONE);
         }

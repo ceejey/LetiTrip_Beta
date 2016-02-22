@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.PopupMenu;
@@ -33,10 +34,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
+import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -49,33 +53,11 @@ public class SessionDetail extends Fragment {
     private MapView mapView;
     private PolylineOptions route;
     private Marker liveMarker;
-
-    //private GPSService gps;
-
     private Button btnSwitchMapType;
     private TextView infoBox;
-
-    //private boolean bound = false;
-   // private int lastSpeedID = -1;
-
-    /*
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
-            gps = binder.getService();
-            bound = true;
-            setUpMapIfNeeded();
-            Log.w("sessiondetail", "GEBUNDEN");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w("sessiondetail","ungebunden");
-            bound = false;
-        }
-    };*/
-
+    private LinkedList<Integer> last5Pulses;
+    private Date vibrated; //only vibrate every 20 seconds
+    private Date lastTimePulsShown;
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.w("sessiondetail","saveinstance");
@@ -125,11 +107,14 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.w("sessiondetail","oncreate"+ SessionHandler.getSelectedRunId() + "");
+        Log.w("sessiondetail", "oncreate" + SessionHandler.getSelectedRunId() + "");
 
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         route = new PolylineOptions();
+        last5Pulses = new LinkedList<Integer>();
+        vibrated = new Date();
+        lastTimePulsShown = new Date();
     }
 
     //handler to receive broadcast messages from gps service
@@ -152,10 +137,80 @@ public class SessionDetail extends Fragment {
             liveMarker = mMap.addMarker(new MarkerOptions()
                     .position(temp)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+            updatePulseMarker(temp);
             updateInfoBox();
         }
         }
     };
+
+    /**
+     * add a pulse marker with a color matching to the pulse value
+     * show the marker every 30 seconds or if the change is greater than 20%
+     * @param pos current position
+     */
+    private void updatePulseMarker(LatLng pos) {
+        int temp =  PolarHandler.mHeartRate;
+        if (temp == 0) return;
+        if (last5Pulses.size()<5){
+            last5Pulses.add(temp);
+        } else if (last5Pulses.getLast() != temp) { //add a new pulse if 3 pulses are available and its a new value
+            last5Pulses.removeFirst();
+            last5Pulses.add(temp);
+            double average=0;
+            for (int i=0;i<last5Pulses.size();i++){
+                average+=last5Pulses.get(i);
+            }
+            average/=last5Pulses.size();
+            //20% higher pulse than the average of the previous 3 pulses
+            //OR
+            //30 seconds passed since the pulse got displayed the last time
+            float difference = Math.abs(((temp / ((float) average / 100)))-100);
+            int timePassedLastPulseShown = (int)(((new Date().getTime()-lastTimePulsShown.getTime())/1000));
+            //Log.w("sessionDetail","dif:"+difference +"--timePassed:"+timePassedLastPulseShown);
+            if ((difference>20) || (timePassedLastPulseShown>=30)){
+                mMap.addMarker(new MarkerOptions()
+                                .position(pos)
+                                .icon(BitmapDescriptorFactory.defaultMarker(mapPulseToColor(temp)))
+                                .title("Puls: "+temp)
+                );
+                lastTimePulsShown = new Date();
+            }
+        }
+    }
+
+
+    /**
+     * maps the pulse to a matching color (low pulse = blue; high pulse = red)
+     * @param pulse the pulse
+     * @return a matching color hue
+     */
+    public float mapPulseToColor(int pulse){
+//        public static final float HUE_RED = 0.0F;
+//        public static final float HUE_ORANGE = 30.0F;
+//        public static final float HUE_YELLOW = 60.0F;
+//        public static final float HUE_GREEN = 120.0F;
+//        public static final float HUE_CYAN = 180.0F;
+//        public static final float HUE_AZURE = 210.0F;
+//        public static final float HUE_BLUE = 240.0F;
+        if (pulse < 70){
+            return 240F;
+        } else if (pulse < 200){
+            //pulse     color
+            //70        240
+            //200       0
+            //(LowerBorder - value) * (100 / upperBorder) --> 0-100%
+            double percentOfMaxPulse = (pulse - 70) * ((float)100 / 130); //if pulse is 70, the value is 0; if pulse is 200, the value is 100
+
+            return (-1*((240 * (float)percentOfMaxPulse/ 100) - 240));
+        } else {
+            if ((new Date().getTime()-vibrated.getTime()/1000)>30){
+                Vibrator v = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(200);
+            }
+            vibrated = new Date();
+            return 0F;
+        }
+    }
 
     @Override
     public void onStop() {
@@ -230,7 +285,7 @@ public class SessionDetail extends Fragment {
         res.close();
 
         infoBox.setText("Session " + SessionHandler.getSelectedRunId() +
-                "\nDauer: " + (hours != 0?hours:"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
+                "\nDauer: " + (hours != 0?hours+":":"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
                 "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId())) + " Meter" +
                 "\n\u00D8 Geschwindigkeit: " + decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h" +
                 ((temperature!=-300)?(description+"\nTemperatur: " +temperature+"°C"+

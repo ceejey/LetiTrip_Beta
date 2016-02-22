@@ -157,7 +157,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
             result.setVisibleID(res.getInt(1));
             result.setStarted(displayDateFormat.format(time));
-            result.setDuration((hours != 0?Long.toString(hours):"")+minutes + ":" + ((seconds < 10) ? 0 : "") + seconds);
+            result.setDuration((hours != 0?Long.toString(hours)+":":"")+minutes + ":" + ((seconds < 10) ? 0 : "") + seconds);
 
             double meters = getWalkDistance(id);
             result.setDistanceMeter((int) getWalkDistance(id));

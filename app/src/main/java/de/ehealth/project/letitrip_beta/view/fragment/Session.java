@@ -57,7 +57,7 @@ public class Session extends Fragment {
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
             long hours = TimeUnit.MILLISECONDS.toHours(duration);
-            txtzeit.setText("Dauer: "+ (hours != 0?Long.toString(hours):"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
+            txtzeit.setText("Dauer: "+ (hours != 0?Long.toString(hours)+":":"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
             handler.postDelayed(this, 1000);
         }
     };
@@ -212,12 +212,12 @@ public class Session extends Fragment {
                 angleToWind,
                 (float) temperature,
                 (float) pressure,
-                (float) humidity,
+                (float) (humidity)/100,
                 0.007F,
                 0.276F,
                 1.1F
         );
-
+/*
         Log.w("session","used paras\n"+
                 "speed(m/s)"+(float) speedMperS+"\n"+
                 "altitudeChange"+(float) GPSDatabaseHandler.getInstance().getData().getAltitudeDifference((((MainActivity)getActivity()).getGps().getActiveRecordingID()),-1)+"\n"+
@@ -226,8 +226,8 @@ public class Session extends Fragment {
                 "angleToWind"+angleToWind+"\n"+
                 "temp"+(float) temperature+"\n"+
                 "pressure"+(float) pressure+"\n"+
-                "humidity"+(float) humidity);
-
+                "humidity"+(float) (humidity)/100);
+*/
         txtwatt.setText("Watt: " + (temperature==-300?"Wetterdaten fehlen":df.format(watt)));
     }
 

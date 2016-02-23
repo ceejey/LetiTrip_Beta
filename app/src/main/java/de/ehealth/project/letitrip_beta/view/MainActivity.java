@@ -149,7 +149,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             int extra = getIntent().getIntExtra("notification",-1);
             if (extra == 123){
                 notificationClicked = true;
+                getIntent().removeExtra("notification");
             }
+
         }
 
         mFragmentCaption = new Bar();

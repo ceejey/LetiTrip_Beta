@@ -383,7 +383,7 @@ public class SessionDetail extends Fragment {
         }
         res.close();
 
-        route.width(6);
+        route.width(20);
         route.color(Color.RED);
         mMap.addPolyline(route);
     }

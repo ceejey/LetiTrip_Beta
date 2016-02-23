@@ -43,7 +43,7 @@ public class FitbitUserProfile {
     private Set<String>  mNewsSettings = null;
     private static String mFahrradTyp = "Nichts ausgewählt";
     private static String mReifenTyp = "Nichts ausgewählt";
-    private String mLastRezeptUpdateSince = "283996800";
+    private String mLastRezeptUpdateSince = "0";
     private String mClickOffsetForBarSensibility = "1";
 
 

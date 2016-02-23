@@ -4,6 +4,7 @@ package de.ehealth.project.letitrip_beta.view.fragment.settings;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,18 +13,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.handler.database.RecipeDatabase;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.news.News;
+import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
+import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -35,6 +46,11 @@ public class General extends Fragment {
     private Button mbtnResetApp;
     private SeekBar msbrTouchSensibility;
 
+    private ImageView imgUpdate;
+    private ImageView imgResetActScor;
+    private ImageView imgResetApp;
+    private ImageView imgTouch;
+
     private String requestUrl ="http://recipeapi-ehealthrecipes.rhcloud.com/recipes?since=";
     private String mRecepiUrl ="";
 
@@ -43,6 +59,17 @@ public class General extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_general, container, false);
+
+        imgUpdate = (ImageView) view.findViewById(R.id.imgUpdate);
+        imgResetActScor = (ImageView) view.findViewById(R.id.imgResetActScore);
+        imgResetApp = (ImageView) view.findViewById(R.id.imgResetApp);
+        imgTouch = (ImageView) view.findViewById(R.id.imgTouch);
+
+        imgUpdate.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+        imgResetActScor.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+        imgResetApp.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+        imgTouch.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+
         mbtnUpdateRecipes = (Button) view.findViewById(R.id.btnUpdateRecipes);
         mbtnUpdateRecipes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,13 +112,14 @@ public class General extends Fragment {
                 FitbitUserProfile.saveUser(getActivity());
                 Bar.setClickOffset(msbrTouchSensibility.getProgress());
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
             }
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 // TODO Auto-generated method stub
             }
         });
@@ -103,7 +131,20 @@ public class General extends Fragment {
         Date date = new Date();
         int since = date.getDate(); //meintest du gettime oder getdate ? also mit date l
         try {
-            final String recepiJson = new UpdateRecipeDatabase().execute().get();
+            final String recipeJson = new UpdateRecipeDatabase().execute().get();
+
+            RecipeWrapper.getInstance().fromJsonToRecipes(recipeJson);
+
+            RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
+            List<Recipe> recipes = RecipeWrapper.getInstance().getRecipes();
+            for(Recipe recipe : recipes) {
+                if(recipeDb.getRecipe(recipe.getId()) == null) {
+                    recipeDb.addData(recipe.getCookTime(), recipe.getDifficulty(), recipe.getDate_added(), recipe.getKcal(),
+                            recipe.getPortion(), recipe.getName(), recipe.getRecipe(), recipe.getPreparationTime(),
+                            recipe.getIngredients(), recipe.getId(), recipe.getPic(), recipe.getType());
+                }
+            }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -135,6 +176,7 @@ public class General extends Fragment {
     public void updateActivity(MainActivity.FragmentName fn) {
         mListener.changeFragment(fn);
     }
+
     public class UpdateRecipeDatabase extends AsyncTask<Void, Void, String> {
 
         protected String doInBackground(Void... params) {
@@ -159,6 +201,7 @@ public class General extends Fragment {
                 in.close();
 
                 responseJson = response.toString();
+
                 Log.d("TEST", responseJson);
 
             } catch (IOException ex) {

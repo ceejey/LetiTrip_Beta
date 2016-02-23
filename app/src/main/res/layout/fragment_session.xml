@@ -24,7 +24,8 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5">
+                android:layout_weight="0.5"
+                android:layout_columnWeight="2">
 
                 <TextView
                     android:id="@+id/textView22"
@@ -47,7 +48,8 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5">
+                android:layout_weight="0.5"
+                android:layout_columnWeight="2">
 
                 <TextView
                     android:id="@+id/textView25"
@@ -223,7 +225,8 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2">
 
                 <TextView
                     android:id="@+id/textView24"
@@ -244,8 +247,9 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="186dp"
-                android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2">
 
                 <TextView
                     android:id="@+id/textView27"
@@ -285,7 +289,8 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp" >
+                android:layout_margin="5dp"
+                android:layout_columnWeight="2">
 
                 <TextView
                     android:id="@+id/textView26"
@@ -320,7 +325,8 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp" >
+                android:layout_margin="5dp"
+                android:layout_columnWeight="2">
 
                 <TextView
                     android:id="@+id/textView29"

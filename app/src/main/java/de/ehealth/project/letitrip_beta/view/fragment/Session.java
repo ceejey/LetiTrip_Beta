@@ -41,8 +41,8 @@ public class Session extends Fragment {
     private DecimalFormat df;
     private Handler handler; //update duration every second
     private WattHandler wattHandler;
-    private double speedMperS; //txttemp
-    private int dist; //txttemp
+    private double speedMperS;
+    private int dist;
     private float windSpeedKmH;
     private int temperature;
     private int windDirection;
@@ -73,7 +73,6 @@ public class Session extends Fragment {
     @Override
     public void onStart() {
         Log.w("session", "onStart");
-        //bindToService();
         lastID = -1;
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();

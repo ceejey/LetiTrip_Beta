@@ -190,8 +190,8 @@ public class GPSService extends Service {
     public void createNotification() {
         //on click
         Intent i = new Intent(this, MainActivity.class);
-        i.putExtra("notification",1);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, 0);
+        i.putExtra("notification",123); //mainactivity receives this value; opens session fragment
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Calendar calender = Calendar.getInstance();

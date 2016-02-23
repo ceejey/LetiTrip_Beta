@@ -34,8 +34,8 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class Session extends Fragment {
 
     private FragmentChanger mListener;
-    private TextView txtpuls, txtwatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtdistanz, txtgeschwSession, txtzeit;
-    private ImageView imgType;
+    private TextView txtpuls, txtwatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtdistanz, txtgeschwSession, txtzeit, txtWindDirection;
+    private ImageView imgType, imgWalkDir, imgWindDir;
     private int lastID;
     private Button showOnMap;
     private DecimalFormat df;
@@ -48,7 +48,7 @@ public class Session extends Fragment {
     private int windDirection;
     private int humidity;
     private int pressure;
-    private double walkDirection;
+    private int walkDirection;
 
     private Runnable runnable = new Runnable() {
         @Override
@@ -57,7 +57,7 @@ public class Session extends Fragment {
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
             long hours = TimeUnit.MILLISECONDS.toHours(duration);
-            txtzeit.setText("Dauer: "+ (hours != 0?Long.toString(hours)+":":"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten");
+            txtzeit.setText((hours != 0?Long.toString(hours)+":":"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
             handler.postDelayed(this, 1000);
         }
     };
@@ -110,11 +110,14 @@ public class Session extends Fragment {
         txtlaufRichtung = (TextView) view.findViewById(R.id.textView18);
         txttemp = (TextView) view.findViewById(R.id.textView12);
         txtwind = (TextView) view.findViewById(R.id.textView13);
+        txtWindDirection = (TextView) view.findViewById(R.id.textView30);
         txtdistanz = (TextView) view.findViewById(R.id.textView14);
         txtgeschwSession = (TextView) view.findViewById(R.id.textView15);
         txtzeit = (TextView) view.findViewById(R.id.textView16);
         imgType = (ImageView) view.findViewById(R.id.imgType);
         showOnMap = (Button) view.findViewById(R.id.button2);
+        imgWalkDir = (ImageView) view.findViewById(R.id.imgWalkDir);
+        imgWindDir = (ImageView) view.findViewById(R.id.imgWindDir);
 
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,17 +148,14 @@ public class Session extends Fragment {
         mListener.changeFragment(fn);
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-    }
-
-
     /**
      * updates ui elements that only need one update at startup
      */
     public void updateStaticUI(){
         imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+        imgWalkDir.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+        imgWindDir.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+
         if (((MainActivity) getActivity()).getGps().getRecordingAsBicycle() == 1){
             imgType.setImageResource(R.drawable.ic_directions_bike_white_48dp);
         } else {
@@ -163,11 +163,13 @@ public class Session extends Fragment {
         }
 
         if (temperature != -300){
-            txttemp.setText("Temperatur: " + temperature + " °C");
-            txtwind.setText("Wind: " + windSpeedKmH + " km/h (" + GPSDatabaseHandler.getInstance().getData().getDirectionLetter(windDirection) + "[" + windDirection + "])");
+            txttemp.setText(temperature + " °C");
+            txtwind.setText(windSpeedKmH + " km/h");
+            txtWindDirection.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(windDirection)); //+ "[" + windDirection + "]
+            imgWindDir.setRotation(windDirection);
         } else {
-            txttemp.setText("Temperatur nicht verfügbar");
-            txtwind.setText("Wind nicht verfügbar.");
+            txttemp.setText("N/A");
+            txtwind.setText("N/A");
         }
 
     }
@@ -176,25 +178,26 @@ public class Session extends Fragment {
      * updates all visible UI elements
      */
     private void updateUI() {
-        txtpuls.setText((PolarHandler.mHeartRate == 0) ? "Puls nicht verfügbar" : "Puls: " + PolarHandler.mHeartRate);
+        txtpuls.setText((PolarHandler.mHeartRate == 0) ? "N/A" : PolarHandler.mHeartRate+" bpm");
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
         if ((currentID != lastID) && (lastID != -1)){
             speedMperS = GPSDatabaseHandler.getInstance().getData().getSpeed(lastID, currentID);
-            txtgeschw.setText("Geschwindigkeit: " + df.format(3.6 * speedMperS) + " km/h");
-            walkDirection = GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
-            txtlaufRichtung.setText("Laufrichtung: " + GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection) + " (" + df.format(walkDirection) + ")");
+            txtgeschw.setText(df.format(3.6 * speedMperS) + " km/h");
+            walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
+            txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));//+ " (" + df.format(walkDirection) + ")"
+            imgWalkDir.setRotation(walkDirection);
         } else {
-            txtgeschw.setText("Geschwindigkeit: Warte...");
-            txtlaufRichtung.setText("Laufrichtung: Warte...");
+            txtgeschw.setText("Warte...");
+            txtlaufRichtung.setText("Warte...");
         }
 
         lastID = currentID;
 
-        txtgeschwSession.setText("\u00D8Geschwindigkeit (Session):" + df.format(3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)) + " km/h");
+        txtgeschwSession.setText(df.format(3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)) + " km/h");
         dist = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(((MainActivity) (getActivity())).getGps().getActiveRecordingID());
 
-        txtdistanz.setText("Distanz: " + dist + " Meter");
+        txtdistanz.setText(dist + " Meter");
 
         float angleToWind = (float) Math.abs(windDirection-walkDirection);
 
@@ -217,7 +220,7 @@ public class Session extends Fragment {
                 0.276F,
                 1.1F
         );
-/*
+
         Log.w("session","used paras\n"+
                 "speed(m/s)"+(float) speedMperS+"\n"+
                 "altitudeChange"+(float) GPSDatabaseHandler.getInstance().getData().getAltitudeDifference((((MainActivity)getActivity()).getGps().getActiveRecordingID()),-1)+"\n"+
@@ -227,8 +230,8 @@ public class Session extends Fragment {
                 "temp"+(float) temperature+"\n"+
                 "pressure"+(float) pressure+"\n"+
                 "humidity"+(float) (humidity)/100);
-*/
-        txtwatt.setText("Watt: " + (temperature==-300?"Wetterdaten fehlen":df.format(watt)));
+
+        txtwatt.setText((temperature==-300?"Wetterdaten fehlen":df.format(watt)));
     }
 
     @Override
@@ -238,14 +241,10 @@ public class Session extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
     public void onPause() {
         Log.w("session", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+        handler.removeCallbacks(runnable);
         super.onPause();
     }
 

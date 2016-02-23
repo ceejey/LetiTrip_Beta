@@ -182,7 +182,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startTime = null;
         Date endTime = null;
-
+        if (res.getCount()==0) return -1;
         try {
             res.moveToFirst();
             startTime = dateFormat.parse(res.getString(0));
@@ -270,7 +270,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         Date convert = new Date();
         String dateFinal;
         int outputmeters=0;
-
+        if (res.getCount()==0) return -1;
         while (res.moveToNext()){
             Log.w("database", res.getString(1) + "-->" + res.getInt(0));
             try {
@@ -306,6 +306,8 @@ public class GPSDatabase extends SQLiteOpenHelper {
             res = db.rawQuery("select " + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
         }
 
+        if (res.getCount()==0) return -1;
+
         res.moveToFirst();
         int val1 = res.getInt(0);
         res.moveToLast();
@@ -334,6 +336,8 @@ public class GPSDatabase extends SQLiteOpenHelper {
         //get start and end time
         Date time1 = null;
         Date time2 = null;
+
+        if (res.getCount() == 0) return -1;
 
         try {
             res.moveToFirst();
@@ -379,7 +383,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
     public double getWalkDirection(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select " + COLUMN3 + "," + COLUMN4 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
-
+        if (res.getCount()==0) return -1;
         res.moveToFirst();
         double lat1 = res.getDouble(0);
         double lon1 = res.getDouble(1);

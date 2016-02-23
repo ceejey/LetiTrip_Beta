@@ -83,7 +83,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
                             android:textSize="14sp"
-                            android:text="Dauer (h)"
+                            android:text="Dauer"
                             android:id="@+id/txtDurationHeader" />
 
                         <TextView

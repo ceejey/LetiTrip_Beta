@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -54,25 +55,25 @@ public class SessionDetail extends Fragment {
     private PolylineOptions route;
     private Marker liveMarker;
     private Button btnSwitchMapType;
-    private TextView infoBox;
     private LinkedList<Integer> last5Pulses;
     private Date vibrated; //only vibrate every 20 seconds
     private Date lastTimePulsShown;
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.w("sessiondetail","saveinstance");
 
-        super.onSaveInstanceState(outState);
-    }
+    private Handler handler; //update duration every second
+
+    private TextView txtSessionID, txtDistance, txtAvgSpeed, txtDuration, txtTemp, txtWind;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.w("sessiondetail", "oncreateview");
-
         // Inflate the layout for this fragment
         View view  = inflater.inflate(R.layout.fragment_session_detail, container, false);
-        infoBox = (TextView)view.findViewById(R.id.infoBox);
+        txtSessionID = (TextView) view.findViewById(R.id.txtSessionID);
+        txtDistance= (TextView) view.findViewById(R.id.txtDistance);
+        txtAvgSpeed = (TextView) view.findViewById(R.id.txtAvgSpeed);
+        txtDuration= (TextView) view.findViewById(R.id.txtDuration);
+        txtTemp = (TextView) view.findViewById(R.id.txtTemp);
+        txtWind = (TextView) view.findViewById(R.id.txtWind);
 
         btnSwitchMapType = (Button) view.findViewById(R.id.button);
         btnSwitchMapType.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +101,6 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onDetach() {
-        Log.w("sessiondetail", "ondeattach");
         super.onDetach();
         mListener = null;
     }
@@ -108,14 +108,26 @@ public class SessionDetail extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.w("sessiondetail", "oncreate" + SessionHandler.getSelectedRunId() + "");
-
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         route = new PolylineOptions();
         last5Pulses = new LinkedList<Integer>();
         vibrated = new Date();
         lastTimePulsShown = new Date();
+        handler = new Handler();
     }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
+            long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
+            long hours = TimeUnit.MILLISECONDS.toHours(duration);
+            txtDuration.setText((hours != 0?Long.toString(hours)+":":"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+            handler.postDelayed(this, 1000);
+        }
+    };
 
     //handler to receive broadcast messages from gps service
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -213,16 +225,14 @@ public class SessionDetail extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        Log.w("sessiondetail", "onstop");
-        super.onStop();
-    }
-
-    @Override
     public void onStart() {
         Log.w("sessiondetail", "onstart");
-        //bindToService();
         setUpMapIfNeeded();
+        updateStaticInfoBox();
+
+        if (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()){
+            handler.postDelayed(runnable, 1000);
+        }
         super.onStart();
     }
 
@@ -239,6 +249,7 @@ public class SessionDetail extends Fragment {
         Log.w("sessiondetail", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
         //getActivity().getSupportFragmentManager().popBackStack();
+        handler.removeCallbacks(runnable);
         super.onPause();
     }
 
@@ -255,16 +266,16 @@ public class SessionDetail extends Fragment {
         super.onLowMemory();
     }
 
-    @Override
-    public void onDestroyView() {
-        Log.w("sessiondetail", "onDestroyView");
-        super.onDestroyView();
-    }
-
     /**
      * updates the box underneath the map
      */
     public void updateInfoBox(){
+        DecimalFormat decimalFormat = new DecimalFormat("0.0");
+        txtDistance.setText((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId()) + " Meter");
+        txtAvgSpeed.setText(decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h");
+    }
+
+    public void updateStaticInfoBox(){
         long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
@@ -284,12 +295,11 @@ public class SessionDetail extends Fragment {
         }
         res.close();
 
-        infoBox.setText("Session " + SessionHandler.getSelectedRunId() +
-                "\nDauer: " + (hours != 0?hours+":":"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds + "") + " Minuten" +
-                "\nDistanz: " + ((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId())) + " Meter" +
-                "\n\u00D8 Geschwindigkeit: " + decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h" +
-                ((temperature!=-300)?(description+"\nTemperatur: " +temperature+"°C"+
-                "\nWind: "+wind+ "km/h"):""));
+        txtTemp.setText(temperature + " °C");
+        txtWind.setText(wind+" km/h");
+        txtSessionID.setText(SessionHandler.getSelectedRunId()+"");
+        txtDuration.setText((hours != 0?hours+":":"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+        updateInfoBox();
     }
 
     /**

@@ -42,7 +42,7 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
             TextView txtDistance = (TextView) v.findViewById(R.id.txtDistance);
             ImageView imgType = (ImageView) v.findViewById(R.id.imgType);
 
-            txtSessionNumber.setText(gpsCustomListItem.getVisibleID()+" (#pos:"+gpsCustomListItem.getPositions()+")");
+            txtSessionNumber.setText(gpsCustomListItem.getVisibleID()+"");
 
             if (gpsCustomListItem.isLive()){
                 txtHeading.setText("(Läuft) Klicke hier für Details!");

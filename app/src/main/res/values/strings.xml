@@ -4,4 +4,6 @@
      <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
         AIzaSyAp9lz6AUJDzrud7fUeFXg--bZlY2pKXg0
     </string>
+    <string name="threeDots">&#8942;</string>
+
 </resources>

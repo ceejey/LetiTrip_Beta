@@ -60,6 +60,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     private GPSService gps;
 
     boolean bound = false;
+    public ServiceConnection mConnection;
+    private boolean notificationClicked = false;
 
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
@@ -70,23 +72,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     /**
      * creates a connection to the gps service
      */
-    public ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
-            gps = binder.getService();
-            bound = true;
-            sendBroadcast("MainActivity", 1);
-            Log.w("mainactivity", "bound to service - status:" + gps.getStatus());
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            Log.w("mainactivity", "unbound");
-            bound = false;
-        }
-    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -134,9 +120,40 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFragmentHeader = new Header();
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
+                gps = binder.getService();
+                bound = true;
+                sendBroadcast("MainActivity", 1);
+                if (notificationClicked) {
+                    notificationClicked = false;
+                    changeFragment(FragmentName.SESSION);
+                }
+                Log.w("mainactivity", "bound to service - status:" + gps.getStatus());
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                Log.w("mainactivity", "unbound");
+                bound = false;
+            }
+        };
+
         mFragmentContent = new Dashboard();
+
+        //intent has this extra if user clicks the session notification; open "session" instead
+        if (getIntent().hasExtra("notification")){
+            int extra = getIntent().getIntExtra("notification",-1);
+            if (extra == 123){
+                notificationClicked = true;
+            }
+        }
+
         mFragmentCaption = new Bar();
+        mFragmentHeader = new Header();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.headerContainer, mFragmentHeader).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.captionContainer, mFragmentCaption).commit();
@@ -147,16 +164,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
         WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
 
-        //TODO doesnt work
-        if (getIntent().hasExtra("notification")){
-            int extra = getIntent().getIntExtra("notification",-1);
-            Log.w("main","extra"+extra);
-            if (extra == 1){
-                changeFragment(FragmentName.SESSION);
-            }
-        } else {
-            Log.w("no extra","main");
-        }
+
     }
 
     @Override
@@ -488,6 +496,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed(); //war vorher am ende der methode. verursacht evtl fehler
         Log.d("Test", "Current backstack count: " + getSupportFragmentManager().getBackStackEntryCount());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -498,6 +507,18 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             transaction.show(fragmentManager.findFragmentByTag(tag)).commit();
             mOldTag = tag;
         }
-        super.onBackPressed();
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        processIntent(intent);
+    }
+
+    private void processIntent(Intent intent){
+        if(intent.hasExtra("notification")){
+            Log.w("main", "got:" + intent.getExtras().getInt("notification"));
+        } else {
+            Log.w("main","no extra");
+        }
     }
 }

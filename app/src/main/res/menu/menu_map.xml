@@ -10,6 +10,5 @@
         android:title="Hybrid" />
     <item android:id="@+id/menuitem4"
         android:title="Terrain"/>
-    <!--dasdad-->
 
 </menu>

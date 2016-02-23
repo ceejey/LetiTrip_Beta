@@ -79,7 +79,7 @@ public class SessionDetail extends Fragment {
         btnSwitchMapType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchMapType();
+                showMapTypePopup(v);
             }
         });
 
@@ -124,7 +124,7 @@ public class SessionDetail extends Fragment {
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
             long hours = TimeUnit.MILLISECONDS.toHours(duration);
-            txtDuration.setText((hours != 0?Long.toString(hours)+":":"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+            txtDuration.setText((hours != 0 ? Long.toString(hours) + ":" : "") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
             handler.postDelayed(this, 1000);
         }
     };
@@ -169,7 +169,7 @@ public class SessionDetail extends Fragment {
             last5Pulses.removeFirst();
             last5Pulses.add(temp);
             double average=0;
-            for (int i=0;i<last5Pulses.size();i++){
+            for (int i = 0;i < last5Pulses.size(); i++){
                 average+=last5Pulses.get(i);
             }
             average/=last5Pulses.size();
@@ -392,14 +392,13 @@ public class SessionDetail extends Fragment {
      * change the map view
      * @param v
      */
-    public void showPopup(View v) {
+    public void showMapTypePopup(View v) {
         PopupMenu popup = new PopupMenu(getActivity(), v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_map, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Log.w("CLICK",item.getOrder()+"-"+item.getGroupId()+"-"+item.getItemId()+"-"+item.getTitle());
                 switch (item.getItemId()) {
                     case R.id.menuitem1:
                         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -418,10 +417,6 @@ public class SessionDetail extends Fragment {
             }
         });
         popup.show();
-    }
-
-    public void switchMapType() {
-        showPopup(getView());
     }
 
     public void updateActivity(MainActivity.FragmentName fn) {

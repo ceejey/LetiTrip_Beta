@@ -61,6 +61,8 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
                 showActivityScoreView();
 
+                refreshWeather();
+
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
@@ -87,7 +89,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 thread.start();
 
                 setSessionOnDashBoard();
-                refreshWeather();
             }
         });
 

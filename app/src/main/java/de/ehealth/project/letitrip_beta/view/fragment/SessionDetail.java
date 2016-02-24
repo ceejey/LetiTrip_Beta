@@ -271,7 +271,7 @@ public class SessionDetail extends Fragment {
      */
     public void updateInfoBox(){
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
-        txtDistance.setText((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId()) + " Meter");
+        txtDistance.setText((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId(),-1) + " Meter");
         txtAvgSpeed.setText(decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h");
     }
 

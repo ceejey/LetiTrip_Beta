@@ -42,7 +42,8 @@ public class Session extends Fragment {
     private Handler handler; //update duration every second
     private WattHandler wattHandler;
     private double speedMperS;
-    private int dist;
+    private double distSinceLastUpdate;
+    private int totalDistance;
     private float windSpeedKmH;
     private int temperature;
     private int windDirection;
@@ -187,6 +188,7 @@ public class Session extends Fragment {
             txtgeschw.setText(df.format(speedMperS*3.6) + " km/h");
             walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
             altitudeDifference = GPSDatabaseHandler.getInstance().getData().getAltitudeDifference(lastID, currentID);
+            distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
             txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));
             imgWalkDir.setRotation(walkDirection);
         } else {
@@ -197,14 +199,12 @@ public class Session extends Fragment {
         lastID = currentID;
 
         txtgeschwSession.setText(df.format(3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)) + " km/h");
-        dist = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(((MainActivity) (getActivity())).getGps().getActiveRecordingID());
+        totalDistance = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(((MainActivity) (getActivity())).getGps().getActiveRecordingID(),-1);
 
-        txtdistanz.setText(dist + " Meter");
+        txtdistanz.setText(totalDistance + " Meter");
 
         float angleToWind = (float) Math.abs(windDirection-walkDirection);
 
-
-        Log.w("session", "windAngle:" + windDirection + "--yourDirection:" + walkDirection+"angle:"+angleToWind);
         double watt = wattHandler.calcWatts( //TODO fehlende parameter
                 75F,
                 10F,
@@ -212,7 +212,7 @@ public class Session extends Fragment {
                 9.81F,
                 (float) speedMperS,
                 (float) altitudeDifference,
-                (float) dist,
+                (float) distSinceLastUpdate,
                 (float) (windSpeedKmH / 3.6),
                 angleToWind,
                 (float) temperature,
@@ -226,7 +226,7 @@ public class Session extends Fragment {
         Log.w("session","used paras\n"+
                 "speed(m/s)"+(float) speedMperS+"\n"+
                 "altitudeChange"+(float) altitudeDifference+"\n"+
-                "dist"+(float) dist+"\n"+
+                "distSinceLastUpdate"+(float) distSinceLastUpdate +"\n"+
                 "windspeed"+(float) (windSpeedKmH / 3.6)+"\n"+
                 "angleToWind"+angleToWind+"\n"+
                 "temp"+(float) temperature+"\n"+

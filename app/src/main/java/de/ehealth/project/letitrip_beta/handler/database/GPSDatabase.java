@@ -48,7 +48,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
@@ -157,10 +157,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
             result.setVisibleID(res.getInt(1));
             result.setStarted(displayDateFormat.format(time));
-            result.setDuration((hours != 0?Long.toString(hours)+":":"")+minutes + ":" + ((seconds < 10) ? 0 : "") + seconds);
+            result.setDuration((hours != 0 ? Long.toString(hours) + ":" : "") + minutes + ":" + ((seconds < 10) ? 0 : "") + seconds);
 
-            double meters = getWalkDistance(id);
-            result.setDistanceMeter((int) getWalkDistance(id));
+            double meters = getWalkDistance(id,-1);
+            result.setDistanceMeter((int) getWalkDistance(id,-1));
             result.setAverageSpeed(3.6 * (meters / (seconds + (minutes * 60))));
             result.setType(bicycle);
             result.setPositions(res.getCount());
@@ -198,14 +198,21 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     * get the distance in meters of one run
-     * @param id the session id
-     * @return the distance of this run in meters
+     * pass id1=X and id2=-1 to get the distance in meters of session X
+     * pass id1=x and id2=y to get the distance in meters between those points
+     * @param ID1 first point or session ID
+     * @param ID2 second point or -1
+     * @return distance in meters
      */
-    public double getWalkDistance (int id){
+    public double getWalkDistance(int ID1, int ID2){
         double distance = 0;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select " + COLUMN3 + ", " + COLUMN4 + "," + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN1 + "=" + id, null);
+        Cursor res;
+        if (ID2 == -1){
+            res = db.rawQuery("select " + COLUMN3 + ", " + COLUMN4 + "," + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN1 + "=" + ID1, null);
+        } else {
+            res = db.rawQuery("select " + COLUMN3 + ", " + COLUMN4 + "," + COLUMN5 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
+        }
 
         if (res.getCount() < 2){
             return 0;
@@ -283,7 +290,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             //Log.w("database",date+"<->"+dateFinal+"-->?"+(date.equals(dateFinal)));
             //if the input date = iterated date, add the distance of that run to the output
             if (date.equals(dateFinal)) {
-                outputmeters += (int) getWalkDistance(res.getInt(0));
+                outputmeters += (int) getWalkDistance(res.getInt(0),-1);
             }
         }
         res.close();

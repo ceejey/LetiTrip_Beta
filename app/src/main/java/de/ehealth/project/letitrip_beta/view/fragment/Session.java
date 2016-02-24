@@ -213,7 +213,7 @@ public class Session extends Fragment {
                 (float) (windSpeedKmH / 3.6),
                 angleToWind,
                 (float) temperature,
-                (float) pressure,
+                (float) pressure * 100,
                 (float) (humidity)/100,
                 0.007F,
                 0.276F,
@@ -227,8 +227,9 @@ public class Session extends Fragment {
                 "windspeed"+(float) (windSpeedKmH / 3.6)+"\n"+
                 "angleToWind"+angleToWind+"\n"+
                 "temp"+(float) temperature+"\n"+
-                "pressure"+(float) pressure+"\n"+
-                "humidity"+(float) (humidity)/100);
+                "pressure"+(float) (pressure * 100)+"\n"+
+                "humidity"+(float) (humidity)/100+"\n"+
+                "watt: "+watt);
 
         txtwatt.setText((temperature==-300?"Wetterdaten fehlen":df.format(watt)));
     }

@@ -40,6 +40,7 @@ public class FitbitUserProfile {
     private String mWeightUnit = "";
     private String mHeightUnit = "";
     private String mWaterUnit = "";
+    private String mCity = "";
     private Set<String>  mNewsSettings = null;
     private static String mFahrradTyp = "Nichts ausgewählt";
     private static String mReifenTyp = "Nichts ausgewählt";
@@ -112,6 +113,7 @@ public class FitbitUserProfile {
         edit.putString("MemberSince", mActiveUser.getmMemberSince() );
         edit.putString("FahrradTyp", mFahrradTyp );
         edit.putString("ReifenTyp", mReifenTyp );
+        edit.putString("City",mActiveUser.getmCity() );
         if(mActiveUser.getmNewsSettings() != null) {edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());}
         edit.putString("LastRecipeUpdate", mActiveUser.getmLastRezeptUpdateSince());
         edit.putString("ActScoreResetDate", mActiveUser.getmActScoreResetDate());
@@ -126,7 +128,7 @@ public class FitbitUserProfile {
         FitbitUserProfile profile = mActiveUser;
         SharedPreferences pref = context.getSharedPreferences("userprofile", context.MODE_PRIVATE);
         profile.mEncodedId = pref.getString("UserId","");
-        profile.mAccessToken = new Token(pref.getString("AccessToken",""), pref.getString("Secret","" ));
+        profile.mAccessToken = new Token(pref.getString("AccessToken",""), pref.getString("Secret",""));
         profile.mFullname = pref.getString("Fullname","");
         profile.mDateOfBirth = pref.getString("DateOfBirth","");
         profile.mAge = pref.getString("Age","");
@@ -141,7 +143,8 @@ public class FitbitUserProfile {
         profile.mMemberSince = pref.getString("MemberSince","");
         profile.mFahrradTyp = pref.getString("FahrradTyp","");
         profile.mReifenTyp = pref.getString("ReifenTyp", "");
-        profile.mNewsSettings = pref.getStringSet("NewsSettings", null);
+        profile.mCity = pref.getString("City","");
+        profile.mNewsSettings = pref.getStringSet("NewsSettings",null);
         profile.mLastRezeptUpdateSince = pref.getString("LastRecipeUpdate","");
         //nun überprüfen, ob der letzte update leer ist falls die app neu installiert wurde
         if(profile.mLastRezeptUpdateSince == ""){
@@ -339,4 +342,13 @@ public class FitbitUserProfile {
     public void setmActScoreResetDate(String mActScoreResetDate) {
         this.mActScoreResetDate = mActScoreResetDate;
     }
+
+    public String getmCity() {
+        return mCity;
+    }
+
+    public void setmCity(String mCity) {
+        this.mCity = mCity;
+    }
+
 }

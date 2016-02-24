@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.fitbit;
+package de.ehealth.project.letitrip_beta.handler.fitbit;
 
 import android.app.Activity;
 
@@ -7,13 +7,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
-import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
-import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
 
 /**
  * Created by Mirorn on 25.11.2015.
  */
-public class FitBitActivityScore {
+public class FitBitActivityScoreHandler {
 
     private static double mActivtiyScoreSteps = 0;
     private static double mActivtiyScoreCalories = 0;
@@ -22,10 +22,10 @@ public class FitBitActivityScore {
     private static double mCaloriesOutAvg = 0;
     private static double mStepsAim = 10000; //10 000 set by default
     private static double mCaloriesAim = 4000; //4000 set by default
-    private static FitBitActivityScore mActivityScore = new FitBitActivityScore();
-    private FitBitActivityScore(){}
+    private static FitBitActivityScoreHandler mActivityScore = new FitBitActivityScoreHandler();
+    private FitBitActivityScoreHandler(){}
 
-    public static FitBitActivityScore getmActivityScore(){
+    public static FitBitActivityScoreHandler getmActivityScore(){
         return mActivityScore;
     }
 
@@ -59,7 +59,7 @@ public class FitBitActivityScore {
             cal1.setTime(d1);
             Calendar cal2 = Calendar.getInstance();
             cal2.setTime(today);
-            // This is import if the user resetes the activity score !
+
             daysbetweenNowAndResetDate = daysBetween(cal2, cal1) - 1;
         }
         if(daysbetweenNowAndResetDate > 14 || daysbetweenNowAndResetDate <= 0 ){
@@ -98,31 +98,31 @@ public class FitBitActivityScore {
         int user_age = Integer.parseInt(FitbitUserProfile.getmActiveUser().getmAge());
         if(FitbitUserProfile.getmActiveUser().getmGender().contains("MALE")) {
             if (user_age == 18) {
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(3200);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(3200);
             }
             if (user_age >= 19 && user_age <= 35){
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(3000);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(3000);
             }
             if (user_age >= 36 && user_age <= 55){
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2800);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(2800);
             }
             if (user_age >= 56 && user_age <= 75){
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2600);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(2600);
             }
             if (user_age > 75){
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2400);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(2400);
             }
         }
         else {
 
             if (user_age >= 18 && user_age <= 30){
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2400);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(2400);
             }
             if (user_age >= 31 && user_age <= 60){
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2200);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(2200);
             }
             if (user_age >= 61 ){
-                FitBitActivityScore.getmActivityScore().setmCaloriesAim(2000);
+                FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(2000);
             }
         }
     }
@@ -132,7 +132,7 @@ public class FitBitActivityScore {
     }
 
     public static void setmStepsAim(double mStepsAim) {
-        FitBitActivityScore.mStepsAim = mStepsAim;
+        FitBitActivityScoreHandler.mStepsAim = mStepsAim;
     }
 
     public static double getmActivtiyScoreSteps() {
@@ -140,7 +140,7 @@ public class FitBitActivityScore {
     }
 
     public static void setmActivtiyScoreSteps(double mActivtiyScoreSteps) {
-        FitBitActivityScore.mActivtiyScoreSteps = mActivtiyScoreSteps;
+        FitBitActivityScoreHandler.mActivtiyScoreSteps = mActivtiyScoreSteps;
     }
 
     public static double getmStepsAvg() {
@@ -148,7 +148,7 @@ public class FitBitActivityScore {
     }
 
     public static void setmStepsAvg(double mStepsAvg) {
-        FitBitActivityScore.mStepsAvg = mStepsAvg;
+        FitBitActivityScoreHandler.mStepsAvg = mStepsAvg;
     }
 
     public static double getmCaloriesBMRAvg() {
@@ -156,7 +156,7 @@ public class FitBitActivityScore {
     }
 
     public static void setmCaloriesBMRAvg(double mCaloriesBMRAvg) {
-        FitBitActivityScore.mCaloriesBMRAvg = mCaloriesBMRAvg;
+        FitBitActivityScoreHandler.mCaloriesBMRAvg = mCaloriesBMRAvg;
     }
 
     public static double getmCaloriesOutAvg() {
@@ -164,7 +164,7 @@ public class FitBitActivityScore {
     }
 
     public static void setmCaloriesOutAvg(double mCaloriesOutAvg) {
-        FitBitActivityScore.mCaloriesOutAvg = mCaloriesOutAvg;
+        FitBitActivityScoreHandler.mCaloriesOutAvg = mCaloriesOutAvg;
     }
 
     public static double getmCaloriesAim() {
@@ -172,11 +172,11 @@ public class FitBitActivityScore {
     }
 
     public static void setmCaloriesAim(double mCaloriesAim) {
-        FitBitActivityScore.mCaloriesAim = mCaloriesAim;
+        FitBitActivityScoreHandler.mCaloriesAim = mCaloriesAim;
     }
 
-    public static void setmActivityScore(FitBitActivityScore mActivityScore) {
-        FitBitActivityScore.mActivityScore = mActivityScore;
+    public static void setmActivityScore(FitBitActivityScoreHandler mActivityScore) {
+        FitBitActivityScoreHandler.mActivityScore = mActivityScore;
     }
 
     public static double getmActivtiyScoreCalories() {
@@ -184,6 +184,6 @@ public class FitBitActivityScore {
     }
 
     public static void setmActivtiyScoreCalories(double mActivtiyScoreCalories) {
-        FitBitActivityScore.mActivtiyScoreCalories = mActivtiyScoreCalories;
+        FitBitActivityScoreHandler.mActivtiyScoreCalories = mActivtiyScoreCalories;
     }
 }

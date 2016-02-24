@@ -250,7 +250,7 @@ public class GPSService extends Service {
         }
     }
 
-    public float getLastSpeed() {
+    public float getLastSpeedMperS() {
         return lastSpeed;
     }
 }

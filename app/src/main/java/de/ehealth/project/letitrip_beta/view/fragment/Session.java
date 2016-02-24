@@ -49,6 +49,7 @@ public class Session extends Fragment {
     private int humidity;
     private int pressure;
     private int walkDirection;
+    private int altitudeDifference;
 
     private Runnable runnable = new Runnable() {
         @Override
@@ -181,10 +182,12 @@ public class Session extends Fragment {
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
         if ((currentID != lastID) && (lastID != -1)){
-            speedMperS = GPSDatabaseHandler.getInstance().getData().getSpeed(lastID, currentID);
-            txtgeschw.setText(((MainActivity)getActivity()).getGps().getLastSpeed()+"\n"+df.format(3.6 * speedMperS) + " km/h");
+            //speedMperS = GPSDatabaseHandler.getInstance().getData().getSpeed(lastID, currentID);
+            speedMperS = ((MainActivity)getActivity()).getGps().getLastSpeedMperS();
+            txtgeschw.setText(df.format(speedMperS*3.6) + " km/h");
             walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
-            txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));//+ " (" + df.format(walkDirection) + ")"
+            altitudeDifference = GPSDatabaseHandler.getInstance().getData().getAltitudeDifference(lastID, currentID);
+            txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));
             imgWalkDir.setRotation(walkDirection);
         } else {
             txtgeschw.setText("Warte...");
@@ -208,13 +211,13 @@ public class Session extends Fragment {
                 180F,
                 9.81F,
                 (float) speedMperS,
-                (float) GPSDatabaseHandler.getInstance().getData().getAltitudeDifference((((MainActivity)getActivity()).getGps().getActiveRecordingID()),-1),
+                (float) altitudeDifference,
                 (float) dist,
                 (float) (windSpeedKmH / 3.6),
                 angleToWind,
                 (float) temperature,
                 (float) pressure * 100,
-                (float) (humidity)/100,
+                ((float)humidity)/100,
                 0.007F,
                 0.276F,
                 1.1F
@@ -222,13 +225,13 @@ public class Session extends Fragment {
 
         Log.w("session","used paras\n"+
                 "speed(m/s)"+(float) speedMperS+"\n"+
-                "altitudeChange"+(float) GPSDatabaseHandler.getInstance().getData().getAltitudeDifference((((MainActivity)getActivity()).getGps().getActiveRecordingID()),-1)+"\n"+
+                "altitudeChange"+(float) altitudeDifference+"\n"+
                 "dist"+(float) dist+"\n"+
                 "windspeed"+(float) (windSpeedKmH / 3.6)+"\n"+
                 "angleToWind"+angleToWind+"\n"+
                 "temp"+(float) temperature+"\n"+
                 "pressure"+(float) (pressure * 100)+"\n"+
-                "humidity"+(float) (humidity)/100+"\n"+
+                "humidity"+ ((float)humidity)/100+"\n"+
                 "watt: "+watt);
 
         txtwatt.setText((temperature==-300?"N/A":df.format(watt)));

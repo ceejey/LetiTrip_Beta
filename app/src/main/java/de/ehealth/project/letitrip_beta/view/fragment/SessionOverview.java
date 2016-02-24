@@ -276,8 +276,6 @@ public class SessionOverview extends Fragment {
      * adds all available sessions (also live sessions) in descending order to the listview
      */
     public void updateList() {
-        Log.w("sessionoverview","update list - status: "+((MainActivity)getActivity()).getGps().getStatus().toString());
-
         List valueList = new ArrayList<GPSCustomListItem>();
         int lastRun = GPSDatabaseHandler.getInstance().getData().getLastSessionID();
 

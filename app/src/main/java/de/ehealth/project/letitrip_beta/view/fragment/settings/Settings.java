@@ -37,7 +37,7 @@ public class Settings extends Fragment {
         ListView listSettings = (ListView) view.findViewById(R.id.listSettings);
         List<SettingsRow> itemList = new ArrayList<>();
         itemList.add(new SettingsRow("Allgemein", "Einstellungen für die App"));
-        itemList.add(new SettingsRow("Profil", "Hat sich ihr Gewicht oder das Fahrrad geändert?"));
+        itemList.add(new SettingsRow("Profil", "Gewicht, Trainingsort oder den Fahrradtyp ändern?"));
         itemList.add(new SettingsRow("Geräte", "App mit einem Gerät koppeln?"));
         itemList.add(new SettingsRow("News", "Welche Themen sollen angezeigt werden?"));
         itemList.add(new SettingsRow("Hilfe", "Allgemein"));

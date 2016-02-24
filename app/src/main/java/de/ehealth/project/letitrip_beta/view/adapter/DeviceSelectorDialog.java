@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.view.fragment.settings;
+package de.ehealth.project.letitrip_beta.view.adapter;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -26,12 +26,21 @@ public class DeviceSelectorDialog extends DialogFragment {
 
         int id = getArguments().getInt("id");
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        builder.setTitle("Device ID" + id)
-                .setItems(new String[]{"Info", "Löschen", "Abbrechen"}, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        getTargetFragment().onActivityResult(1,which,getActivity().getIntent());
-                    }
-                });
+        if(id == 0) {
+            builder.setTitle("FitBit Account").setItems(new String[]{"Mit einem anderen Account verbinden", "Abbrechen"}, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    getTargetFragment().onActivityResult(1, which, getActivity().getIntent());
+                }
+            });
+        }
+        else{
+            builder.setTitle("Polar").setItems(new String[]{"Löschen", "Abbrechen"}, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    getTargetFragment().onActivityResult(1, which, getActivity().getIntent());
+                }
+            });
+        }
+
         return builder.create();
 
     }

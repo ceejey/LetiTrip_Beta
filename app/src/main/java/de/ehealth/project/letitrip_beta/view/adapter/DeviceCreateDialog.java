@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.view.fragment.settings;
+package de.ehealth.project.letitrip_beta.view.adapter;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -16,6 +16,7 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.Polar;
 
 /**
  * Created by Mirorn on 14.12.2015.

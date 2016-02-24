@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,21 +15,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import android.widget.TextView;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.database.RecipeDatabase;
+import de.ehealth.project.letitrip_beta.handler.recipe.RecipeUpdateHandler;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
-import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
-import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -46,7 +35,7 @@ public class General extends Fragment {
     private ImageView imgResetActScor;
     private ImageView imgResetApp;
     private ImageView imgTouch;
-
+    private TextView mtxtViewRecipiUpdate;
     private String requestUrl ="http://recipeapi-ehealthrecipes.rhcloud.com/recipes?since=";
     private String mRecepiUrl ="";
 
@@ -56,6 +45,8 @@ public class General extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_general, container, false);
 
+        mtxtViewRecipiUpdate = (TextView) view.findViewById(R.id.txtUpdateDate);
+        mtxtViewRecipiUpdate.setText(FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince());
         imgUpdate = (ImageView) view.findViewById(R.id.imgUpdate);
         imgResetActScor = (ImageView) view.findViewById(R.id.imgResetActScore);
         imgResetApp = (ImageView) view.findViewById(R.id.imgResetApp);
@@ -123,32 +114,8 @@ public class General extends Fragment {
     }
 
     private void updateRecipeDatabase(){
-        mRecepiUrl = requestUrl + FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince();
-        Date date = new Date();
-        int since = date.getDate(); //meintest du gettime oder getdate ? also mit date l
-        try {
-            final String recipeJson = new UpdateRecipeDatabase().execute().get();
-
-            RecipeWrapper.getInstance().fromJsonToRecipes(recipeJson);
-
-            RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
-            List<Recipe> recipes = RecipeWrapper.getInstance().getRecipes();
-            for(Recipe recipe : recipes) {
-                if(recipeDb.getRecipe(recipe.getId()) == null) {
-                    recipeDb.addData(recipe.getCookTime(), recipe.getDifficulty(), recipe.getDate_added(), recipe.getKcal(),
-                            recipe.getPortion(), recipe.getName(), recipe.getRecipe(), recipe.getPreparationTime(),
-                            recipe.getIngredients(), recipe.getId(), recipe.getPic(), recipe.getType());
-                }
-            }
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        FitbitUserProfile.getmActiveUser().setmLastRezeptUpdateSince(Integer.toString(since));
-        FitbitUserProfile.saveUser(getActivity());
+        new RecipeUpdateHandler().updateRecipeDatabase(getActivity());
+        mtxtViewRecipiUpdate.setText(FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince());
     }
 
     private void resetApp(){
@@ -193,37 +160,4 @@ public class General extends Fragment {
         mListener.changeFragment(fn);
     }
 
-    public class UpdateRecipeDatabase extends AsyncTask<Void, Void, String> {
-
-        protected String doInBackground(Void... params) {
-
-            String responseJson = "";
-            try {
-                String url = mRecepiUrl;
-
-                URL obj = new URL(url);
-                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-                con.setRequestMethod("GET");
-
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                responseJson = response.toString();
-
-                Log.d("TEST", responseJson);
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            return responseJson;
-        }
-    }
 }

@@ -22,17 +22,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import de.ehealth.project.letitrip_beta.handler.polar.PolarCallback;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
-public class GPSService extends Service {
+public class GPSService extends Service implements PolarCallback {
 
     private LocationListener locationListener;
     private LocationManager locationManager;
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
     private PolarHandler polar;
+
+    private List <BluetoothDevice> deviceList;
 
     private boolean standing = false;
     private boolean firstPoint = true;
@@ -71,8 +74,13 @@ public class GPSService extends Service {
         Log.w("service", "DESTROYED");
         activeRecordingID = -1;
         lastSpeed = -1;
-        if (notificationManager != null) notificationManager.cancel(0);
-        polar.disconnectFromPolarDevice();
+
+        if (notificationManager != null)
+            notificationManager.cancel(0);
+
+        if(polar.isDeviceConnected())
+            polar.disconnectFromPolarDevice();
+
         sendBroadcast("GPSService",2); //let the UI refresh
         super.onDestroy();
     }
@@ -87,7 +95,10 @@ public class GPSService extends Service {
     public void onCreate() {
         Log.w("service", "created");
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        polar = new PolarHandler(getApplicationContext());
+
+        polar = new PolarHandler(getApplicationContext(), this);
+        PolarHandler.setInstance(polar);
+
         status = Status.IDLE;
         super.onCreate();
     }
@@ -121,6 +132,25 @@ public class GPSService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    public void polarDiscoveryFinished(){
+        //Connect to Polar
+        if(polar.isDeviceFound()) {
+            deviceList = polar.getDeviceList();
+            if (deviceList.size() != 0) {
+                Log.d("Polar", "Try to connect with device: " + deviceList.get(0).getName());
+                polar.connectToPolarDevice(deviceList.get(0));
+            }
+        }
+    }
+
+    public void polarDeviceConnected(){
+        if(polar.isDeviceConnected()) {
+            Log.d("Polar", "Connected: " + polar.isDeviceConnected() + "\nTrying to receive Heartrate!");
+            polar.receiveHeartRate();
+
+        }
+    }
+
     /**
      * sends a broadcast with given parameters
      * @param msg
@@ -135,12 +165,6 @@ public class GPSService extends Service {
      * connects to the polar device and starts the gps tracking
      */
     public void startTracking() {
-        //connect to polar
-        List <BluetoothDevice> deviceList = polar.getDeviceList();
-        if (deviceList.size() != 0){
-            polar.connectToPolarDevice(deviceList.get(0));
-            polar.receiveHeartRate();
-        }
 
         locationListener = new LocationListener() {
             @Override

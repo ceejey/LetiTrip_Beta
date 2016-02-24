@@ -223,7 +223,7 @@ public class Session extends Fragment {
                 1.1F
         );
 
-        Log.w("session","used paras\n"+
+        /*Log.w("session","used paras\n"+
                 "speed(m/s)"+(float) speedMperS+"\n"+
                 "altitudeChange"+(float) altitudeDifference+"\n"+
                 "distSinceLastUpdate"+(float) distSinceLastUpdate +"\n"+
@@ -232,7 +232,7 @@ public class Session extends Fragment {
                 "temp"+(float) temperature+"\n"+
                 "pressure"+(float) (pressure * 100)+"\n"+
                 "humidity"+ ((float)humidity)/100+"\n"+
-                "watt: "+watt);
+                "watt: "+watt);*/
 
         txtwatt.setText((temperature==-300?"N/A":(watt < 0?"0":df.format(watt))));
     }

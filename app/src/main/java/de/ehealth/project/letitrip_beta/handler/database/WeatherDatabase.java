@@ -15,7 +15,7 @@ import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 
 public class WeatherDatabase extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "eHealthDb2";
+    public static final String DATABASE_NAME = "LetitripDB2";
     public static final String TABLE_NAME = "WeatherDataTable";
     public static final String COLUMN0 = "ID";
     public static final String COLUMN1 = "Date";

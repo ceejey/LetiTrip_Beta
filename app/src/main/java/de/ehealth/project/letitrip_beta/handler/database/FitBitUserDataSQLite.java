@@ -61,7 +61,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
         Log.d("Database", "Database created!");
     }
 
-    //Not implemented!!!!!!!!!!!!!!!!!!
+    //TODO Not implemented!!!!!!!!!!!!!!!!!!
     public  void newTable(){
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
@@ -114,6 +114,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
             else {
                 updateFitBitData(fitBitUserData, day);
             }
+            cursor.close();
         }catch(Exception ex){
             Log.d("Fitbit", "INSERTION FAILED !");
         }
@@ -138,6 +139,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
         Log.d("Fitbit", "After Update:");
         printTable(TABLE_USER);
     }
+
     // Searches for an entry that contains the string parameter
     public Summary getFitBitData(String day){
         Log.d("Fitbit", day);
@@ -163,7 +165,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
 
             Log.d("Fitbit","-------------------------------------------" +user.getSteps());
         } else {return null;}
-
+        cursor.close();
         return user;
     }
     @Override
@@ -219,6 +221,8 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
             Log.d("Fitbit", rowSeperator);
         }
+        cursor.close();
+        dbCursor.close();
     }
 
     public FitBitUserData getCurFitBitUserMovement() {

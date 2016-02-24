@@ -38,16 +38,19 @@ public class GPSService extends Service {
     private boolean firstPoint = true;
     private List<Float> bearingList = new ArrayList<>();
 
-    private Status status;
-    private NotificationManager notificationManager;
-    private IBinder mBinder = new LocalBinder();
+    private float lastSpeed;
 
+    private Status status;
+
+    private NotificationManager notificationManager;
+
+    private IBinder mBinder = new LocalBinder();
     public class LocalBinder extends Binder {
+
         public GPSService getService() {
             return GPSService.this;
         }
     }
-
     /**
      * status of the service
      */
@@ -67,6 +70,7 @@ public class GPSService extends Service {
         }
         Log.w("service", "DESTROYED");
         activeRecordingID = -1;
+        lastSpeed = -1;
         if (notificationManager != null) notificationManager.cancel(0);
         polar.disconnectFromPolarDevice();
         sendBroadcast("GPSService",2); //let the UI refresh
@@ -132,7 +136,7 @@ public class GPSService extends Service {
      */
     public void startTracking() {
         //connect to polar
-        List<BluetoothDevice> deviceList = polar.getDeviceList();
+        List <BluetoothDevice> deviceList = polar.getDeviceList();
         if (deviceList.size() != 0){
             polar.connectToPolarDevice(deviceList.get(0));
             polar.receiveHeartRate();
@@ -151,6 +155,7 @@ public class GPSService extends Service {
                             boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate);
                             if (ins) {
                                 sendBroadcast("GPSService", 5);
+                                lastSpeed = l.getSpeed();
                             } else
                                 Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
 
@@ -179,6 +184,7 @@ public class GPSService extends Service {
                                                    //TODO set time to 2000
             locationManager.requestLocationUpdates("gps", 1000, 0, locationListener);
             status = Status.SEARCHINGGPS;
+            lastSpeed = -1;
         } catch (SecurityException e) {
             e.printStackTrace();
         }
@@ -242,5 +248,9 @@ public class GPSService extends Service {
         if ((status!= Status.IDLE) && (status != Status.SEARCHINGGPS)){
             status = Status.TRACKINGSTARTED;
         }
+    }
+
+    public float getLastSpeed() {
+        return lastSpeed;
     }
 }

@@ -35,9 +35,9 @@ public class Session extends Fragment {
 
     private FragmentChanger mListener;
     private TextView txtpuls, txtwatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtdistanz, txtgeschwSession, txtzeit, txtWindDirection;
+    private Button showOnMap;
     private ImageView imgType, imgWalkDir, imgWindDir;
     private int lastID;
-    private Button showOnMap;
     private DecimalFormat df;
     private Handler handler; //update duration every second
     private WattHandler wattHandler;
@@ -164,7 +164,7 @@ public class Session extends Fragment {
         if (temperature != -300){
             txttemp.setText(temperature + " °C");
             txtwind.setText(windSpeedKmH + " km/h");
-            txtWindDirection.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(windDirection)); //+ "[" + windDirection + "]
+            txtWindDirection.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(windDirection));
             imgWindDir.setRotation(windDirection);
         } else {
             txttemp.setText("N/A");
@@ -182,7 +182,7 @@ public class Session extends Fragment {
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
         if ((currentID != lastID) && (lastID != -1)){
             speedMperS = GPSDatabaseHandler.getInstance().getData().getSpeed(lastID, currentID);
-            txtgeschw.setText(df.format(3.6 * speedMperS) + " km/h");
+            txtgeschw.setText(((MainActivity)getActivity()).getGps().getLastSpeed()+"\n"+df.format(3.6 * speedMperS) + " km/h");
             walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
             txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));//+ " (" + df.format(walkDirection) + ")"
             imgWalkDir.setRotation(walkDirection);

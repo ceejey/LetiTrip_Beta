@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
 import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
@@ -28,35 +29,70 @@ public class FitBitActivityScore {
         return mActivityScore;
     }
 
-    public static void calcActivtiyScore(Activity activity){
+    public static int daysBetween(Calendar startDate, Calendar endDate) {
+        Calendar date = (Calendar) startDate.clone();
+        int daysBetween = 0;
+        while (date.before(endDate)) {
+            date.add(Calendar.DAY_OF_MONTH, 1);
+            daysBetween++;
+        }
+        return daysBetween;
+    }
 
+    public static void calcActivtiyScore(Activity activity){
+        int daysbetweenNowAndResetDate = 0;
         try {
             new FitBitGetJsonTask(Oauth.getmOauth(), FitBitGetJsonTask.ENDPOINT_MOVES,activity).execute().get();
         } catch(Exception ex){ ex.printStackTrace(); }
-        Calendar now = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        String[] days = new String[14];
-        now.add(Calendar.DAY_OF_MONTH, -14);
-        for (int i = 0; i < days.length; i++) {
-            days[i] = format.format(now.getTime());
-            Summary sum = FitBitUserDataSQLite.getInstance(activity).getFitBitData(days[i]);
-            mStepsAvg += Integer.parseInt(sum.getSteps());
-            mCaloriesBMRAvg += Integer.parseInt(sum.getCaloriesBMR());
-            mCaloriesOutAvg += Integer.parseInt(sum.getCaloriesOut());
-            now.add(Calendar.DAY_OF_MONTH, 1);
+
+        // The date that was saved since the User wanted to Reset the ActivityScore
+        if(!FitbitUserProfile.getmActiveUser().getmActScoreResetDate().equals("")) {
+            Date d1 = new Date(FitbitUserProfile.getmActiveUser().getmActScoreResetDate());
+
+
+            // Get the date today using Calendar object.
+            Date today = Calendar.getInstance().getTime();
+            // Using DateFormat format method we can create a string
+            // representation of a date with the defined format.
+
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime(d1);
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(today);
+            // This is import if the user resetes the activity score !
+            daysbetweenNowAndResetDate = daysBetween(cal2, cal1) - 1;
         }
-        mStepsAvg = mStepsAvg /14;
-        mCaloriesBMRAvg = mCaloriesBMRAvg /14;
-        mCaloriesOutAvg = mCaloriesOutAvg /14;
-        setUserAims();
-        try {
-            mActivtiyScoreSteps = mStepsAvg / mStepsAim;
-            mActivtiyScoreCalories = mCaloriesOutAvg / mCaloriesAim;
-        } catch(Exception ex){ ex.printStackTrace(); }
+        if(daysbetweenNowAndResetDate > 14 || daysbetweenNowAndResetDate <= 0 ){
+            daysbetweenNowAndResetDate = 14;
+        }
+        if(daysbetweenNowAndResetDate != 0) {
+            Calendar now = Calendar.getInstance();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String[] days = new String[daysbetweenNowAndResetDate];
+            now.add(Calendar.DAY_OF_MONTH, -daysbetweenNowAndResetDate);
+            for (int i = 0; i < days.length; i++) {
+                days[i] = format.format(now.getTime());
+                Summary sum = FitBitUserDataSQLite.getInstance(activity).getFitBitData(days[i]);
+                mStepsAvg += Integer.parseInt(sum.getSteps());
+                mCaloriesBMRAvg += Integer.parseInt(sum.getCaloriesBMR());
+                mCaloriesOutAvg += Integer.parseInt(sum.getCaloriesOut());
+                now.add(Calendar.DAY_OF_MONTH, 1);
+            }
+            mStepsAvg = mStepsAvg / daysbetweenNowAndResetDate;
+            mCaloriesBMRAvg = mCaloriesBMRAvg / daysbetweenNowAndResetDate;
+            mCaloriesOutAvg = mCaloriesOutAvg / daysbetweenNowAndResetDate;
+            setUserAims();
+            try {
+                mActivtiyScoreSteps = mStepsAvg / mStepsAim;
+                mActivtiyScoreCalories = mCaloriesOutAvg / mCaloriesAim;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
-     * Look at our Aim Table. We decie that our overall aim is an active User
+     * Look at our Aim Table. We decide that our overall aim is an active User
      */
     public static void setUserAims(){
         int user_age = Integer.parseInt(FitbitUserProfile.getmActiveUser().getmAge());

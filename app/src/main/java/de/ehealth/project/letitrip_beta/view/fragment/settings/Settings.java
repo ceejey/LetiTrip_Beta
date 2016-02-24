@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +36,11 @@ public class Settings extends Fragment {
 
         ListView listSettings = (ListView) view.findViewById(R.id.listSettings);
         List<SettingsRow> itemList = new ArrayList<>();
-        itemList.add(new SettingsRow("Allgemein", "test"));
-        itemList.add(new SettingsRow("Profil", "test"));
-        itemList.add(new SettingsRow("Geräte", "test"));
-        itemList.add(new SettingsRow("News", "test"));
-        itemList.add(new SettingsRow("Hilfe", "test"));
+        itemList.add(new SettingsRow("Allgemein", "Einstellungen für die App"));
+        itemList.add(new SettingsRow("Profil", "Hat sich ihr Gewicht oder das Fahrrad geändert?"));
+        itemList.add(new SettingsRow("Geräte", "App mit einem Gerät koppeln?"));
+        itemList.add(new SettingsRow("News", "Welche Themen sollen angezeigt werden?"));
+        itemList.add(new SettingsRow("Hilfe", "Allgemein"));
         ListAdapter customAdapter = new SettingsAdapter(getActivity(), itemList);
         listSettings.setAdapter(customAdapter);
 
@@ -93,8 +92,9 @@ public class Settings extends Fragment {
         super.onAttach(activity);
         if (activity instanceof FragmentChanger) {
             mListener = (FragmentChanger) activity;
-        } else {
-            Log.d("Fitbit", "Wrong interface implemented");
+        }
+        if (FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")){
+            updateActivity(MainActivity.FragmentName.FIT_BIT_INIT);
         }
     }
 

@@ -14,7 +14,7 @@ import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 
 /**
- * Created by Mirorn on 28.10.2015.
+ * This class saves all important Data mostly from the settings and user profile in shared references
  */
 public class FitbitUserProfile {
 
@@ -44,6 +44,7 @@ public class FitbitUserProfile {
     private static String mFahrradTyp = "Nichts ausgewählt";
     private static String mReifenTyp = "Nichts ausgewählt";
     private String mLastRezeptUpdateSince = "0";
+    private String mActScoreResetDate = "";
     private String mClickOffsetForBarSensibility = "1";
 
 
@@ -113,6 +114,7 @@ public class FitbitUserProfile {
         edit.putString("ReifenTyp", mReifenTyp );
         if(mActiveUser.getmNewsSettings() != null) {edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());}
         edit.putString("LastRecipeUpdate", mActiveUser.getmLastRezeptUpdateSince());
+        edit.putString("ActScoreResetDate", mActiveUser.getmActScoreResetDate());
         edit.putString("ClickOffsetForBarSensibility", mActiveUser.getmClickOffsetForBarSensibility() );
 
         edit.commit();
@@ -143,8 +145,9 @@ public class FitbitUserProfile {
         profile.mLastRezeptUpdateSince = pref.getString("LastRecipeUpdate","");
         //nun überprüfen, ob der letzte update leer ist falls die app neu installiert wurde
         if(profile.mLastRezeptUpdateSince == ""){
-            profile.mLastRezeptUpdateSince = "283996800";
+            profile.mLastRezeptUpdateSince = "noch nicht";
         }
+        profile.mActScoreResetDate = pref.getString("ActScoreResetDate","");
         profile.mClickOffsetForBarSensibility = pref.getString("ClickOffsetForBarSensibility","");
         if(profile.mClickOffsetForBarSensibility == ""){
             profile.mClickOffsetForBarSensibility = "1";
@@ -169,6 +172,7 @@ public class FitbitUserProfile {
         mActiveUser.setmNewsSettings(null);
         mActiveUser.setmLastRezeptUpdateSince("");
         mActiveUser.setmClickOffsetForBarSensibility("1");
+        mActiveUser.setmActScoreResetDate("");
         final SharedPreferences.Editor edit = pref.edit();
         edit.clear();
         edit.commit();
@@ -327,5 +331,12 @@ public class FitbitUserProfile {
 
     public void setmClickOffsetForBarSensibility(String mClickOffsetForBarSensibility) {
         this.mClickOffsetForBarSensibility = mClickOffsetForBarSensibility;
+    }
+    public String getmActScoreResetDate() {
+        return mActScoreResetDate;
+    }
+
+    public void setmActScoreResetDate(String mActScoreResetDate) {
+        this.mActScoreResetDate = mActScoreResetDate;
     }
 }

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.DevicesAdapter;
@@ -113,14 +112,14 @@ public class Device extends Fragment {
                         break;
                     case 1:
                         if(mSelectedDevice == 0){
-                            if(!Polar.getmPolarDevice().equals("")){
+                            if(FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")){
                                 Polar.setmPolarDevice("");
                                 updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                             }
                             else {
                                 FitbitUserProfile.getmActiveUser().setmEncodedId("");
                                 FitbitUserProfile.saveUser(getActivity());
-                                FitBitUserDataSQLite.getInstance(getActivity()).newTable();
+                                //FitBitUserDataSQLite.getInstance(getActivity()).newTable();
                                 updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                             }
 

@@ -31,6 +31,7 @@ public class Header extends Fragment {
         } else {
             Log.d("Fitbit", "Wrong interface implemented");
         }
+
     }
 
     @Override

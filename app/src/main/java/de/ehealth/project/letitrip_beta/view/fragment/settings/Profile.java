@@ -206,8 +206,10 @@ public class Profile extends Fragment {
             ex.printStackTrace();
         }
 
+        FitbitUserProfile.getmActiveUser().getmEncodedId();
         FitbitUserProfile.saveUser(getActivity());
         FitBitActivityScore.calcActivtiyScore(getActivity());
+
         if(!checkbox){
             FitbitUserProfile.setmFahrradTyp("Nichts ausgewählt");
             FitbitUserProfile.setmReifenTyp("Nichts ausgewählt");

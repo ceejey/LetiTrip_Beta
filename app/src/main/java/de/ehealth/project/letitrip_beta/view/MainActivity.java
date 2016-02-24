@@ -262,7 +262,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             case SETTINGS:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings";
-
+                /*
                 expectedEntryCount = 1;
                 expectedEntry = "settings";
                 refillEntrys.add("settings");
@@ -271,7 +271,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     alreadyAdded = true;
-                else
+                else */
                     fragmentContent = new Settings();
                 break;
             case SETTINGS_GENERAL:
@@ -293,7 +293,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             case SETTINGS_PROFILE:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_profile";
-
+                /*
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
                 refillEntrys.add("dashboard");
@@ -303,7 +303,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     alreadyAdded = true;
-                else
+                else */
                     fragmentContent = new Profile();
                 break;
             case SETTINGS_DEVICE:

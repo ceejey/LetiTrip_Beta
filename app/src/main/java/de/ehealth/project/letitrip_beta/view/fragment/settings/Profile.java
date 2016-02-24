@@ -16,17 +16,13 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitActivityScoreHandler;
 import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
-import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitActivityScoreHandler;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -217,13 +213,7 @@ public class Profile extends Fragment {
             FitbitUserProfile.setmFahrradTyp("Nichts ausgewählt");
             FitbitUserProfile.setmReifenTyp("Nichts ausgewählt");
         }
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        // Get the date today using Calendar object.
-        Date today = Calendar.getInstance().getTime();
-        // Using DateFormat format method we can create a string
-        // representation of a date with the defined format.
-        String reportDate = df.format(today);
-        FitbitUserProfile.getmActiveUser().setmActScoreResetDate(reportDate);
+
         FitbitUserProfile.saveUser(getActivity());
         FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
         updateActivity(MainActivity.FragmentName.SETTINGS);

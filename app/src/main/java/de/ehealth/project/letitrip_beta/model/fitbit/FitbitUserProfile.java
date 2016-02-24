@@ -8,6 +8,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.Token;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
@@ -75,6 +79,15 @@ public class FitbitUserProfile {
                     profile.mWaterUnit = obj.getString("waterUnit");
                     profile.mGender = obj.getString("gender");
                     profile.mMemberSince = obj.getString("memberSince");
+
+                    /** This very important because this Timestemp is for the correct Activity Score calculation */
+                    DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                    // Get the date today using Calendar object.
+                    Date today = Calendar.getInstance().getTime();
+                    // Using DateFormat format method we can create a string
+                    // representation of a date with the defined format.
+                    String reportDate = df.format(today);
+                    profile.mActScoreResetDate = reportDate;
                 }
                     mActiveUser = profile;
 
@@ -82,6 +95,7 @@ public class FitbitUserProfile {
                 e.printStackTrace();
             }
         }
+
     }
     public static FitbitUserProfile searchUser(String id){
         if(mActiveUser.getmEncodedId().equals(id)) {

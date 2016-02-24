@@ -230,7 +230,7 @@ public class Session extends Fragment {
                 "pressure"+(float) pressure+"\n"+
                 "humidity"+(float) (humidity)/100);
 
-        txtwatt.setText((temperature==-300?"Wetterdaten fehlen":df.format(watt)));
+        txtwatt.setText((temperature==-300?"N/A":df.format(watt)));
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.List;
 import de.ehealth.project.letitrip_beta.R;
 
 /**
- * Created by Lars on 15.02.2016.
+ * the adapter of the listview in "Sessionoverview"
  */
 public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
 

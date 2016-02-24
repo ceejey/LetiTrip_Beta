@@ -1,5 +1,8 @@
 package de.ehealth.project.letitrip_beta.view.adapter;
 
+/**
+ * dataholder class for every listview entry
+ */
 public class GPSCustomListItem {
 
     private int ID; //not visible
@@ -20,17 +23,6 @@ public class GPSCustomListItem {
     }
 
     private boolean live;
-
-    public GPSCustomListItem(int ID, int visibleID, String started, String duration, int distanceMeter, double averageSpeed, int type, int positions) {
-        this.ID = ID;
-        this.visibleID = visibleID;
-        this.started = started;
-        this.duration = duration;
-        this.positions = positions;
-        this.distanceMeter = distanceMeter;
-        this.averageSpeed = averageSpeed;
-        this.type = type;
-    }
 
     public GPSCustomListItem() {
         this.live = false;

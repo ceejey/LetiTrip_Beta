@@ -4,6 +4,7 @@ package de.ehealth.project.letitrip_beta.view.fragment.settings;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,23 +16,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.database.RecipeDatabase;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitBitActivityScore;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
 import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
@@ -44,14 +40,12 @@ public class General extends Fragment {
     private FragmentChanger mListener;
     private Button mbtnUpdateRecipes;
     private Button mbtnResetApp;
-    private Button mbtnResetActivityScore;
     private SeekBar msbrTouchSensibility;
 
     private ImageView imgUpdate;
     private ImageView imgResetActScor;
     private ImageView imgResetApp;
     private ImageView imgTouch;
-    private TextView mUpdateRecipesDate;
 
     private String requestUrl ="http://recipeapi-ehealthrecipes.rhcloud.com/recipes?since=";
     private String mRecepiUrl ="";
@@ -71,13 +65,7 @@ public class General extends Fragment {
         imgResetActScor.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
         imgResetApp.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
         imgTouch.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
-        mbtnResetActivityScore = (Button) view.findViewById(R.id.btnResetActScore);
-        mbtnResetActivityScore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetActScore();
-            }
-        });
+
         mbtnUpdateRecipes = (Button) view.findViewById(R.id.btnUpdateRecipes);
         mbtnUpdateRecipes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +99,7 @@ public class General extends Fragment {
         msbrTouchSensibility.setMax(30);
         msbrTouchSensibility.setProgress(Integer.parseInt(FitbitUserProfile.getmActiveUser().getmClickOffsetForBarSensibility()));
         msbrTouchSensibility.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
@@ -130,22 +119,13 @@ public class General extends Fragment {
                 // TODO Auto-generated method stub
             }
         });
-        mUpdateRecipesDate= (TextView)view.findViewById(R.id.txtUpdateDate);
-        mUpdateRecipesDate.setText(FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince());
         return view;
     }
 
     private void updateRecipeDatabase(){
         mRecepiUrl = requestUrl + FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince();
-
         Date date = new Date();
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        // Get the date today using Calendar object.
-        Date today = Calendar.getInstance().getTime();
-        // Using DateFormat format method we can create a string
-        // representation of a date with the defined format.
-        String reportDate = df.format(today);
-
+        int since = date.getDate(); //meintest du gettime oder getdate ? also mit date l
         try {
             final String recipeJson = new UpdateRecipeDatabase().execute().get();
 
@@ -167,30 +147,32 @@ public class General extends Fragment {
             e.printStackTrace();
         }
 
-        mUpdateRecipesDate.setText(reportDate);
-        FitbitUserProfile.getmActiveUser().setmLastRezeptUpdateSince(reportDate);
+        FitbitUserProfile.getmActiveUser().setmLastRezeptUpdateSince(Integer.toString(since));
         FitbitUserProfile.saveUser(getActivity());
-    }
-
-    private void resetActScore() {
-        Date date = new Date();
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    // Get the date today using Calendar object.
-        Date today = Calendar.getInstance().getTime();
-    // Using DateFormat format method we can create a string
-    // representation of a date with the defined format.
-        String reportDate = df.format(today);
-
-        FitbitUserProfile.getmActiveUser().setmActScoreResetDate(reportDate);
-        FitbitUserProfile.saveUser(getActivity());
-
-
-        FitBitActivityScore.calcActivtiyScore(getActivity());
     }
 
     private void resetApp(){
         FitbitUserProfile.deleteUser(getActivity());
+        if (getActivity().deleteDatabase("LetitripDB")) Log.w("general","DB deleted");
+        if (getActivity().deleteDatabase("LetitripDB2")) Log.w("general","DB deleted");
+        if (getActivity().deleteDatabase("LetitripDB3")) Log.w("general","DB deleted");
+        if (getActivity().deleteDatabase("FitbitUserDB")) Log.w("general","DB deleted");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Zurücksetzen erfolgreich.\nDie App wird nun neugestartet.")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent i = getActivity().getBaseContext().getPackageManager()
+                                .getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

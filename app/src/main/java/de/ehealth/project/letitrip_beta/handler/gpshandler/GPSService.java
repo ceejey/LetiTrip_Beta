@@ -141,7 +141,7 @@ public class GPSService extends Service {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location l) {
-                if ((l != null) && (status != Status.PAUSED)) {
+                if ((l != null) && (status != Status.PAUSED) && (!Double.isNaN(l.getLongitude())) && (!Double.isNaN(l.getLatitude())) && (!Double.isNaN(l.getAltitude()))) {
                     //only insert data when accuaracy is good enough
                     if (l.getAccuracy() < 25){
 

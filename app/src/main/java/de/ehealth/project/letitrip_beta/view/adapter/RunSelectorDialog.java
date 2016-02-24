@@ -5,6 +5,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
+/**
+ * Opens a dialog when clicking on a list element of "SessionOverview"
+ */
 public class RunSelectorDialog extends DialogFragment {
 
     public static RunSelectorDialog newInstance(int id) {
@@ -17,7 +20,6 @@ public class RunSelectorDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         int id = getArguments().getInt("id");
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setTitle("Session " + id)
@@ -27,6 +29,5 @@ public class RunSelectorDialog extends DialogFragment {
                     }
                 });
         return builder.create();
-
     }
 }

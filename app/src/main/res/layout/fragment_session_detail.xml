@@ -19,7 +19,9 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/scrollView2" >
+                android:id="@+id/scrollView2"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -32,23 +34,21 @@
                         android:layout_alignParentStart="true"
                         android:background="@android:color/darker_gray" />
 
-                    <GridLayout
+                    <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:weightSum="1"
-                        android:useDefaultMargins="true"
-                        android:columnCount="2"
-                        android:rowCount="1" >
+                        android:useDefaultMargins="true">
 
                         <LinearLayout
                             android:orientation="vertical"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:layout_row="0"
                             android:layout_column="0"
-                            android:layout_columnWeight="2">
+                            android:layout_columnWeight="0.5">
 
                             <TextView
                                 android:id="@+id/textView28"
@@ -68,12 +68,12 @@
 
                         <LinearLayout
                             android:orientation="vertical"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:layout_row="0"
                             android:layout_column="1"
-                            android:layout_columnWeight="2">
+                            android:layout_columnWeight="0.5">
 
                             <TextView
                                 android:id="@+id/textView40"
@@ -91,7 +91,7 @@
                                 android:id="@+id/txtDistance" />
                         </LinearLayout>
 
-                    </GridLayout>
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -99,22 +99,23 @@
                         android:layout_alignParentStart="true"
                         android:background="@android:color/darker_gray" />
 
-                    <GridLayout
+                    <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:weightSum="1"
                         android:layout_gravity="center_horizontal"
                         android:rowCount="1"
-                        android:columnCount="2" >
+                        android:columnCount="2"
+                        android:baselineAligned="false">
 
                         <LinearLayout
                             android:orientation="vertical"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
                             android:layout_column="0"
-                            android:layout_columnWeight="2">
+                            android:layout_columnWeight="2"
+                            android:layout_weight="0.5">
 
                             <TextView
                                 android:id="@+id/textView36"
@@ -134,11 +135,11 @@
 
                         <LinearLayout
                             android:orientation="vertical"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
                             android:layout_column="1"
-                            android:layout_columnWeight="2">
+                            android:layout_columnWeight="2"
+                            android:layout_weight="0.5">
 
                             <TextView
                                 android:id="@+id/textView32"
@@ -155,7 +156,7 @@
                                 android:text="10:00"
                                 android:id="@+id/txtDuration" />
                         </LinearLayout>
-                    </GridLayout>
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -163,20 +164,18 @@
                         android:layout_alignParentStart="true"
                         android:background="@android:color/darker_gray" />
 
-                    <GridLayout
+                    <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:weightSum="1"
-                        android:layout_gravity="center_horizontal"
-                        android:columnCount="2"
-                        android:rowCount="1" >
+                        android:layout_gravity="center_horizontal" >
 
                         <LinearLayout
                             android:orientation="vertical"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_columnWeight="2">
+                            android:layout_weight="0.5">
 
                             <TextView
                                 android:id="@+id/textView34"
@@ -196,9 +195,9 @@
 
                         <LinearLayout
                             android:orientation="vertical"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_columnWeight="2">
+                            android:layout_weight="0.5">
 
                             <TextView
                                 android:id="@+id/textView38"
@@ -215,7 +214,7 @@
                                 android:text="3 km/h"
                                 android:id="@+id/txtWind" />
                         </LinearLayout>
-                    </GridLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
             </ScrollView>
@@ -242,13 +241,6 @@
             android:id="@+id/map"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="false"
-            android:layout_alignParentEnd="true" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true" />
 
     </RelativeLayout>

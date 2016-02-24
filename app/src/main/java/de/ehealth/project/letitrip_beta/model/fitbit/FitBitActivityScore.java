@@ -113,7 +113,7 @@ public class FitBitActivityScore {
                 FitBitActivityScore.getmActivityScore().setmCaloriesAim(2400);
             }
         }
-        else{
+        else {
 
             if (user_age >= 18 && user_age <= 30){
                 FitBitActivityScore.getmActivityScore().setmCaloriesAim(2400);

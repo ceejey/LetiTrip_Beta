@@ -18,7 +18,7 @@ import de.ehealth.project.letitrip_beta.view.adapter.GPSCustomListItem;
 
 public class GPSDatabase extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "eHealthDb";
+    public static final String DATABASE_NAME = "LetitripDB3";
     public static final String TABLE_NAME = "GPSDataTable";
     public static final String COLUMN0 = "ID";
     public static final String COLUMN1 = "SessionNumber";
@@ -80,12 +80,12 @@ public class GPSDatabase extends SQLiteOpenHelper {
         contentValues.put(COLUMN7, pulse);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
-        return (result !=-1);
+        return (result != -1);
     }
 
     /**
      *
-     * @return
+     * @return the last session ID
      */
     public int getLastSessionID(){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -371,6 +371,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             lon1 = res.getDouble(2);
             alt1 = res.getDouble(3);
         }
+        res.close();
         return totalDistance/totalSeconds;
     }
 
@@ -467,5 +468,4 @@ public class GPSDatabase extends SQLiteOpenHelper {
         }
         return e == null ? "ERR" : e.getValue();
     }
-
 }

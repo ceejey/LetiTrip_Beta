@@ -180,7 +180,6 @@ public class Session extends Fragment {
             txttemp.setText("N/A");
             txtwind.setText("N/A");
         }
-
     }
 
     /**
@@ -239,8 +238,8 @@ public class Session extends Fragment {
                         0.276F,
                         1.1F );
 
-                //Log.w("bla"+lastID+"-"+currentID,TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID,currentID))+"");
-                calories+=((((watt*3600)/4.18)/0.24)/3600)*TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID,currentID));
+                long pastTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
+                calories+=wattHandler.calcKcal(watt,(double)pastTime);
             } else { //walking
 
             }
@@ -261,7 +260,7 @@ public class Session extends Fragment {
                 "pressure"+(float) (pressure * 100)+"\n"+
                 "humidity"+ ((float)humidity)/100+"\n"+
                 "watt: "+watt);*/
-        Log.w("session","watt="+watt+"");
+
         txtwatt.setText((temperature == -300 ? "N/A" : (watt < 0 ? "0" : df.format(watt))));
         txtCalories.setText((calories==-1)?"N/A":df.format(calories)+" kcal");
     }

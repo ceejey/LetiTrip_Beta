@@ -201,12 +201,12 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = null;
         if (ID2 == -1){
-            res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
-        } else {
             res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + ID1, null);
+        } else {
+            res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
         Date startTime = null;
         Date endTime = null;
         if (res.getCount() == 0) return -1;

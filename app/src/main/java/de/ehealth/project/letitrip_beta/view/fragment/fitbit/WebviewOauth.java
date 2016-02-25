@@ -17,7 +17,7 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
 /**
- * Created by Mirorn on 08.12.2015.
+ * See Oauth class
  */
 public class WebviewOauth extends Fragment{
 
@@ -32,8 +32,8 @@ public class WebviewOauth extends Fragment{
         mOauth.firstoauthstep();
         webView = (WebView)view.findViewById(R.id.webView);
         webView.setInitialScale(30);
-        //webView.getSettings().setLoadWithOverviewMode(true);
-        // webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);

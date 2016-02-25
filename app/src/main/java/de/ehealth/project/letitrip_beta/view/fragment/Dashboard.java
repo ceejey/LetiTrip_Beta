@@ -23,14 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherService;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitBitAPI;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.model.weather.Channel;
 import de.ehealth.project.letitrip_beta.model.weather.DescriptionMapping;
@@ -94,10 +92,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
         });
 
         mInflater = inflater;
-
-        //init for fitbit connection
-        Oauth.getmOauth().initOauth("3444e1985fcecca0dd97ff85e4253c45", "e4263b0e379b61c4916e4427d594f5c2", "http://www.google.de", FitBitAPI.class);
-        FitbitUserProfile.loadUser(getActivity());
 
         return view;
     }

@@ -239,7 +239,8 @@ public class Session extends Fragment {
                         1.1F );
 
                 long pastTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
-                calories+=wattHandler.calcKcal(watt,(double)pastTime);
+                calories=calories+wattHandler.calcKcal(watt,(double)pastTime);
+                Log.w("bla",""+calories);
             } else { //walking
 
             }
@@ -262,7 +263,7 @@ public class Session extends Fragment {
                 "watt: "+watt);*/
 
         txtwatt.setText((temperature == -300 ? "N/A" : (watt < 0 ? "0" : df.format(watt))));
-        txtCalories.setText((calories==-1)?"N/A":df.format(calories)+" kcal");
+        txtCalories.setText((calories == -1)?"N/A":df.format(calories)+" kcal");
     }
 
     @Override

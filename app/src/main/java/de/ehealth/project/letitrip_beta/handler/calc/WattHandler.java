@@ -47,7 +47,7 @@ public class WattHandler {
         return pMech;
     }
 
-    public Double calcKcal(Double pMech, Double pastTime){
+    public double calcKcal(Double pMech, Double pastTime){
         Double kJMech = (pMech/1000) * pastTime;
         Double kJMet = kJMech / 0.25F;
         Double kcal = kJMet * 0.239006F;

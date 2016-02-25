@@ -44,12 +44,13 @@ public class WattHandler {
         /*Log.d("Watt", "Watt:\nFg: " + fg + "\nCr: " + Cr + "\nCg: " + Cg + "\na: " + a + "\nes: " + es + "\nrf: " + rf + "\nrho: " + rho + "\nA: " +
                 A + "\nb: " + b + "\npMech: " + pMech);*/
 
-        testMet(a,b,speed);
         return pMech;
     }
 
-    private void testMet(Double a, Double b, Float v){
-        Log.d("Test", "Nach Formel: " + ((a+b*Math.pow(v, 3))/0.25F));
-        Log.d("Test", "V zusätzlich: " + ((a*v+b*Math.pow(v, 3))/0.25F));
+    private Double calcKcal(Double pMech){
+        Double pMet = pMech / 0.25F;
+        Double kcal = pMet * 0.239006F;
+        Log.d("Test", "Nach Formel: " + pMet);
+        return kcal;
     }
 }

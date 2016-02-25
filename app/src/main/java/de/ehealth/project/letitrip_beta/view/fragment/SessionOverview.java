@@ -103,7 +103,7 @@ public class SessionOverview extends Fragment {
                     Log.w("sessionoverview", "starting...");
                     Intent i = new Intent(getActivity(), GPSService.class);
                     getActivity().startService(i);
-                    gpsStatusTextView.setText("Aufnahme startet bald...");
+                    gpsStatusTextView.setText("Session wird vorbereitet..");
                     btnStartSession.setText("Session beenden");
                 } else {
                     Log.w("sessionoverview", "stopping...");
@@ -330,7 +330,7 @@ public class SessionOverview extends Fragment {
                     mListener.changeFragment(MainActivity.FragmentName.SESSION);
                 }
             } else if (message == 3) {
-                gpsStatusTextView.setText("GPS zu ungenau...");
+                gpsStatusTextView.setText("Warte auf GPS..");
             }
         }
     };

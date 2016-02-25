@@ -63,7 +63,6 @@ public class FitbitUserProfile {
                 obj = new JSONObject(jSon).getJSONObject("user");
                 String encodedId = obj.getString("encodedId");
                 FitbitUserProfile profile = searchUser(encodedId);
-
                 if (!profile.mEncodedId.equals(encodedId)) {
                     profile.mEncodedId = encodedId;
                     profile.mAccessToken = accessToken;

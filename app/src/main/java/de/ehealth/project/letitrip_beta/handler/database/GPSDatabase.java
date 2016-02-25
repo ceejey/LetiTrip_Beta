@@ -52,12 +52,22 @@ public class GPSDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * returns everything matching with the session id
+     * @param id the session id
+     * @return all entries of the session
+     */
     public Cursor getSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN1 + " = " + id, null);
         return res;
     }
 
+    /**
+     *  get the last stored position (lon, lat) of a point
+     * @param id the session id
+     * @return the last position (lon,lat)
+     */
     public Cursor getLastPosOfSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         //SELECT Latitude, Longitude FROM  GPSDataTable WHERE ((RunNumber=1) AND (ID=(SELECT MAX(ID) FROM GPSDataTable))
@@ -65,6 +75,16 @@ public class GPSDatabase extends SQLiteOpenHelper {
         return res;
     }
 
+    /**
+     * add an entry to the database
+     * @param sessionNumber
+     * @param latitude
+     * @param longitude
+     * @param altitude
+     * @param bicycle
+     * @param pulse
+     * @return false if an error occured; true if inserting was successful
+     */
     public boolean addData(int sessionNumber, double latitude, double longitude, double altitude, int bicycle, int pulse){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -171,7 +191,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     * get the duration in of one run
+     * get the duration of one run
      * @param id the session id
      * @return the duration in milliseconds
      */
@@ -182,7 +202,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startTime = null;
         Date endTime = null;
-        if (res.getCount()==0) return -1;
+        if (res.getCount() == 0) return -1;
         try {
             res.moveToFirst();
             startTime = dateFormat.parse(res.getString(0));
@@ -195,6 +215,30 @@ public class GPSDatabase extends SQLiteOpenHelper {
         }
 
         return (endTime.getTime() - startTime.getTime());
+    }
+
+    /**
+     * get the start timestamp of a run
+     * @param id the session id
+     * @return the duration in milliseconds
+     */
+    public long getStartTimeOfSession(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + id + " order by "+ COLUMN0 + " asc limit 1", null);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startTime = null;
+        if (res.getCount() == 0) return -1;
+        try {
+            res.moveToFirst();
+            startTime = dateFormat.parse(res.getString(0));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            res.close();
+        }
+
+        return startTime.getTime();
     }
 
     /**

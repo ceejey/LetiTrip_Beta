@@ -88,8 +88,8 @@ public class Profile extends Fragment {
         typenListetwo.add("Nichts ausgewählt");
         typenListetwo.add("Cityrad (aufrechtsitzend)");
         typenListetwo.add("Stollen (vorgebeugt)");
-        typenListetwo.add("TourenRad tiefer Lenker (vorgebeugt)");
-        typenListetwo.add("Renrad (vorgebeugt)");
+        typenListetwo.add("Tourenrad tiefer Lenker (vorgebeugt)");
+        typenListetwo.add("Rennrad (vorgebeugt)");
         mSpFahrradTyp.setAdapter(new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, typenListetwo));
         for(int i = 0; i < typenListetwo.size(); i++ ) {
             if(typenListetwo.get(i).contains(FitbitUserProfile.getmFahrradTyp())) {

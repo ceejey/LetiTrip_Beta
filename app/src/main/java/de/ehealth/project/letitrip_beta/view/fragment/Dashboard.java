@@ -1,7 +1,6 @@
 package de.ehealth.project.letitrip_beta.view.fragment;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,15 +21,12 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
-import de.ehealth.project.letitrip_beta.handler.polar.PolarCallback;
-import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherService;
@@ -131,8 +127,8 @@ public class Dashboard extends Fragment implements WeatherCallback {
         //only check weather if no weather information are in the database
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         if (res.getCount() == 0){
-            Log.w("dashboard", "lade wetter von yahoo");
-            new WeatherService(this).execute("Oberhausen"); //todo set city in settings
+            Log.w("dashboard", "lade wetter für "+FitbitUserProfile.getmActiveUser().getmCity()+" von yahoo");
+            new WeatherService(this).execute(FitbitUserProfile.getmActiveUser().getmCity());
         } else {
             Log.w("dashboard", "wetter schon vorhanden! lade aus DB");
             showWeather(res);

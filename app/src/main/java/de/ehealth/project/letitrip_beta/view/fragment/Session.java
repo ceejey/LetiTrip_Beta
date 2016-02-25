@@ -21,20 +21,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.calc.WattHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
-import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class Session extends Fragment {
 
     private FragmentChanger mListener;
-    private TextView txtpuls, txtwatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtdistanz, txtgeschwSession, txtzeit, txtWindDirection;
+    private TextView txtpuls, txtwatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtdistanz, txtgeschwSession, txtzeit, txtWindDirection, txtCalories;
     private Button showOnMap;
     private ImageView imgType, imgWalkDir, imgWindDir;
     private int lastID;
@@ -52,13 +53,15 @@ public class Session extends Fragment {
     private int walkDirection;
     private int altitudeDifference;
 
+    private long duration; //is set at the start of a session
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
-            long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
-            long hours = TimeUnit.MILLISECONDS.toHours(duration);
+            long currentTime = new Date().getTime();
+            long seconds = (TimeUnit.MILLISECONDS.toSeconds(currentTime-duration))%60;
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(currentTime-duration)%60;
+            long hours = TimeUnit.MILLISECONDS.toHours(currentTime-duration);
             txtzeit.setText((hours != 0?Long.toString(hours)+":":"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
             handler.postDelayed(this, 1000);
         }
@@ -76,6 +79,7 @@ public class Session extends Fragment {
     public void onStart() {
         Log.w("session", "onStart");
         lastID = -1;
+        duration = GPSDatabaseHandler.getInstance().getData().getStartTimeOfSession(((MainActivity)(getActivity())).getGps().getActiveRecordingID());
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();
         if (res.getCount() == 1){
@@ -117,6 +121,7 @@ public class Session extends Fragment {
         txtzeit = (TextView) view.findViewById(R.id.textView16);
         imgType = (ImageView) view.findViewById(R.id.imgType);
         showOnMap = (Button) view.findViewById(R.id.button2);
+        txtCalories = (TextView) view.findViewById(R.id.textView35);
         imgWalkDir = (ImageView) view.findViewById(R.id.imgWalkDir);
         imgWindDir = (ImageView) view.findViewById(R.id.imgWindDir);
 
@@ -205,23 +210,38 @@ public class Session extends Fragment {
 
         float angleToWind = (float) Math.abs(windDirection-walkDirection);
 
-        double watt = wattHandler.calcWatts( //TODO fehlende parameter
-                75F,
-                10F,
-                180F,
-                9.81F,
-                (float) speedMperS,
-                (float) altitudeDifference,
-                (float) distSinceLastUpdate,
-                (float) (windSpeedKmH / 3.6),
-                angleToWind,
-                (float) temperature,
-                (float) pressure * 100,
-                ((float)humidity)/100,
-                0.007F,
-                0.276F,
-                1.1F
-        );
+        FitbitUserProfile f = FitbitUserProfile.getmActiveUser();
+        float weight = 0,height = 0;
+        double watt = 0;
+        try {
+            weight = Float.valueOf(f.getmWeight());
+            height = Float.valueOf(f.getmHeight());
+            //bicycle
+            if (((MainActivity)getActivity()).getGps().getRecordingAsBicycle()==1){
+                watt = wattHandler.calcWatts( //TODO fehlende parameter
+                        weight,
+                        10F,
+                        height,
+                        9.81F,
+                        (float) speedMperS,
+                        (float) altitudeDifference,
+                        (float) distSinceLastUpdate,
+                        (float) (windSpeedKmH / 3.6),
+                        angleToWind,
+                        (float) temperature,
+                        (float) pressure * 100,
+                        ((float) humidity) / 100,
+                        0.007F,
+                        0.276F,
+                        1.1F );
+            } else { //walking
+
+            }
+        } catch (NumberFormatException ex){
+            ex.printStackTrace();
+            temperature = -300;
+        }
+
 
         /*Log.w("session","used paras\n"+
                 "speed(m/s)"+(float) speedMperS+"\n"+
@@ -234,7 +254,8 @@ public class Session extends Fragment {
                 "humidity"+ ((float)humidity)/100+"\n"+
                 "watt: "+watt);*/
 
-        txtwatt.setText((temperature==-300?"N/A":(watt < 0?"0":df.format(watt))));
+        txtwatt.setText((temperature == -300 ? "N/A" : (watt < 0 ? "0" : df.format(watt))));
+        txtCalories.setText("N/A");
     }
 
     @Override

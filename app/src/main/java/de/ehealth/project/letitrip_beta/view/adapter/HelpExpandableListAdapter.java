@@ -7,11 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-
-import de.ehealth.project.letitrip_beta.R;
 
 
 /**
@@ -77,11 +74,11 @@ public class HelpExpandableListAdapter  extends BaseExpandableListAdapter {
         holder.groupPosition = groupPosition;
 
         if (view == null) {
-            view = inflater.inflate(R.layout.list_item_parent_help_listview, viewGroup,false);
+            //view = inflater.inflate(R.layout.list_item_parent_help_listview, viewGroup,false);
         }
 
-        TextView textView = (TextView) view.findViewById(R.id.list_item_text_view);
-        textView.setText(getGroup(groupPosition).toString());
+        //TextView textView = (TextView) view.findViewById(R.id.list_item_text_view);
+        //textView.setText(getGroup(groupPosition).toString());
 
         view.setTag(holder);
 
@@ -98,11 +95,11 @@ public class HelpExpandableListAdapter  extends BaseExpandableListAdapter {
         holder.groupPosition = groupPosition;
 
         if (view == null) {
-            view = inflater.inflate(R.layout.list_item_child_help_listview, viewGroup,false);
+            //view = inflater.inflate(R.layout.list_item_child_help_listview, viewGroup,false);
         }
 
-        TextView textView = (TextView) view.findViewById(R.id.list_item_text_child);
-        textView.setText(mParent.get(groupPosition).getArrayChildren().get(childPosition));
+        //TextView textView = (TextView) view.findViewById(R.id.list_item_text_child);
+        //textView.setText(mParent.get(groupPosition).getArrayChildren().get(childPosition));
 
         view.setTag(holder);
 

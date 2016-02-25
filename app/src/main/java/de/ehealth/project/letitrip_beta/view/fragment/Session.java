@@ -189,9 +189,7 @@ public class Session extends Fragment {
         txtpuls.setText((PolarHandler.mHeartRate == 0) ? "N/A" : PolarHandler.mHeartRate+" bpm");
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
-        int timeSinceLastUpdate;
         if ((currentID != lastID) && (lastID != -1)){
-            //speedMperS = GPSDatabaseHandler.getInstance().getData().getSpeed(lastID, currentID);
             speedMperS = ((MainActivity)getActivity()).getGps().getLastSpeedMperS();
             txtgeschw.setText(df.format(speedMperS*3.6) + " km/h");
             walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
@@ -199,7 +197,6 @@ public class Session extends Fragment {
             distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
             txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));
             imgWalkDir.setRotation(walkDirection);
-            //timeSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().get
         } else {
             txtgeschw.setText("Warte...");
             txtlaufRichtung.setText("Warte...");
@@ -220,7 +217,7 @@ public class Session extends Fragment {
             weight = Float.valueOf(f.getmWeight());
             height = Float.valueOf(f.getmHeight());
             //bicycle
-            if (((MainActivity)getActivity()).getGps().getRecordingAsBicycle()==1){
+            if (((MainActivity)getActivity()).getGps().getRecordingAsBicycle() == 1){
                 watt = wattHandler.calcWatts( //TODO fehlende parameter
                         weight,
                         10F,
@@ -236,11 +233,11 @@ public class Session extends Fragment {
                         ((float) humidity) / 100,
                         0.007F,
                         0.276F,
-                        1.1F );
+                        1.1F);
 
                 long pastTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
-                calories=calories+wattHandler.calcKcal(watt,(double)pastTime);
-                Log.w("bla",""+calories);
+                double newKcal = wattHandler.calcKcal(watt,(double)pastTime);
+                calories = calories + newKcal;
             } else { //walking
 
             }

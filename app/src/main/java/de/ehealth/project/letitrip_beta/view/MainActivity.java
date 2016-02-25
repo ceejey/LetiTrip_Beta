@@ -120,6 +120,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
+        WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
+
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
@@ -162,11 +165,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         getSupportFragmentManager().beginTransaction().replace(R.id.contentContainer, mFragmentContent, "dashboard").commit();
 
         mOldTag = "dashboard";
-
-        GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
-        WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
-
-
     }
 
     @Override

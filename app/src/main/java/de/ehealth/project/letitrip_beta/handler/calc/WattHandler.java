@@ -43,6 +43,15 @@ public class WattHandler {
         Double pMech = wc.calculateMechWatts(a, b, speed, windSpeed, angleToWind);
         /*Log.d("Watt", "Watt:\nFg: " + fg + "\nCr: " + Cr + "\nCg: " + Cg + "\na: " + a + "\nes: " + es + "\nrf: " + rf + "\nrho: " + rho + "\nA: " +
                 A + "\nb: " + b + "\npMech: " + pMech);*/
+
         return pMech;
+    }
+
+    public double calcKcal(Double pMech, Double pastTime){
+        Double kJMech = (pMech/1000) * pastTime;
+        Double kJMet = kJMech / 0.25F;
+        Double kcal = kJMet * 0.239006F;
+        Log.d("Test", "Nach Formel: " + kcal);
+        return kcal;
     }
 }

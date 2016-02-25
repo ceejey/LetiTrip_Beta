@@ -55,9 +55,10 @@ public class SessionDetail extends Fragment {
     private PolylineOptions route;
     private Marker liveMarker;
     private Button btnSwitchMapType;
-    private LinkedList<Integer> last5Pulses;
+    private LinkedList <Integer> last5Pulses;
     private Date vibrated; //only vibrate every 20 seconds
     private Date lastTimePulsShown;
+    private long duration; //is set at the start of a session
 
     private Handler handler; //update duration every second
 
@@ -120,10 +121,10 @@ public class SessionDetail extends Fragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
-            long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
-            long hours = TimeUnit.MILLISECONDS.toHours(duration);
+            long currentTime = new Date().getTime();
+            long seconds = (TimeUnit.MILLISECONDS.toSeconds(currentTime-duration))%60;
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(currentTime-duration)%60;
+            long hours = TimeUnit.MILLISECONDS.toHours(currentTime-duration);
             txtDuration.setText((hours != 0 ? Long.toString(hours) + ":" : "") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
             handler.postDelayed(this, 1000);
         }
@@ -227,12 +228,15 @@ public class SessionDetail extends Fragment {
     @Override
     public void onStart() {
         Log.w("sessiondetail", "onstart");
+        if (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()){
+            duration = GPSDatabaseHandler.getInstance().getData().getStartTimeOfSession(((MainActivity)(getActivity())).getGps().getActiveRecordingID());
+            handler.postDelayed(runnable, 1000);
+        } else {
+            duration = -1;
+        }
         setUpMapIfNeeded();
         updateStaticInfoBox();
 
-        if (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()){
-            handler.postDelayed(runnable, 1000);
-        }
         super.onStart();
     }
 
@@ -276,11 +280,10 @@ public class SessionDetail extends Fragment {
     }
 
     public void updateStaticInfoBox(){
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
+        long duration = GPSDatabaseHandler.getInstance().getData().getDuration(SessionHandler.getSelectedRunId(),-1);
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
         long hours = TimeUnit.MILLISECONDS.toHours(duration);
-        DecimalFormat decimalFormat = new DecimalFormat("0.0");
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getWeatherOfRun(SessionHandler.getSelectedRunId());
         res.moveToFirst();
 
@@ -295,8 +298,8 @@ public class SessionDetail extends Fragment {
         }
         res.close();
 
-        txtTemp.setText(temperature + " °C");
-        txtWind.setText(wind+" km/h");
+        txtTemp.setText((temperature == -300 ? "N/A" : temperature) + " °C");
+        txtWind.setText((wind==-1?"N/A":wind)+" km/h");
         txtSessionID.setText(SessionHandler.getSelectedRunId()+"");
         txtDuration.setText((hours != 0?hours+":":"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
         updateInfoBox();

@@ -53,6 +53,8 @@ public class Session extends Fragment {
     private int walkDirection;
     private int altitudeDifference;
 
+    private double calories;
+
     private long duration; //is set at the start of a session
 
     private Runnable runnable = new Runnable() {
@@ -79,6 +81,7 @@ public class Session extends Fragment {
     public void onStart() {
         Log.w("session", "onStart");
         lastID = -1;
+        calories = 0;
         duration = GPSDatabaseHandler.getInstance().getData().getStartTimeOfSession(((MainActivity)(getActivity())).getGps().getActiveRecordingID());
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();
@@ -187,6 +190,7 @@ public class Session extends Fragment {
         txtpuls.setText((PolarHandler.mHeartRate == 0) ? "N/A" : PolarHandler.mHeartRate+" bpm");
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
+        int timeSinceLastUpdate;
         if ((currentID != lastID) && (lastID != -1)){
             //speedMperS = GPSDatabaseHandler.getInstance().getData().getSpeed(lastID, currentID);
             speedMperS = ((MainActivity)getActivity()).getGps().getLastSpeedMperS();
@@ -196,12 +200,12 @@ public class Session extends Fragment {
             distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
             txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));
             imgWalkDir.setRotation(walkDirection);
+            //timeSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().get
         } else {
             txtgeschw.setText("Warte...");
             txtlaufRichtung.setText("Warte...");
         }
 
-        lastID = currentID;
 
         txtgeschwSession.setText(df.format(3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)) + " km/h");
         totalDistance = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(((MainActivity) (getActivity())).getGps().getActiveRecordingID(),-1);
@@ -234,6 +238,9 @@ public class Session extends Fragment {
                         0.007F,
                         0.276F,
                         1.1F );
+
+                //Log.w("bla"+lastID+"-"+currentID,TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID,currentID))+"");
+                calories+=((((watt*3600)/4.18)/0.24)/3600)*TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID,currentID));
             } else { //walking
 
             }
@@ -242,6 +249,7 @@ public class Session extends Fragment {
             temperature = -300;
         }
 
+        lastID = currentID;
 
         /*Log.w("session","used paras\n"+
                 "speed(m/s)"+(float) speedMperS+"\n"+
@@ -253,9 +261,9 @@ public class Session extends Fragment {
                 "pressure"+(float) (pressure * 100)+"\n"+
                 "humidity"+ ((float)humidity)/100+"\n"+
                 "watt: "+watt);*/
-
+        Log.w("session","watt="+watt+"");
         txtwatt.setText((temperature == -300 ? "N/A" : (watt < 0 ? "0" : df.format(watt))));
-        txtCalories.setText("N/A");
+        txtCalories.setText((calories==-1)?"N/A":df.format(calories)+" kcal");
     }
 
     @Override

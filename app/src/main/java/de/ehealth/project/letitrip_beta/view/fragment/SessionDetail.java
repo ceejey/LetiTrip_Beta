@@ -55,7 +55,7 @@ public class SessionDetail extends Fragment {
     private PolylineOptions route;
     private Marker liveMarker;
     private Button btnSwitchMapType;
-    private LinkedList<Integer> last5Pulses;
+    private LinkedList <Integer> last5Pulses;
     private Date vibrated; //only vibrate every 20 seconds
     private Date lastTimePulsShown;
     private long duration; //is set at the start of a session
@@ -280,11 +280,10 @@ public class SessionDetail extends Fragment {
     }
 
     public void updateStaticInfoBox(){
-        long duration = GPSDatabaseHandler.getInstance().getData().getDurationOfSession(SessionHandler.getSelectedRunId());
+        long duration = GPSDatabaseHandler.getInstance().getData().getDuration(SessionHandler.getSelectedRunId(),-1);
         long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
         long hours = TimeUnit.MILLISECONDS.toHours(duration);
-        DecimalFormat decimalFormat = new DecimalFormat("0.0");
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getWeatherOfRun(SessionHandler.getSelectedRunId());
         res.moveToFirst();
 
@@ -299,7 +298,7 @@ public class SessionDetail extends Fragment {
         }
         res.close();
 
-        txtTemp.setText((temperature == -300?"N/A":temperature) + " °C");
+        txtTemp.setText((temperature == -300 ? "N/A" : temperature) + " °C");
         txtWind.setText((wind==-1?"N/A":wind)+" km/h");
         txtSessionID.setText(SessionHandler.getSelectedRunId()+"");
         txtDuration.setText((hours != 0?hours+":":"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));

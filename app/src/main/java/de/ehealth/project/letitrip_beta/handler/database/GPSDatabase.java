@@ -160,7 +160,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             //0=walk; 1=bicycle
             int bicycle = res.getInt(6);
 
-            long duration = getDurationOfSession(id);
+            long duration = getDuration(id,-1);
             long seconds = (TimeUnit.MILLISECONDS.toSeconds(duration))%60;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration)%60;
             long hours = TimeUnit.MILLISECONDS.toHours(duration);
@@ -191,13 +191,20 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     * get the duration of one run
-     * @param id the session id
-     * @return the duration in milliseconds
+     * pass id1=X and id2=-1 to get the time of session X
+     * pass id1=x and id2=y to get the time between those points
+     * @param ID1 first point or session ID
+     * @param ID2 second point or -1
+     * @return time in milliseconds
      */
-    public long getDurationOfSession(int id){
+    public long getDuration(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + "=" + id, null);
+        Cursor res = null;
+        if (ID2 == -1){
+            res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN0 + " = " + ID1 + " or " + COLUMN0 + " = " + ID2, null);
+        } else {
+            res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + ID1, null);
+        }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startTime = null;

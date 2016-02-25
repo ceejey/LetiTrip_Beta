@@ -121,7 +121,6 @@ public class GPSService extends Service implements PolarCallback {
         Log.w("service", "started");
         activeRecordingID = (GPSDatabaseHandler.getInstance().getData().getLastSessionID()) + 1;
         recordingAsBicycle = SessionHandler.getRunType();
-
         polar.searchPolarDevice();
 
         //gps enabled?

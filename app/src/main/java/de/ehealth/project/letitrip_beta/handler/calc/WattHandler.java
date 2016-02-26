@@ -28,7 +28,7 @@ public class WattHandler {
         Float af = 0.276F;          //Anteil Projektionsfläche Oberkörperfläche
         Float cd = 1.1F;            //Luftwiderstandskonstante*/
 
-        WattCalculator wc = new WattCalculator();
+        BicycleWattCalculator wc = new BicycleWattCalculator();
 
         Double fg = wc.calculateWeightForce(weightPerson + weightBike, gravityAcceleration);
 
@@ -47,9 +47,28 @@ public class WattHandler {
         return pMech;
     }
 
+    //Should never get negative!!!!!
+    public double calcRunningWatts(Float weightPerson, Float heightPerson, Float gravityAcceleration,
+                                   Float speed, Float attitudeGain, Float pastTime){
+
+        RunWattCalculator wc = new RunWattCalculator();
+
+        //h = 2F;
+        //pastTime = 100F; //In 100sek zb 2 meter hochgestiegen.
+        Float stepsPerSecond = speed;
+        Float focusHub = wc.calculateFocusHub(heightPerson);
+        Double weightWatts = wc.calculateWeightWatts(weightPerson, gravityAcceleration, stepsPerSecond, focusHub);
+        Double uphillWatts = wc.calculateUphillWatts(weightPerson, gravityAcceleration, attitudeGain, pastTime);
+        Double pMet = wc.calculateRunningWatts(weightWatts, uphillWatts);
+
+
+        return pMet;
+    }
+
+    //Wirkungsgrad beim Laufen / Fahrradfahren sind in etwa gleich 20 - 25 %
     public double calcKcal(double pMech, double pastTime){
         double kJMech = (pMech/1000) * pastTime;
-        double kJMet = kJMech / 0.25F;
+        double kJMet = kJMech / 0.22F;
         double kcal = kJMet * 0.239006F;
         Log.d("Test", "Nach Formel: " + kcal);
         return kcal;

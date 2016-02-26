@@ -4,7 +4,7 @@ package de.ehealth.project.letitrip_beta.handler.calc;
  * Created by Erich on 15.11.2015.
  */
 
-class WattCalculator {
+class BicycleWattCalculator {
 
     //TODO: Parameter names!
     public double calculateMechWatts(Double a, Double b, Float v, Float vl, Float gamma){

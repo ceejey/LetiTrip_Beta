@@ -473,6 +473,23 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
+     * get the burned kcalories per session
+     * @param id the session id
+     * @return kilo calories per session
+     */
+    public double getCaloriesBurned(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select " + COLUMN10 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + id, null);
+
+        if (res.getCount() == 0) return -1;
+
+        res.moveToLast();
+        double kcal = res.getDouble(0);
+        res.close();
+        return kcal;
+    }
+
+    /**
      * sources: http://climate.umn.edu/snow_fence/components/winddirectionanddegreeswithouttable3.htm
      *          http://stackoverflow.com/questions/13399821/data-structures-that-can-map-a-range-of-values-to-a-key
      *

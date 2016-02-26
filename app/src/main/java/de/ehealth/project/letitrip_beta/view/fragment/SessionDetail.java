@@ -44,6 +44,7 @@ import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
+import de.ehealth.project.letitrip_beta.model.weather.DescriptionMapping;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class SessionDetail extends Fragment {
@@ -62,7 +63,7 @@ public class SessionDetail extends Fragment {
 
     private Handler handler; //update duration every second
 
-    private TextView txtSessionID, txtDistance, txtAvgSpeed, txtDuration, txtTemp, txtWind;
+    private TextView txtSessionID, txtDistance, txtAvgSpeed, txtDuration, txtTemp, txtWind, txtCalories,txtCondition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,6 +76,8 @@ public class SessionDetail extends Fragment {
         txtDuration= (TextView) view.findViewById(R.id.txtDuration);
         txtTemp = (TextView) view.findViewById(R.id.txtTemp);
         txtWind = (TextView) view.findViewById(R.id.txtWind);
+        txtCondition = (TextView) view.findViewById(R.id.txtCondition);
+        txtCalories = (TextView) view.findViewById(R.id.txtCalories);
 
         btnSwitchMapType = (Button) view.findViewById(R.id.button);
         btnSwitchMapType.setOnClickListener(new View.OnClickListener() {
@@ -277,6 +280,7 @@ public class SessionDetail extends Fragment {
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
         txtDistance.setText((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId(),-1) + " Meter");
         txtAvgSpeed.setText(decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h");
+        txtCalories.setText(decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getCaloriesBurned(SessionHandler.getSelectedRunId()))+" kcal");
     }
 
     public void updateStaticInfoBox(){
@@ -289,7 +293,7 @@ public class SessionDetail extends Fragment {
 
         int temperature = -300;
         int wind = -1;
-        String description = null;
+        String description = "";
         if (res.getCount() != 0){
             res.moveToFirst();
             temperature = res.getInt(2);
@@ -300,8 +304,14 @@ public class SessionDetail extends Fragment {
 
         txtTemp.setText((temperature == -300 ? "N/A" : temperature) + " °C");
         txtWind.setText((wind==-1?"N/A":wind)+" km/h");
+        if (DescriptionMapping.getMap().containsKey(description.toLowerCase())){
+            txtCondition.setText(DescriptionMapping.getMap().get(description.toLowerCase()));
+        } else {
+            txtCondition.setText((description=="")?"N/A":description);
+        }
         txtSessionID.setText(SessionHandler.getSelectedRunId()+"");
         txtDuration.setText((hours != 0?hours+":":"")+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+        txtCalories.setText(new DecimalFormat("0.0").format(((MainActivity)getActivity()).getGps().getKcaloriesBurned())+" kcal");
         updateInfoBox();
     }
 

@@ -63,9 +63,9 @@ public class WeatherService extends AsyncTask<String, Void, String> {
 
                 return temp;
             } catch (MalformedURLException e) {
-                ex = e;
+                ex = new Exception("Keine Verbindung.");
             } catch (IOException e) {
-                ex = e;
+                ex = new Exception("Keine Verbindung.");
             }
         return null;
     }
@@ -84,12 +84,12 @@ public class WeatherService extends AsyncTask<String, Void, String> {
 
             //if no location was found YQL query returns count=0
             if (queryResults.optInt("count") == 0){
-                weatherServiveCallback.failure(new Exception("Location not found."));
+                weatherServiveCallback.failure(new Exception("Ort nicht gefunden."));
                 return;
             }
             //if coordinates doesn't match to a known location
             if (queryResults.optJSONObject("results").optJSONObject("channel").optString("title").contains("Error")){
-                weatherServiveCallback.failure(new Exception("Coordinates not found."));
+                weatherServiveCallback.failure(new Exception("Koordinaten nicht gefunden."));
                 return;
             }
 

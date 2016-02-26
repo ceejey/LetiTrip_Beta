@@ -13,10 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
-import de.ehealth.project.letitrip_beta.view.fragment.settings.Polar;
 
 /**
  * Created by Mirorn on 14.12.2015.
@@ -42,7 +41,9 @@ public class DeviceCreateDialog extends DialogFragment {
         ImageView polar = (ImageView) modifyView.findViewById(R.id.imv_Polar);
 
         //Imageviw onClick listener FITBIT
-        if (FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
+        if (UserSettings.getmActiveUser().getmFitBitUserID().equals("")) {
+
+
             fitBit.setOnTouchListener(new View.OnTouchListener() {
 
                 @Override
@@ -77,7 +78,7 @@ public class DeviceCreateDialog extends DialogFragment {
             modifyView.findViewById(R.id.layout_FitBit).setBackgroundColor(Color.GRAY);
         }
         //Imageviw onClick listener POLAR
-        if (Polar.getmPolarDevice().equals("")) {
+        if (UserSettings.getmActiveUser().getmPolarDeviceID().equals("")) {
             polar.setOnTouchListener(new View.OnTouchListener() {
 
                 @Override
@@ -109,7 +110,7 @@ public class DeviceCreateDialog extends DialogFragment {
         }
         else{
             polar.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
-            modifyView.findViewById(R.id.layout_FitBit).setBackgroundColor(Color.GRAY);
+            modifyView.findViewById(R.id.layout_Polar).setBackgroundColor(Color.GRAY);
         }
 
         return modifyView;

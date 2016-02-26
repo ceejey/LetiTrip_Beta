@@ -1,8 +1,8 @@
 package de.ehealth.project.letitrip_beta.view.fragment.fitbit;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitBitAPI;
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
@@ -26,9 +25,8 @@ public class FitBitInit extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mOauth.initOauth("3444e1985fcecca0dd97ff85e4253c45", "e4263b0e379b61c4916e4427d594f5c2", "http://www.google.de", FitBitAPI.class);
-        FitbitUserProfile.loadUser(getActivity());
-        if (!FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
+
+        if (!UserSettings.getmActiveUser().getmFitBitUserID().equals("")) {
             //updateActivity(MainActivity.);
         }
         View view = inflater.inflate(R.layout.fragment_fitbit_initial, container, false);

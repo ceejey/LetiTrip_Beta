@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
@@ -68,8 +68,8 @@ public class NewsSettings extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings_news, container, false);
 
-        if(FitbitUserProfile.getmActiveUser().getmNewsSettings() != null)
-            mCheckedList = new ArrayList<String>(FitbitUserProfile.getmActiveUser().getmNewsSettings());
+        if(UserSettings.getmActiveUser().getmNewsSettings() != null)
+            mCheckedList = new ArrayList<String>(UserSettings.getmActiveUser().getmNewsSettings());
         else
             mCheckedList = new ArrayList<String>();
         mBTSaveNewsSettings = (Button) view.findViewById(R.id.bnSpeichernNews);
@@ -215,8 +215,8 @@ public class NewsSettings extends Fragment {
         }
 
         set.addAll(currentTasks);
-        FitbitUserProfile.getmActiveUser().setmNewsSettings(set);
-        FitbitUserProfile.saveUser(getActivity());
+        UserSettings.getmActiveUser().setmNewsSettings(set);
+        UserSettings.saveUser(getActivity());
         updateActivity(MainActivity.FragmentName.SETTINGS);
     }
 

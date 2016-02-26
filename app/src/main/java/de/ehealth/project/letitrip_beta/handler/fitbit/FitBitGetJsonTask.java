@@ -18,7 +18,7 @@ import java.util.Calendar;
 
 import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
 import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 
 
 /** The class "FitBitGetJsonTask" extends "AsyncTask" and its purpose is to request and receive JSon
@@ -89,10 +89,10 @@ public class FitBitGetJsonTask extends AsyncTask<Void, Void, Void> {
     }
 
     /**This method calls up a Json object for the current user. The Request URL can be found in the API documentation:
-    "https://dev.fitbit.com/docs". The JSon object is parsed to be a Object of the class "FitbitUserProfile"  */
+    "https://dev.fitbit.com/docs". The JSon object is parsed to be a Object of the class "UserSettings"  */
     private void getProfile() {
         sendRequestUrl("https://api.fitbit.com/1/user/-/profile.json");
-        FitbitUserProfile.JsonToUserProfile(mJson, mOauth.getmAccessToken());
+        UserSettings.JsonToUserProfile(mJson, mOauth.getmAccessToken());
     }
 
     /**This method calls up a Json object for the last two weeks, but not for today's date!

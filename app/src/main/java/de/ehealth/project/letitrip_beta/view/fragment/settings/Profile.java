@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitActivityScoreHandler;
 import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
@@ -34,11 +33,11 @@ public class Profile extends Fragment {
 
     private FragmentChanger mListener;
     private Oauth mOauth = Oauth.getOauth();
-    private FitbitUserProfile mUser;
+    private UserSettings mUser = UserSettings.getmActiveUser();
 
-    private TextView mVtxtFullName;
-    private TextView mVtxtHeight;
-    private TextView mVtxtAge;
+    private EditText mVtxtFullName;
+    private EditText mVtxtHeight;
+    private EditText mVtxtAge;
     private TextView mVtxtFahrradTyp;
     private TextView mVtxtReifenTyp;
     private EditText mEtxtWeight;
@@ -54,9 +53,9 @@ public class Profile extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.checkprofile, container, false);
-        mVtxtFullName = (TextView) view.findViewById(R.id.vtxtFullName);
-        mVtxtAge = (TextView) view.findViewById(R.id.vtxtAge);
-        mVtxtHeight = (TextView) view.findViewById(R.id.vtxtHeight);
+        mVtxtFullName = (EditText) view.findViewById(R.id.vtxtFullName);
+        mVtxtAge = (EditText) view.findViewById(R.id.vtxtAge);
+        mVtxtHeight = (EditText) view.findViewById(R.id.vtxtHeight);
         mEtxtWeight = (EditText) view.findViewById(R.id.etxtWeight);
         mRbMale = (RadioButton) view.findViewById(R.id.rdMale);
         mRbFemale = (RadioButton) view.findViewById(R.id.rdFemale);
@@ -67,7 +66,7 @@ public class Profile extends Fragment {
         mSpReifentyp = (Spinner) view.findViewById(R.id.spReifenTyp);
         mSpFahrradTyp = (Spinner) view.findViewById(R.id.spFahrradTyp);
         mEtxtCity = (EditText) view.findViewById(R.id.etxtCity);
-        mEtxtCity.setText(FitbitUserProfile.getmActiveUser().getmCity());
+
 
         final List<String> typenListe = new ArrayList<String>();
 
@@ -79,7 +78,7 @@ public class Profile extends Fragment {
         mSpReifentyp.setAdapter(new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, typenListe));
 
         for(int i = 0; i < typenListe.size(); i++ ) {
-            if(typenListe.get(i).contains(FitbitUserProfile.getmReifenTyp())) {
+            if(typenListe.get(i).contains(mUser.getmReifenTyp())) {
                 mSpReifentyp.setSelection(i);
             }
         }
@@ -91,13 +90,14 @@ public class Profile extends Fragment {
         typenListetwo.add("Tourenrad tiefer Lenker (vorgebeugt)");
         typenListetwo.add("Rennrad (vorgebeugt)");
         mSpFahrradTyp.setAdapter(new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, typenListetwo));
+
         for(int i = 0; i < typenListetwo.size(); i++ ) {
-            if(typenListetwo.get(i).contains(FitbitUserProfile.getmFahrradTyp())) {
+            if(typenListetwo.get(i).contains(mUser.getmFahrradTyp())) {
                 mSpFahrradTyp.setSelection(i);
             }
         }
 
-        if(FitbitUserProfile.getmFahrradTyp().equals("Nichts ausgewählt") || FitbitUserProfile.getmReifenTyp().equals("Nichts ausgewählt")) {
+        if(mUser.getmFahrradTyp().equals("Nichts ausgewählt") || mUser.getmReifenTyp().equals("Nichts ausgewählt")) {
 
             mVtxtFahrradTyp.setVisibility(view.INVISIBLE);
             mVtxtReifenTyp.setVisibility(view.INVISIBLE);
@@ -111,7 +111,7 @@ public class Profile extends Fragment {
             mSpReifentyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    FitbitUserProfile.setmReifenTyp(typenListe.get(position));
+                    mUser.setmReifenTyp(typenListe.get(position));
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
@@ -120,7 +120,7 @@ public class Profile extends Fragment {
             mSpFahrradTyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    FitbitUserProfile.setmFahrradTyp(typenListetwo.get(position));
+                    mUser.setmFahrradTyp(typenListetwo.get(position));
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
@@ -133,11 +133,11 @@ public class Profile extends Fragment {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        mUser = FitbitUserProfile.getmActiveUser();
+
         mCbBike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!checkbox) {
+                if (!checkbox) {
                     mVtxtFahrradTyp.setVisibility(v.VISIBLE);
                     mVtxtReifenTyp.setVisibility(v.VISIBLE);
                     mSpFahrradTyp.setVisibility(v.VISIBLE);
@@ -145,7 +145,7 @@ public class Profile extends Fragment {
                     mSpReifentyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            FitbitUserProfile.setmReifenTyp(typenListe.get(position));
+                            mUser.setmReifenTyp(typenListe.get(position));
                         }
 
                         @Override
@@ -155,7 +155,7 @@ public class Profile extends Fragment {
                     mSpFahrradTyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            FitbitUserProfile.setmFahrradTyp(typenListetwo.get(position));
+                            mUser.setmFahrradTyp(typenListetwo.get(position));
                         }
 
                         @Override
@@ -164,8 +164,7 @@ public class Profile extends Fragment {
                         }
                     });
                     checkbox = true;
-                }
-                else {
+                } else {
                     mVtxtFahrradTyp.setVisibility(v.INVISIBLE);
                     mVtxtReifenTyp.setVisibility(v.INVISIBLE);
                     mSpFahrradTyp.setVisibility(v.INVISIBLE);
@@ -174,22 +173,24 @@ public class Profile extends Fragment {
                 }
             }
         });
-        if (!mUser.getmEncodedId().isEmpty()) {
-            mVtxtFullName.setText(mUser.getmFullname());
-            mBtnSaveUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    saveUser();
-                }
-            });
-            mVtxtAge.setText(mUser.getmAge());
-            mVtxtHeight.setText(mUser.getmHeight());
-            mEtxtWeight.setText(mUser.getmWeight());
-            if (mUser.getmGender().equals("MALE"))
-                mRbMale.setChecked(true);
-            else if (mUser.getmGender().equals("FEMALE"))
-                mRbFemale.setChecked(true);
-        }
+
+
+        mBtnSaveUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveUser();
+            }
+        });
+        mVtxtFullName.setText(mUser.getmFullname());
+        mVtxtAge.setText(mUser.getmAge());
+        mVtxtHeight.setText(mUser.getmHeight());
+        mEtxtWeight.setText(mUser.getmWeight());
+        mEtxtCity.setText(UserSettings.getmActiveUser().getmCity());
+
+        if (mUser.getmGender().equals("MALE"))
+            mRbMale.setChecked(true);
+        else if (mUser.getmGender().equals("FEMALE"))
+            mRbFemale.setChecked(true);
 
         return view;
     }
@@ -198,24 +199,33 @@ public class Profile extends Fragment {
 
         mUser.setmWeight(mEtxtWeight.getText().toString());
         mUser.setmCity(mEtxtCity.getText().toString());
+        mUser.setmAge(mVtxtAge.getText().toString());
+        mUser.setmHeight(mVtxtHeight.getText().toString());
+
+        if (mRbMale.isChecked()){
+            mUser.setmGender("MALE");
+        }
+        else {
+            mUser.setmGender("FEMALE");
+        }
         //change the difference between current weight and the weight from server
         try {
             new FitBitGetJsonTask(Oauth.getmOauth()
                     , FitBitGetJsonTask.ENDPOINT_WEIGHT, getActivity()
                     , Integer.parseInt(mEtxtWeight.getText().toString())).execute().get();
-            FitbitUserProfile.getmActiveUser().setmWeight(mEtxtWeight.getText().toString());
-            FitbitUserProfile.getmActiveUser().saveUser(getActivity());
+            UserSettings.getmActiveUser().setmWeight(mEtxtWeight.getText().toString());
+            UserSettings.getmActiveUser().saveUser(getActivity());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         if(!checkbox){
-            FitbitUserProfile.setmFahrradTyp("Nichts ausgewählt");
-            FitbitUserProfile.setmReifenTyp("Nichts ausgewählt");
+            mUser.setmFahrradTyp("Nichts ausgewählt");
+            mUser.setmReifenTyp("Nichts ausgewählt");
         }
 
-        FitbitUserProfile.saveUser(getActivity());
-        FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
+        UserSettings.saveUser(getActivity());
+        //FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
         updateActivity(MainActivity.FragmentName.SETTINGS);
     }
 

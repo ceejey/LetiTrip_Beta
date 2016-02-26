@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.recipe.RecipeUpdateHandler;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -36,8 +36,6 @@ public class General extends Fragment {
     private ImageView imgResetApp;
     private ImageView imgTouch;
     private TextView mtxtViewRecipiUpdate;
-    private String requestUrl ="http://recipeapi-ehealthrecipes.rhcloud.com/recipes?since=";
-    private String mRecepiUrl ="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,7 +44,7 @@ public class General extends Fragment {
         View view = inflater.inflate(R.layout.fragment_general, container, false);
 
         mtxtViewRecipiUpdate = (TextView) view.findViewById(R.id.txtUpdateDate);
-        mtxtViewRecipiUpdate.setText(FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince());
+        mtxtViewRecipiUpdate.setText(UserSettings.getmActiveUser().getmLastRezeptUpdateSince());
         imgUpdate = (ImageView) view.findViewById(R.id.imgUpdate);
         imgResetActScor = (ImageView) view.findViewById(R.id.imgResetActScore);
         imgResetApp = (ImageView) view.findViewById(R.id.imgResetApp);
@@ -88,15 +86,15 @@ public class General extends Fragment {
         });
         msbrTouchSensibility = (SeekBar)view.findViewById(R.id.sbrTouchSensibility);
         msbrTouchSensibility.setMax(30);
-        msbrTouchSensibility.setProgress(Integer.parseInt(FitbitUserProfile.getmActiveUser().getmClickOffsetForBarSensibility()));
+        msbrTouchSensibility.setProgress(Integer.parseInt(UserSettings.getmActiveUser().getmClickOffsetForBarSensibility()));
         msbrTouchSensibility.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
                 Log.d("Fitbit", "TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
-                FitbitUserProfile.getmActiveUser().setmClickOffsetForBarSensibility(Integer.toString(msbrTouchSensibility.getProgress()));
-                FitbitUserProfile.saveUser(getActivity());
+                UserSettings.getmActiveUser().setmClickOffsetForBarSensibility(Integer.toString(msbrTouchSensibility.getProgress()));
+                UserSettings.saveUser(getActivity());
                 Bar.setClickOffset(msbrTouchSensibility.getProgress());
             }
 
@@ -115,11 +113,11 @@ public class General extends Fragment {
 
     private void updateRecipeDatabase(){
         new RecipeUpdateHandler().updateRecipeDatabase(getActivity());
-        mtxtViewRecipiUpdate.setText(FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince());
+        mtxtViewRecipiUpdate.setText(UserSettings.getmActiveUser().getmLastRezeptUpdateSince());
     }
 
     private void resetApp(){
-        FitbitUserProfile.deleteUser(getActivity());
+        UserSettings.deleteUser(getActivity());
         if (getActivity().deleteDatabase("LetitripDB")) Log.w("general","DB deleted");
         if (getActivity().deleteDatabase("LetitripDB2")) Log.w("general","DB deleted");
         if (getActivity().deleteDatabase("LetitripDB3")) Log.w("general","DB deleted");

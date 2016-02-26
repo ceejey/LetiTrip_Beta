@@ -29,7 +29,7 @@ import de.ehealth.project.letitrip_beta.handler.calc.WattHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class Session extends Fragment {
@@ -209,7 +209,7 @@ public class Session extends Fragment {
 
         float angleToWind = (float) Math.abs(windDirection-walkDirection);
 
-        FitbitUserProfile f = FitbitUserProfile.getmActiveUser();
+        UserSettings f = UserSettings.getmActiveUser();
         float weight = 0,height = 0;
         double watt = 0;
         try {

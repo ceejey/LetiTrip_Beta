@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.DeviceCreateDialog;
 import de.ehealth.project.letitrip_beta.view.adapter.DeviceSelectorDialog;
@@ -77,11 +77,11 @@ public class Device extends Fragment {
         });
 
         itemList = new ArrayList<>();
-        if (!FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
-            itemList.add(new DevicesRow(1,"Fitbit","Benutzername: " + FitbitUserProfile.getmActiveUser().getmFullname()));
+        if (!UserSettings.getmActiveUser().getmFitBitUserID().equals("")) {
+            itemList.add(new DevicesRow(1,"Fitbit","Benutzername: " + UserSettings.getmActiveUser().getmFullname()));
         }
-        if (!Polar.getmPolarDevice().equals("")){
-            itemList.add(new DevicesRow(2,"Polar",Polar.getmPolarDevice()));
+        if (!UserSettings.getmActiveUser().getmPolarDeviceID().equals("")){
+            itemList.add(new DevicesRow(2,"Polar",UserSettings.getmActiveUser().getmPolarDeviceID()));
         }
         //ON CLICK LISTENER !!
         mCustomAdapter = new DevicesAdapter(getActivity(), itemList);
@@ -90,7 +90,7 @@ public class Device extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mSelectedDevice = position;
-                showDeviceDialog(position);
+                showDeviceDialog(itemList.get(position).getID());
             }
         });
         return view;
@@ -106,37 +106,36 @@ public class Device extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        switch (requestCode) {
-            case 1:
-                switch (resultCode){
+        switch (resultCode){
 
-                    case 0:
-                        if(mSelectedDevice == 0){
-                            if(FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")){
-                                Polar.setmPolarDevice("");
-                                updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
-                            }
-                            else {
-                                //FitbitUserProfile.getmActiveUser().setmEncodedId("");
-                                //FitbitUserProfile.saveUser(getActivity());
-                                //FitBitUserDataSQLite.getInstance(getActivity()).newTable();
-                                updateActivity(MainActivity.FragmentName.WEB_VIEW_OAUTH);
-                            }
-
-                        }
-                        if(mSelectedDevice == 1){
-                            Polar.setmPolarDevice("");
-                            updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
-                        }
-                        break;
-                    case 2:
-
-                        break;
-                    default:
-                        break;
+            case 0:
+                if(mSelectedDevice == 0){
+                    if(UserSettings.getmActiveUser().getmFitBitUserID().equals("")){
+                        itemList.clear();
+                        UserSettings.getmActiveUser().setmPolarDeviceID("");
+                        updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
+                    }
+                    else {
+                        UserSettings.getmActiveUser().setmFitBitUserID("");
+                        itemList.remove(0);
+                        UserSettings.saveUser(getActivity());
+                        //FitBitUserDataSQLite.getInstance(getActivity()).newTable();
+                        updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
+                    }
+                }
+                if(mSelectedDevice == 1){
+                    UserSettings.getmActiveUser().setmPolarDeviceID("");
+                    itemList.remove(1);
+                    updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                 }
                 break;
+            case 2:
+                updateActivity(MainActivity.FragmentName.FITBIT_TRACKER_DATA);
+                break;
+            default:
+                break;
         }
+
     }
 
 

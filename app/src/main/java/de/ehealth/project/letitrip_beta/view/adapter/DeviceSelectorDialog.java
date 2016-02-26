@@ -26,8 +26,8 @@ public class DeviceSelectorDialog extends DialogFragment {
 
         int id = getArguments().getInt("id");
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        if(id == 0) {
-            builder.setTitle("FitBit Account").setItems(new String[]{"Mit einem anderen Account verbinden", "Abbrechen"}, new DialogInterface.OnClickListener() {
+        if(id == 1) {
+            builder.setTitle("FitBit Account").setItems(new String[]{"Löschen", "Abbrechen", "Zeige gesammelte Daten"}, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     getTargetFragment().onActivityResult(1, which, getActivity().getIntent());
                 }

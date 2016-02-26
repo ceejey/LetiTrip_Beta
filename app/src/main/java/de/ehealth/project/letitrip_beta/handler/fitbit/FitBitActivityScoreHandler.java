@@ -7,13 +7,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
 
 /** ActivityScore calculation for the FitBit Data. Note the interval of 2 weeks is only settled
  * if the User login to the app was 14 or above days ago, else the average calculation of this data is for an interval
  * of the difference between the Timestemp (NewUserlogin or Activity reset)and todays date. The Timestamp has been created in
- * the class FitbitUserProfile and General setting Fragment. Note an another Timestemp will be created if the User decided to
+ * the class UserSettings and General setting Fragment. Note an another Timestemp will be created if the User decided to
  * RESET his ActivityScore*/
 
 public class FitBitActivityScoreHandler {
@@ -49,8 +49,8 @@ public class FitBitActivityScoreHandler {
         } catch(Exception ex){ ex.printStackTrace(); }
 
         // The date that was saved since the User wanted to Reset the ActivityScore
-        if(!FitbitUserProfile.getmActiveUser().getmActScoreResetDate().equals("")) {
-            Date d1 = new Date(FitbitUserProfile.getmActiveUser().getmActScoreResetDate());
+        if(!UserSettings.getmActiveUser().getmActScoreResetDate().equals("")) {
+            Date d1 = new Date(UserSettings.getmActiveUser().getmActScoreResetDate());
 
 
             // Get the date today using Calendar object.
@@ -98,8 +98,8 @@ public class FitBitActivityScoreHandler {
      * Look at our Aim Table. We decide that our overall aim is an active User
      */
     public static void setUserAims(){
-        int user_age = Integer.parseInt(FitbitUserProfile.getmActiveUser().getmAge());
-        if(FitbitUserProfile.getmActiveUser().getmGender().contains("MALE")) {
+        int user_age = Integer.parseInt(UserSettings.getmActiveUser().getmAge());
+        if(UserSettings.getmActiveUser().getmGender().contains("MALE")) {
             if (user_age == 18) {
                 FitBitActivityScoreHandler.getmActivityScore().setmCaloriesAim(3200);
             }

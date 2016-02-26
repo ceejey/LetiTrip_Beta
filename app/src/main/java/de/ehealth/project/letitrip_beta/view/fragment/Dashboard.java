@@ -29,7 +29,7 @@ import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherService;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.model.weather.Channel;
 import de.ehealth.project.letitrip_beta.model.weather.DescriptionMapping;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
@@ -121,8 +121,8 @@ public class Dashboard extends Fragment implements WeatherCallback {
         //only check weather if no weather information are in the database
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         if (res.getCount() == 0){
-            Log.w("dashboard", "lade wetter für "+FitbitUserProfile.getmActiveUser().getmCity()+" von yahoo");
-            new WeatherService(this).execute(FitbitUserProfile.getmActiveUser().getmCity());
+            Log.w("dashboard", "lade wetter für "+ UserSettings.getmActiveUser().getmCity()+" von yahoo");
+            new WeatherService(this).execute(UserSettings.getmActiveUser().getmCity());
         } else {
             Log.w("dashboard", "wetter schon vorhanden! lade aus DB");
             showWeather(res);

@@ -1,4 +1,4 @@
-package de.ehealth.project.letitrip_beta.model.fitbit;
+package de.ehealth.project.letitrip_beta.model.settings;
 
 
 import android.content.Context;
@@ -20,17 +20,17 @@ import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 /**
  * This class saves all important Data mostly from the settings and user profile in shared references
  */
-public class FitbitUserProfile {
+public class UserSettings {
 
-    private static FitbitUserProfile mActiveUser = new FitbitUserProfile();
+    private static UserSettings mActiveUser = new UserSettings();
 
-    public static FitbitUserProfile getmActiveUser(){
+    public static UserSettings getmActiveUser(){
         return mActiveUser;
     }
 
-    private FitbitUserProfile() {
+    private UserSettings() {
     }
-    private String mEncodedId = "";
+    private String mFitBitUserID = "";
     private Token mAccessToken = null;
     private String mDisplayName = "";
     private String mFullname= "";
@@ -46,25 +46,24 @@ public class FitbitUserProfile {
     private String mWaterUnit = "";
     private String mCity = "";
     private Set<String>  mNewsSettings = null;
-    private static String mFahrradTyp = "Nichts ausgewählt";
-    private static String mReifenTyp = "Nichts ausgewählt";
+    private String mFahrradTyp = "Nichts ausgewählt";
+    private String mReifenTyp = "Nichts ausgewählt";
+    private String mPolarDeviceID = "";
     private String mLastRezeptUpdateSince = "0";
     private String mActScoreResetDate = "";
     private String mClickOffsetForBarSensibility = "1";
 
-
-
     public static void JsonToUserProfile(String jSon, Token accessToken) {
         // überprüft ob vorhanden wenn ja verwende diesen wenn nicht parse die Informationen
-        //    für einen neuen User heraus
+
         if(!jSon.isEmpty()) {
             try {
                 JSONObject obj = null;
                 obj = new JSONObject(jSon).getJSONObject("user");
                 String encodedId = obj.getString("encodedId");
-                FitbitUserProfile profile = searchUser(encodedId);
-                if (!profile.mEncodedId.equals(encodedId)) {
-                    profile.mEncodedId = encodedId;
+                UserSettings profile = getmActiveUser();
+                if (!profile.mFitBitUserID.equals(encodedId)) {
+                    profile.mFitBitUserID = encodedId;
                     profile.mAccessToken = accessToken;
                     profile.mFullname = obj.getString("fullName");
                     profile.mDateOfBirth = obj.getString("dateOfBirth");
@@ -96,18 +95,13 @@ public class FitbitUserProfile {
         }
 
     }
-    public static FitbitUserProfile searchUser(String id){
-        if(mActiveUser.getmEncodedId().equals(id)) {
-            return mActiveUser;
-        }
-        return new FitbitUserProfile();
-    }
+
 
     public static void saveUser(Context context){
 
         SharedPreferences pref = context.getSharedPreferences("userprofile", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
-        edit.putString("UserId",mActiveUser.getmEncodedId() );
+        edit.putString("UserId",mActiveUser.getmFitBitUserID() );
         if(mActiveUser.getmAccessToken() != null) {
             edit.putString("AccessToken", mActiveUser.getmAccessToken().getToken().toString());
             edit.putString("Secret", mActiveUser.getmAccessToken().getSecret().toString());
@@ -124,23 +118,23 @@ public class FitbitUserProfile {
         edit.putString("WaterUnit",mActiveUser.getmWaterUnit() );
         edit.putString("Gender", mActiveUser.getmGender() );
         edit.putString("MemberSince", mActiveUser.getmMemberSince() );
-        edit.putString("FahrradTyp", mFahrradTyp );
-        edit.putString("ReifenTyp", mReifenTyp );
+        edit.putString("FahrradTyp", mActiveUser.getmFahrradTyp() );
+        edit.putString("ReifenTyp", mActiveUser.getmReifenTyp());
         edit.putString("City",mActiveUser.getmCity() );
         if(mActiveUser.getmNewsSettings() != null) {edit.putStringSet("NewsSettings", mActiveUser.getmNewsSettings());}
         edit.putString("LastRecipeUpdate", mActiveUser.getmLastRezeptUpdateSince());
         edit.putString("ActScoreResetDate", mActiveUser.getmActScoreResetDate());
         edit.putString("ClickOffsetForBarSensibility", mActiveUser.getmClickOffsetForBarSensibility() );
-
+        edit.putString("PolarDeviceID", mActiveUser.getmPolarDeviceID() );
         edit.commit();
     }
 
 
     public static void loadUser(Context context){
 
-        FitbitUserProfile profile = mActiveUser;
+        UserSettings profile = mActiveUser;
         SharedPreferences pref = context.getSharedPreferences("userprofile", context.MODE_PRIVATE);
-        profile.mEncodedId = pref.getString("UserId","");
+        profile.mFitBitUserID = pref.getString("UserId","");
         profile.mAccessToken = new Token(pref.getString("AccessToken",""), pref.getString("Secret",""));
         profile.mFullname = pref.getString("Fullname","");
         profile.mDateOfBirth = pref.getString("DateOfBirth","");
@@ -157,8 +151,9 @@ public class FitbitUserProfile {
         profile.mFahrradTyp = pref.getString("FahrradTyp","");
         profile.mReifenTyp = pref.getString("ReifenTyp", "");
         profile.mCity = pref.getString("City","");
-        profile.mNewsSettings = pref.getStringSet("NewsSettings",null);
-        profile.mLastRezeptUpdateSince = pref.getString("LastRecipeUpdate","");
+        profile.mNewsSettings = pref.getStringSet("NewsSettings", null);
+        profile.mLastRezeptUpdateSince = pref.getString("LastRecipeUpdate", "");
+        profile.mPolarDeviceID = pref.getString("PolarDeviceID", "");
         //nun überprüfen, ob der letzte update leer ist falls die app neu installiert wurde
         if(profile.mLastRezeptUpdateSince == ""){
             profile.mLastRezeptUpdateSince = "noch nicht";
@@ -174,8 +169,9 @@ public class FitbitUserProfile {
     }
 
     public static void deleteUser(Context context){
+
         SharedPreferences pref = context.getSharedPreferences("userprofile", context.MODE_PRIVATE);
-        mActiveUser.setmEncodedId("");
+        mActiveUser.setmFitBitUserID("");
         mActiveUser.setmAccessToken(null);
         mActiveUser.setmFullname("");
         mActiveUser.setmDateOfBirth("");
@@ -189,6 +185,8 @@ public class FitbitUserProfile {
         mActiveUser.setmLastRezeptUpdateSince("");
         mActiveUser.setmClickOffsetForBarSensibility("1");
         mActiveUser.setmActScoreResetDate("");
+        mActiveUser.setmPolarDeviceID("");
+
         final SharedPreferences.Editor edit = pref.edit();
         edit.clear();
         edit.commit();
@@ -226,8 +224,9 @@ public class FitbitUserProfile {
     public void setmFullname(String mFullname) {
         this.mFullname = mFullname;
     }
-    public String getmEncodedId() {
-        return mEncodedId;
+
+    public String getmFitBitUserID() {
+        return mFitBitUserID;
     }
 
     public Token getmAccessToken() {
@@ -294,8 +293,8 @@ public class FitbitUserProfile {
         this.mDateOfBirth = mDateOfBirth;
     }
 
-    public void setmEncodedId(String mEncodedId) {
-        this.mEncodedId = mEncodedId;
+    public void setmFitBitUserID(String mFitBitUserID) {
+        this.mFitBitUserID = mFitBitUserID;
     }
 
     public String getmAge() {
@@ -306,20 +305,20 @@ public class FitbitUserProfile {
         this.mAge = mAge;
     }
 
-    public static String getmFahrradTyp() {
+    public String getmFahrradTyp() {
         return mFahrradTyp;
     }
 
-    public static void setmFahrradTyp(String mFahrradTyp) {
-        FitbitUserProfile.mFahrradTyp = mFahrradTyp;
+    public void setmFahrradTyp(String mFahrradTyp) {
+        this.mFahrradTyp = mFahrradTyp;
     }
 
-    public static String getmReifenTyp() {
+    public String getmReifenTyp() {
         return mReifenTyp;
     }
 
-    public static void setmReifenTyp(String mReifenTyp) {
-        FitbitUserProfile.mReifenTyp = mReifenTyp;
+    public void setmReifenTyp(String mReifenTyp) {
+        this.mReifenTyp = mReifenTyp;
     }
 
     public Set<String> getmNewsSettings() {
@@ -330,13 +329,14 @@ public class FitbitUserProfile {
         this.mNewsSettings = mNewsSettings;
     }
 
-    public static void setmActiveUser(FitbitUserProfile mActiveUser) {
-        FitbitUserProfile.mActiveUser = mActiveUser;
+    public static void setmActiveUser(UserSettings mActiveUser) {
+        UserSettings.mActiveUser = mActiveUser;
     }
 
     public String getmLastRezeptUpdateSince() {
         return mLastRezeptUpdateSince;
     }
+
     public void setmLastRezeptUpdateSince(String mLastRezeptUpdateSince) {
         this.mLastRezeptUpdateSince = mLastRezeptUpdateSince;
     }
@@ -348,6 +348,7 @@ public class FitbitUserProfile {
     public void setmClickOffsetForBarSensibility(String mClickOffsetForBarSensibility) {
         this.mClickOffsetForBarSensibility = mClickOffsetForBarSensibility;
     }
+
     public String getmActScoreResetDate() {
         return mActScoreResetDate;
     }
@@ -364,4 +365,11 @@ public class FitbitUserProfile {
         this.mCity = mCity;
     }
 
+    public String getmPolarDeviceID() {
+        return mPolarDeviceID;
+    }
+
+    public void setmPolarDeviceID(String mPolarDeviceID) {
+        this.mPolarDeviceID = mPolarDeviceID;
+    }
 }

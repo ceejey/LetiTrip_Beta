@@ -2,8 +2,6 @@ package de.ehealth.project.letitrip_beta.view.fragment.settings;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.SettingsAdapter;
 import de.ehealth.project.letitrip_beta.view.adapter.SettingsRow;
@@ -56,7 +53,9 @@ public class Settings extends Fragment {
                     updateActivity(MainActivity.FragmentName.SETTINGS_GENERAL);
                 }
                 if (row.getCustomItem().equals("Profil")) {
-                    if (!FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")) {
+                    updateActivity(MainActivity.FragmentName.SETTINGS_PROFILE);
+                    /*
+                    if (!) {
                         updateActivity(MainActivity.FragmentName.SETTINGS_PROFILE);
                     }
                     else{
@@ -70,7 +69,7 @@ public class Settings extends Fragment {
                                             }
                                         });
                         builder.show();
-                    }
+                    } */
                 }
                 if (row.getCustomItem().equals("Geräte")) {
                     updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
@@ -92,9 +91,6 @@ public class Settings extends Fragment {
         super.onAttach(activity);
         if (activity instanceof FragmentChanger) {
             mListener = (FragmentChanger) activity;
-        }
-        if (FitbitUserProfile.getmActiveUser().getmEncodedId().equals("")){
-            updateActivity(MainActivity.FragmentName.FIT_BIT_INIT);
         }
     }
 

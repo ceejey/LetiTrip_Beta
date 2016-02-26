@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.ehealth.project.letitrip_beta.handler.database.RecipeDatabase;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
 import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
 
@@ -30,7 +30,7 @@ public class RecipeUpdateHandler {
 
     public void updateRecipeDatabase(Activity activity){
 
-        mRecepiUrl = requestUrl + FitbitUserProfile.getmActiveUser().getmLastRezeptUpdateSince();
+        mRecepiUrl = requestUrl + UserSettings.getmActiveUser().getmLastRezeptUpdateSince();
 
         Date date = new Date();
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
@@ -60,8 +60,8 @@ public class RecipeUpdateHandler {
             e.printStackTrace();
         }
 
-        FitbitUserProfile.getmActiveUser().setmLastRezeptUpdateSince(reportDate);
-        FitbitUserProfile.saveUser(activity);
+        UserSettings.getmActiveUser().setmLastRezeptUpdateSince(reportDate);
+        UserSettings.saveUser(activity);
     }
     public class UpdateRecipeDatabase extends AsyncTask<Void, Void, String> {
         protected String doInBackground(Void... params) {

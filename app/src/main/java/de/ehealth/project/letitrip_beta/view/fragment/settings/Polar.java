@@ -25,6 +25,7 @@ import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.DevicesAdapter;
 import de.ehealth.project.letitrip_beta.view.adapter.DevicesRow;
@@ -46,15 +47,7 @@ public class Polar extends Fragment {
     private  List<DevicesRow> mItemList = null;
     private int mSelectedDevice = 0;
 
-    public static String getmPolarDevice() {
-        return mPolarDevice;
-    }
 
-    public static void setmPolarDevice(String mPolarDevice) {
-        Polar.mPolarDevice = mPolarDevice;
-    }
-
-    private static String mPolarDevice = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,9 +99,9 @@ public class Polar extends Fragment {
                 switch (resultCode){
                     case 0:
                         if(mDeviceList.size() != 0) {
-                            mPolarDevice = mDeviceList.get(mSelectedDevice).getName();
+                            UserSettings.getmActiveUser().setmPolarDeviceID(mDeviceList.get(mSelectedDevice).getName());
                         }
-                        mPolarDevice = "Test";
+                        UserSettings.getmActiveUser().setmPolarDeviceID("Nur zum Listen Test");
                         updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                         break;
                     default:

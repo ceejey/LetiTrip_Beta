@@ -20,9 +20,12 @@ import java.util.List;
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.database.GPSDatabase;
 import de.ehealth.project.letitrip_beta.handler.database.WeatherDatabase;
+import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitBitAPI;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.fragment.Bar;
 import de.ehealth.project.letitrip_beta.view.fragment.Dashboard;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
@@ -35,6 +38,7 @@ import de.ehealth.project.letitrip_beta.view.fragment.SessionOverview;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.FitBitInit;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.WebviewOauth;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Tracker_Data;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.General;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.NewsSettings;
@@ -66,7 +70,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT,
-        NEWS, POLAR_DEVICE, NEWS_SETTINGS
+        NEWS, POLAR_DEVICE, NEWS_SETTINGS, FITBIT_TRACKER_DATA
     }
 
     /**
@@ -119,6 +123,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Oauth.getOauth().initOauth("3444e1985fcecca0dd97ff85e4253c45", "e4263b0e379b61c4916e4427d594f5c2", "http://www.google.de", FitBitAPI.class);
+
+        UserSettings.loadUser(this);
 
         GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
         WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
@@ -260,65 +268,58 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
             case SETTINGS:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings";
-                /*
+
                 expectedEntryCount = 1;
                 expectedEntry = "settings";
                 refillEntrys.add("settings");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else */
-                    fragmentContent = new Settings();
+
+                fragmentContent = new Settings();
                 break;
             case SETTINGS_GENERAL:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_general";
-                /*
+
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("dashboard");
                 refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else */
-                    fragmentContent = new General();
+
+                fragmentContent = new General();
                 break;
             case SETTINGS_PROFILE:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_profile";
-                /*
+
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("dashboard");
                 refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else */
-                    fragmentContent = new Profile();
+
+                fragmentContent = new Profile();
                 break;
             case SETTINGS_DEVICE:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_device";
 
-              /*  expectedEntryCount = 2;
+                expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("dashboard");
                 refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else */
-                    fragmentContent = new Device();
+                fragmentContent = new Device();
                 break;
             case SETTINGS_HELP:
                 txtHeader.setText("Einstellungen");
@@ -326,99 +327,108 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("dashboard");
                 refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else
-                    fragmentContent = new Help();
+                fragmentContent = new Help();
                 break;
             case WEB_VIEW_OAUTH:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_webview";
 
-             /*   expectedEntryCount = 2;
+                expectedEntryCount = 2;
                 expectedEntry = "settings_device";
-                refillEntrys.add("dashboard");
-                refillEntrys.add("settings");
                 refillEntrys.add("settings_device");
+                refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    transaction.remove(fragmentContent);
-                */
+
                 fragmentContent = new WebviewOauth();
                 break;
             case FIT_BIT_INIT:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_fitbit";
-                /*
+
                 expectedEntryCount = 3;
                 expectedEntry = "settings_device";
-                refillEntrys.add("dashboard");
-                refillEntrys.add("settings");
+
                 refillEntrys.add("settings_device");
+                refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else */
-                    fragmentContent = new FitBitInit();
+
+                fragmentContent = new FitBitInit();
                 break;
             case NEWS:
                 txtHeader.setText("Nachrichten");
                 newTag = "news";
-                /*
+
                 expectedEntryCount = 1;
                 expectedEntry = "dashboard";
                 refillEntrys.add("dashboard");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    transaction.remove(fragmentContent);
-                */
                 fragmentContent = new News();
                 break;
             case POLAR_DEVICE:
                 txtHeader.setText("Polar-Einstellungen");
                 newTag = "settings_polar";
-                /*
+
                 expectedEntryCount = 3;
                 expectedEntry = "settings_device";
-                refillEntrys.add("dashboard");
-                refillEntrys.add("settings");
                 refillEntrys.add("settings_device");
+                refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else
-                */
-                    fragmentContent = new Polar();
+
+                fragmentContent = new Polar();
                 break;
             case NEWS_SETTINGS:
                 txtHeader.setText("News-Einstellungen");
                 newTag = "settings_news";
-                /*
+
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("dashboard");
                 refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else
-                */
-                    fragmentContent = new NewsSettings();
+
+                fragmentContent = new NewsSettings();
+                break;
+            case FITBIT_TRACKER_DATA:
+                txtHeader.setText("News-Einstellungen");
+                newTag = "settings_news";
+
+                expectedEntryCount = 2;
+                expectedEntry = "settings";
+                refillEntrys.add("settings");
+                refillEntrys.add("dashboard");
+
+                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+
+                fragmentContent = fragmentManager.findFragmentByTag(newTag);
+
+                fragmentContent = new FitBit_Tracker_Data();
+                break;
+            default:
+                break;
         }
 
         if(alreadyAdded){

@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class Bar extends Fragment {
@@ -26,7 +26,7 @@ public class Bar extends Fragment {
     private static final class BarHandler {
         private static String selBtn = "";
 
-        private static int clickOffset = Integer.parseInt(FitbitUserProfile.getmActiveUser().getmClickOffsetForBarSensibility());
+        private static int clickOffset = Integer.parseInt(UserSettings.getmActiveUser().getmClickOffsetForBarSensibility());
 
 
         //private static float clickOffset = 0.6f;

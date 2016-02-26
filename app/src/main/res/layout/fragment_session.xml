@@ -149,30 +149,6 @@
                 android:layout_columnWeight="2">
 
                 <TextView
-                    android:id="@+id/textView17"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="Puls"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="0bpm"
-                    android:id="@+id/textView9" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="2"
-                android:layout_weight="0.5">
-
-                <TextView
                     android:id="@+id/textView20"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -186,6 +162,30 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="300"
                     android:id="@+id/textView10" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2"
+                android:layout_weight="0.5">
+
+                <TextView
+                    android:id="@+id/textView33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:text="Kalorien"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="0 kcal"
+                    android:id="@+id/textView35" />
 
             </LinearLayout>
         </LinearLayout>
@@ -211,19 +211,20 @@
                 android:layout_columnWeight="2" >
 
                 <TextView
-                    android:id="@+id/textView33"
+                    android:id="@+id/textView17"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="Kalorien"
+                    android:text="Puls"
                     android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="0 kcal"
-                    android:id="@+id/textView35" />
+                    android:text="0bpm"
+                    android:id="@+id/textView9" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -238,14 +239,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="dummy"
                     android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="dummy"
                     android:id="@+id/textView39" />
             </LinearLayout>
         </LinearLayout>

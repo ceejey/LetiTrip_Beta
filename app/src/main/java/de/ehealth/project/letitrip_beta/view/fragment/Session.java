@@ -190,8 +190,6 @@ public class Session extends Fragment {
 
         int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
         if ((currentID != lastID) && (lastID != -1)){
-            speedMperS = ((MainActivity)getActivity()).getGps().getLastSpeedMperS();
-            txtgeschw.setText(df.format(speedMperS*3.6) + " km/h");
             walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
             altitudeDifference = GPSDatabaseHandler.getInstance().getData().getAltitudeDifference(lastID, currentID);
             distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
@@ -202,7 +200,8 @@ public class Session extends Fragment {
             txtlaufRichtung.setText("Warte...");
         }
 
-
+        speedMperS = ((MainActivity)getActivity()).getGps().getLastSpeedMperS();
+        txtgeschw.setText(df.format(speedMperS*3.6) + " km/h");
         txtgeschwSession.setText(df.format(3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)) + " km/h");
         totalDistance = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(((MainActivity) (getActivity())).getGps().getActiveRecordingID(),-1);
 

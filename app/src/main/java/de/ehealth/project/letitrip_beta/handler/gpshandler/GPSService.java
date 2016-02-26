@@ -37,9 +37,7 @@ public class GPSService extends Service implements PolarCallback {
 
     private List <BluetoothDevice> deviceList;
 
-    private boolean standing = false;
     private boolean firstPoint = true;
-    private List<Float> bearingList = new ArrayList<>();
 
     private float lastSpeed;
 
@@ -172,9 +170,10 @@ public class GPSService extends Service implements PolarCallback {
                     //only insert data when accuaracy is good enough
                     if (l.getAccuracy() < 25){
 
-                        //Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
-                        if(!standing || l.getSpeed() >= 2.5f) { //Also take the first standing point
-                            standing = false;
+                        Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
+                        if(l.getSpeed() >= 2.5f || firstPoint) { //Also take the first point
+                            firstPoint = false;
+
                             boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate);
                             if (ins) {
                                 sendBroadcast("GPSService", 5);
@@ -189,8 +188,6 @@ public class GPSService extends Service implements PolarCallback {
                                 status = Status.TRACKINGSTARTED;
                                 sendBroadcast("GPSService", 4);
                             }
-                        } else if(l.getSpeed() <= 2.5F && standing == false){
-                            standing = true;
                         }
                     } else {
                         Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");

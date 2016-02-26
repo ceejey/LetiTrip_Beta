@@ -28,7 +28,9 @@ public class GPSDatabase extends SQLiteOpenHelper {
     public static final String COLUMN5 = "Altitude";
     public static final String COLUMN6 = "Bicycle"; //1=bicycle, 0=walking
     public static final String COLUMN7 = "Pulse";
-
+    public static final String COLUMN8 = "Speed";
+    public static final String COLUMN9 = "Watt";
+    public static final String COLUMN10 = "Calories";
     public GPSDatabase(Context context) {
         super(context, DATABASE_NAME, null, 1);
     }
@@ -43,7 +45,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
                 COLUMN4 + " REAL," +
                 COLUMN5 + " REAL," +
                 COLUMN6 + " INTEGER," +
-                COLUMN7 + " INTEGER)");
+                COLUMN7 + " INTEGER," +
+                COLUMN8 + " REAL," +
+                COLUMN9 + " REAL," +
+                COLUMN10 + " REAL)");
     }
 
     @Override
@@ -85,7 +90,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
      * @param pulse
      * @return false if an error occured; true if inserting was successful
      */
-    public boolean addData(int sessionNumber, double latitude, double longitude, double altitude, int bicycle, int pulse){
+    public boolean addData(int sessionNumber, double latitude, double longitude, double altitude, int bicycle, int pulse, double speed, double watt, double calories){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -98,6 +103,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
         contentValues.put(COLUMN5, altitude);
         contentValues.put(COLUMN6, bicycle);
         contentValues.put(COLUMN7, pulse);
+        contentValues.put(COLUMN8, speed);
+        contentValues.put(COLUMN9, watt);
+        contentValues.put(COLUMN10, calories);
+
 
         long result = db.insert(TABLE_NAME, null, contentValues);
         return (result != -1);
@@ -385,7 +394,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res;
         if (ID2 == -1){
-            res = db.rawQuery("select " + COLUMN2 +","+COLUMN3+","+COLUMN4+","+COLUMN5+ " from " + TABLE_NAME + " where " + COLUMN1 + "="+ID1, null);
+            res = db.rawQuery("select " + COLUMN2 +","+COLUMN3+","+COLUMN4+","+COLUMN5+","+COLUMN8+ " from " + TABLE_NAME + " where " + COLUMN1 + "="+ID1, null);
         } else {
             res = db.rawQuery("select " + COLUMN2 +","+COLUMN3+","+COLUMN4+","+COLUMN5+ " from " + TABLE_NAME + " where " + COLUMN0+" >= "+ID1+" and "+COLUMN0+ " <= "+ID2, null);
         }
@@ -397,6 +406,10 @@ public class GPSDatabase extends SQLiteOpenHelper {
 
         if (res.getCount() == 0) return -1;
 
+        if (res.getCount() == 1){
+            res.moveToFirst();
+            return res.getDouble(4);
+        }
         try {
             res.moveToFirst();
             time1 = dateFormat.parse(res.getString(0));

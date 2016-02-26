@@ -71,7 +71,10 @@ public class GPSHelper {
                 str+=("Longitude:"+res.getString(4)+"\t");
                 str+=("Altitude:"+res.getString(5)+"\t");
                 str+=("bicycle:"+res.getString(6)+"\n");
-                str+=("pulse:"+res.getString(7));
+                str+=("pulse:"+res.getString(7)+"\n");
+                str+=("speed:"+res.getString(8)+"\n");
+                str+=("watt:"+res.getString(9)+"\n");
+                str+=("calories:"+res.getString(10)+"\n");
                 Log.w("gps", str);
             }
             res.close();

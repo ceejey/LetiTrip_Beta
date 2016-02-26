@@ -268,8 +268,8 @@ public class SessionOverview extends Fragment {
 
     //todo delete later
     public void testMethod() {
-      GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50,0,100);
-      GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50,0,120);
+      GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50,0,100,5,70,0.4);
+      GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50,0,120,5,80,0.6);
     }
 
     /**

@@ -47,10 +47,10 @@ public class WattHandler {
         return pMech;
     }
 
-    public double calcKcal(Double pMech, Double pastTime){
-        Double kJMech = (pMech/1000) * pastTime;
-        Double kJMet = kJMech / 0.25F;
-        Double kcal = kJMet * 0.239006F;
+    public double calcKcal(double pMech, double pastTime){
+        double kJMech = (pMech/1000) * pastTime;
+        double kJMet = kJMech / 0.25F;
+        double kcal = kJMet * 0.239006F;
         Log.d("Test", "Nach Formel: " + kcal);
         return kcal;
     }

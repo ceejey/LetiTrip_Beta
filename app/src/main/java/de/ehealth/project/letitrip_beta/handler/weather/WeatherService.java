@@ -58,7 +58,7 @@ public class WeatherService extends AsyncTask<String, Void, String> {
                 String in;
                 String temp = "";
                 while ((in = reader.readLine()) != null){
-                    temp+=in;
+                    temp += in;
                 }
 
                 return temp;

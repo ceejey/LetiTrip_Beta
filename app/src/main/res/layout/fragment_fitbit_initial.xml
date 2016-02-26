@@ -20,12 +20,24 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Die App muss sich zuerst mit einem Fitbit Account verbinden."
             android:id="@+id/textView4" />
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linearLayout2"
+            android:background="@android:color/darker_gray" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="OK"
-            android:id="@+id/startOauthButton" />
+            android:id="@+id/startOauthButton"
+            style="@style/Base.Widget.AppCompat.Button.Borderless" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linearLayout2"
+            android:background="@android:color/darker_gray" />
 
     </LinearLayout>
 </FrameLayout>

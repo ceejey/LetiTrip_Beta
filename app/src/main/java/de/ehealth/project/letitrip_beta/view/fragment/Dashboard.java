@@ -276,7 +276,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
             layoutWeatherRight.setVisibility(View.GONE);
 
             txtWeatherSubHeading.setText("Ooops!");
-            txtWeatherTempHeader.setText("Leider konnten keine Wetterinformationen heruntergeladen werden.");
+            txtWeatherTempHeader.setText("Leider konnten keine Wetterinformationen heruntergeladen werden. "+exc.getMessage());
         }
 
         mTaskComplete = true;

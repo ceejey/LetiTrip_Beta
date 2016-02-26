@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,13 +19,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import de.ehealth.project.letitrip_beta.handler.calc.WattHandler;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarCallback;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
+import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class GPSService extends Service implements PolarCallback {
@@ -33,19 +38,35 @@ public class GPSService extends Service implements PolarCallback {
     private LocationManager locationManager;
     private int activeRecordingID; //all location points are saved with this ID
     private int recordingAsBicycle; //0=walk; 1=bicycle
+
+    private long startTime;
+
     private PolarHandler polar;
 
+    private WattHandler wattHandler;
     private List <BluetoothDevice> deviceList;
-
     private boolean firstPoint = true;
-
-    private float lastSpeed;
-
     private Status status;
 
     private NotificationManager notificationManager;
 
+    private double kcaloriesBurned; //total
+    private double speedMperS;
+    private double distSinceLastUpdate;
+    private int totalDistance;
+    private float windSpeedKmH;
+    private int temperature;
+    private int windDirection;
+    private int humidity;
+    private int pressure;
+    private int walkDirection;
+    private int altitudeDifference;
+    private int lastID;
+    private float weight,height;
+    private double watt;
+
     private IBinder mBinder = new LocalBinder();
+
     public class LocalBinder extends Binder {
 
         public GPSService getService() {
@@ -71,8 +92,20 @@ public class GPSService extends Service implements PolarCallback {
         }
         Log.w("service", "DESTROYED");
         activeRecordingID = -1;
-        lastSpeed = -1;
+        speedMperS = 0;
+        kcaloriesBurned = 0;
+        startTime = 0;
+        distSinceLastUpdate = 0;
+        totalDistance = 0;
+        windSpeedKmH = 0;
+        temperature = -300;
+        windDirection = 0;
+        humidity = 0;
+        pressure = 0;
+        walkDirection = 0;
+        altitudeDifference = 0;
 
+        lastID = -1;
         if (notificationManager != null)
             notificationManager.cancel(0);
 
@@ -88,7 +121,6 @@ public class GPSService extends Service implements PolarCallback {
         Log.w("service", "onbind");
         return mBinder;
     }
-
     @Override
     public void onCreate() {
         Log.w("service", "created");
@@ -119,6 +151,39 @@ public class GPSService extends Service implements PolarCallback {
         Log.w("service", "started");
         activeRecordingID = (GPSDatabaseHandler.getInstance().getData().getLastSessionID()) + 1;
         recordingAsBicycle = SessionHandler.getRunType();
+
+        kcaloriesBurned = 0;
+        wattHandler = new WattHandler();
+        lastID = -1;
+        Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
+        res.moveToFirst();
+        if (res.getCount() == 1){
+            temperature = res.getInt(2);
+            windSpeedKmH = res.getInt(3);
+            windDirection = res.getInt(4);
+            humidity = res.getInt(5);
+            pressure = res.getInt(6);
+        } else {
+            temperature = -300;
+            windSpeedKmH = -1;
+            windDirection = -1;
+            humidity = -1;
+            pressure = -1;
+        }
+        res.close();
+
+        FitbitUserProfile fitbitUserProfile = FitbitUserProfile.getmActiveUser();
+
+        try {
+            weight = (float)Integer.parseInt(fitbitUserProfile.getmWeight());
+            height = (float)Integer.parseInt(fitbitUserProfile.getmWeight());
+        } catch (NumberFormatException e){
+            e.printStackTrace();
+            Toast.makeText(GPSService.this, "Kann Fitbit Daten nicht laden!", Toast.LENGTH_LONG).show();
+            return super.onStartCommand(intent, flags, startId);
+        }
+
+
         polar.searchPolarDevice();
 
         //gps enabled?
@@ -174,18 +239,79 @@ public class GPSService extends Service implements PolarCallback {
                         if(l.getSpeed() >= 2.5f || firstPoint) { //Also take the first point
                             firstPoint = false;
 
-                            boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate);
+                            speedMperS = l.getSpeed();
+                            int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
+                            if ((currentID != lastID) && (lastID != -1)){
+                                walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
+                                altitudeDifference = GPSDatabaseHandler.getInstance().getData().getAltitudeDifference(lastID, currentID);
+                                distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
+                            }
+
+                            float angleToWind = (float) Math.abs(windDirection-walkDirection);
+
+                            //calculate watt
+                            try {
+                                //bicycle
+                                if (recordingAsBicycle == 1){
+                                    watt = wattHandler.calcWatts( //TODO fehlende parameter
+                                            weight,
+                                            10F,
+                                            height,
+                                            9.81F,
+                                            (float) speedMperS,
+                                            (float) altitudeDifference,
+                                            (float) distSinceLastUpdate,
+                                            (float) (windSpeedKmH / 3.6),
+                                            angleToWind,
+                                            (float) temperature,
+                                            (float) pressure * 100,
+                                            ((float) humidity) / 100,
+                                            0.007F,
+                                            0.276F,
+                                            1.1F);
+
+                                    if (!Double.isNaN(watt) && (watt >0)){
+                                        double passedTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
+                                        double newKcal = wattHandler.calcKcal(watt, passedTime);
+                                        kcaloriesBurned = kcaloriesBurned + newKcal;
+                                    }
+                                } else { //walking
+
+                                }
+                            } catch (NumberFormatException ex){
+                                ex.printStackTrace();
+                                temperature = -300;
+                            }
+
+                            lastID = currentID;
+/*
+                            Log.w("session","used paras\n"+
+                                "weight"+(float)Integer.parseInt(fitbitUserProfile.getmWeight())+"\n"+
+                                "heigth"+(float)Integer.parseInt(fitbitUserProfile.getmHeight())+"\n"+
+                                "speed(m/s)"+(float) speedMperS+"\n"+
+                                "altitudeChange"+(float) altitudeDifference+"\n"+
+                                "distSinceLastUpdate"+(float) distSinceLastUpdate +"\n"+
+                                "windspeed"+(float) (windSpeedKmH / 3.6)+"\n"+
+                                "angleToWind"+angleToWind+"\n"+
+                                "temp"+(float) temperature+"\n"+
+                                "pressure"+(float) (pressure * 100)+"\n"+
+                                "humidity"+ ((float)humidity)/100+"\n"+
+                                "watt: "+watt);*/
+
+                            boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate,l.getSpeed(),watt, kcaloriesBurned);
                             if (ins) {
                                 sendBroadcast("GPSService", 5);
-                                lastSpeed = l.getSpeed();
-                            } else
+                                totalDistance = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(activeRecordingID,-1);
+                            } else {
                                 Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
+                            }
 
                             //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
                             if (status != Status.TRACKINGSTARTED) {
                                 createNotification();
                                 Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
                                 status = Status.TRACKINGSTARTED;
+                                startTime = new Date().getTime();
                                 sendBroadcast("GPSService", 4);
                             }
                         }
@@ -204,7 +330,7 @@ public class GPSService extends Service implements PolarCallback {
                                                    //TODO set time to 2000
             locationManager.requestLocationUpdates("gps", 1000, 0, locationListener);
             status = Status.SEARCHINGGPS;
-            lastSpeed = -1;
+            speedMperS = -1;
         } catch (SecurityException e) {
             e.printStackTrace();
         }
@@ -270,7 +396,59 @@ public class GPSService extends Service implements PolarCallback {
         }
     }
 
-    public float getLastSpeedMperS() {
-        return lastSpeed;
+    public double getDistSinceLastUpdate() {
+        return distSinceLastUpdate;
+    }
+
+    public double getSpeedMperS() {
+        return speedMperS;
+    }
+
+    public int getTotalDistance() {
+        return totalDistance;
+    }
+
+    public float getWindSpeedKmH() {
+        return windSpeedKmH;
+    }
+
+    public int getTemperature() {
+        return temperature;
+    }
+
+    public int getWindDirection() {
+        return windDirection;
+    }
+
+    public int getHumidity() {
+        return humidity;
+    }
+
+    public int getPressure() {
+        return pressure;
+    }
+
+    public int getWalkDirection() {
+        return walkDirection;
+    }
+
+    public int getAltitudeDifference() {
+        return altitudeDifference;
+    }
+
+    public int getLastID() {
+        return lastID;
+    }
+
+    public double getKcaloriesBurned() {
+        return kcaloriesBurned;
+    }
+
+    public double getWatt() {
+        return watt;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 }

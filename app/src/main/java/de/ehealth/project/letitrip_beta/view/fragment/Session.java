@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,11 +24,9 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.calc.WattHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
+import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
-import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
-import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class Session extends Fragment {
@@ -38,32 +35,17 @@ public class Session extends Fragment {
     private TextView txtpuls, txtwatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtdistanz, txtgeschwSession, txtzeit, txtWindDirection, txtCalories;
     private Button showOnMap;
     private ImageView imgType, imgWalkDir, imgWindDir;
-    private int lastID;
     private DecimalFormat df;
     private Handler handler; //update duration every second
-    private WattHandler wattHandler;
-    private double speedMperS;
-    private double distSinceLastUpdate;
-    private int totalDistance;
-    private float windSpeedKmH;
-    private int temperature;
-    private int windDirection;
-    private int humidity;
-    private int pressure;
-    private int walkDirection;
-    private int altitudeDifference;
-
-    private double calories;
-
-    private long duration; //is set at the start of a session
 
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             long currentTime = new Date().getTime();
-            long seconds = (TimeUnit.MILLISECONDS.toSeconds(currentTime-duration))%60;
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(currentTime-duration)%60;
-            long hours = TimeUnit.MILLISECONDS.toHours(currentTime-duration);
+            long startTime = ((MainActivity)getActivity()).getGps().getStartTime();
+            long seconds = (TimeUnit.MILLISECONDS.toSeconds(currentTime-startTime))%60;
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(currentTime-startTime)%60;
+            long hours = TimeUnit.MILLISECONDS.toHours(currentTime-startTime);
             txtzeit.setText((hours != 0?Long.toString(hours)+":":"") + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
             handler.postDelayed(this, 1000);
         }
@@ -73,33 +55,12 @@ public class Session extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         df = new DecimalFormat("0.0");
         handler = new Handler();
-        wattHandler = new WattHandler();
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onStart() {
         Log.w("session", "onStart");
-        lastID = -1;
-        calories = 0;
-        duration = GPSDatabaseHandler.getInstance().getData().getStartTimeOfSession(((MainActivity)(getActivity())).getGps().getActiveRecordingID());
-        Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
-        res.moveToFirst();
-        if (res.getCount() == 1){
-            temperature = res.getInt(2);
-            windSpeedKmH = res.getInt(3);
-            windDirection = res.getInt(4);
-            humidity = res.getInt(5);
-            pressure = res.getInt(6);
-        } else {
-            temperature = -300;
-            windSpeedKmH = -1;
-            windDirection = -1;
-            humidity = -1;
-            pressure = -1;
-        }
-        res.close();
-
         updateStaticUI();
         updateUI();
         handler.postDelayed(runnable, 1000);
@@ -171,14 +132,15 @@ public class Session extends Fragment {
             imgType.setImageResource(R.drawable.ic_directions_run_white_48dp);
         }
 
-        if (temperature != -300){
-            txttemp.setText(temperature + " °C");
-            txtwind.setText(windSpeedKmH + " km/h");
-            txtWindDirection.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(windDirection));
-            imgWindDir.setRotation(windDirection);
+        if ((((MainActivity) getActivity()).getGps().getTemperature()) != -300){
+            txttemp.setText((((MainActivity) getActivity()).getGps().getTemperature()) + " °C");
+            txtwind.setText((((MainActivity) getActivity()).getGps().getWindSpeedKmH()) + " km/h");
+            txtWindDirection.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter((((MainActivity) getActivity()).getGps().getWindDirection())));
+            imgWindDir.setRotation((((MainActivity) getActivity()).getGps().getWindDirection()));
         } else {
             txttemp.setText("N/A");
             txtwind.setText("N/A");
+            txtWindDirection.setText("N/A");
         }
     }
 
@@ -186,80 +148,15 @@ public class Session extends Fragment {
      * updates all visible UI elements
      */
     private void updateUI() {
-        txtpuls.setText((PolarHandler.mHeartRate == 0) ? "N/A" : PolarHandler.mHeartRate+" bpm");
-
-        int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
-        if ((currentID != lastID) && (lastID != -1)){
-            walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
-            altitudeDifference = GPSDatabaseHandler.getInstance().getData().getAltitudeDifference(lastID, currentID);
-            distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
-            txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(walkDirection));
-            imgWalkDir.setRotation(walkDirection);
-        } else {
-            txtgeschw.setText("Warte...");
-            txtlaufRichtung.setText("Warte...");
-        }
-
-        speedMperS = ((MainActivity)getActivity()).getGps().getLastSpeedMperS();
-        txtgeschw.setText(df.format(speedMperS*3.6) + " km/h");
-        txtgeschwSession.setText(df.format(3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)) + " km/h");
-        totalDistance = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(((MainActivity) (getActivity())).getGps().getActiveRecordingID(),-1);
-
-        txtdistanz.setText(totalDistance + " Meter");
-
-        float angleToWind = (float) Math.abs(windDirection-walkDirection);
-
-        UserSettings f = UserSettings.getmActiveUser();
-        float weight = 0,height = 0;
-        double watt = 0;
-        try {
-            weight = Float.valueOf(f.getmWeight());
-            height = Float.valueOf(f.getmHeight());
-            //bicycle
-            if (((MainActivity)getActivity()).getGps().getRecordingAsBicycle() == 1){
-                watt = wattHandler.calcWatts( //TODO fehlende parameter
-                        weight,
-                        10F,
-                        height,
-                        9.81F,
-                        (float) speedMperS,
-                        (float) altitudeDifference,
-                        (float) distSinceLastUpdate,
-                        (float) (windSpeedKmH / 3.6),
-                        angleToWind,
-                        (float) temperature,
-                        (float) pressure * 100,
-                        ((float) humidity) / 100,
-                        0.007F,
-                        0.276F,
-                        1.1F);
-
-                long pastTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
-                double newKcal = wattHandler.calcKcal(watt,(double)pastTime);
-                calories = calories + newKcal;
-            } else { //walking
-
-            }
-        } catch (NumberFormatException ex){
-            ex.printStackTrace();
-            temperature = -300;
-        }
-
-        lastID = currentID;
-
-        /*Log.w("session","used paras\n"+
-                "speed(m/s)"+(float) speedMperS+"\n"+
-                "altitudeChange"+(float) altitudeDifference+"\n"+
-                "distSinceLastUpdate"+(float) distSinceLastUpdate +"\n"+
-                "windspeed"+(float) (windSpeedKmH / 3.6)+"\n"+
-                "angleToWind"+angleToWind+"\n"+
-                "temp"+(float) temperature+"\n"+
-                "pressure"+(float) (pressure * 100)+"\n"+
-                "humidity"+ ((float)humidity)/100+"\n"+
-                "watt: "+watt);*/
-
-        txtwatt.setText((temperature == -300 ? "N/A" : (watt < 0 ? "0" : df.format(watt))));
-        txtCalories.setText((calories == -1)?"N/A":df.format(calories)+" kcal");
+        GPSService gps = ((MainActivity) getActivity()).getGps();
+        txtpuls.setText((PolarHandler.mHeartRate == 0) ? "N/A" : PolarHandler.mHeartRate + " bpm");
+        txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(gps.getWalkDirection()));
+        imgWalkDir.setRotation(gps.getWalkDirection());
+        txtgeschw.setText(df.format(gps.getSpeedMperS()*3.6) + " km/h");
+        txtgeschwSession.setText(df.format((3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)))+ " km/h");
+        txtdistanz.setText(gps.getTotalDistance() + " Meter");
+        txtwatt.setText((gps.getTemperature() == -300 ? "N/A" : (gps.getWatt() < 0 ? "0" : df.format(gps.getWatt()))));
+        txtCalories.setText(gps.getTemperature() == -300 ? "N/A" : (gps.getKcaloriesBurned() == -1)?"N/A":df.format(gps.getKcaloriesBurned())+" kcal");
     }
 
     @Override
@@ -284,6 +181,8 @@ public class Session extends Fragment {
             //new position received
             if (message == 5) {
                 updateUI();
+            } else if (message == 4){
+                updateStaticUI();
             }
         }
     };

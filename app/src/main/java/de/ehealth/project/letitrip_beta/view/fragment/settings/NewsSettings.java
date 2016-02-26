@@ -26,7 +26,6 @@ import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 public class NewsSettings extends Fragment {
 
     private FragmentChanger mListener;
-    private CheckBox cbNewsEinschalten;
     private Button mBTSaveNewsSettings;
 
     private CheckBox cbArbeit;
@@ -62,7 +61,6 @@ public class NewsSettings extends Fragment {
     private CheckBox cbWissenschaft;
     private List<String> mCheckedList = null;
 
-    private boolean checkboxNewsEinschalten = false;
     private boolean newsSettingsFounded = false;
 
     @Override
@@ -74,7 +72,6 @@ public class NewsSettings extends Fragment {
             mCheckedList = new ArrayList<String>(FitbitUserProfile.getmActiveUser().getmNewsSettings());
         else
             mCheckedList = new ArrayList<String>();
-        cbNewsEinschalten = (CheckBox) view.findViewById(R.id.cbNewsEinschalten);
         mBTSaveNewsSettings = (Button) view.findViewById(R.id.bnSpeichernNews);
 
         cbArbeit = (CheckBox) view.findViewById(R.id.cbArbeit);
@@ -109,118 +106,7 @@ public class NewsSettings extends Fragment {
         cbVersicherungen = (CheckBox) view.findViewById(R.id.cbVersicherungen);
         cbWissenschaft = (CheckBox) view.findViewById(R.id.cbWissenschaft);
         checkSavedNewsSettings();
-        if(!newsSettingsFounded) {
-            cbArbeit.setVisibility(view.INVISIBLE);
-            cbAuto.setVisibility(view.INVISIBLE);
-            cbBanken.setVisibility(view.INVISIBLE);
-            cbBauwesen.setVisibility(view.INVISIBLE);
-            cbBildung.setVisibility(view.INVISIBLE);
-            cbCelebrities.setVisibility(view.INVISIBLE);
-            cbChemie.setVisibility(view.INVISIBLE);
-            cbComputer.setVisibility(view.INVISIBLE);
-            cbEnergie.setVisibility(view.INVISIBLE);
-            cbFernsehen.setVisibility(view.INVISIBLE);
-            cbFussball.setVisibility(view.INVISIBLE);
-            cbGesundheit.setVisibility(view.INVISIBLE);
-            cbHandel.setVisibility(view.INVISIBLE);
-            cbImmobilien.setVisibility(view.INVISIBLE);
-            cbKinder.setVisibility(view.INVISIBLE);
-            cbLebensmittel.setVisibility(view.INVISIBLE);
-            cbLifestyle.setVisibility(view.INVISIBLE);
-            cbLogistik.setVisibility(view.INVISIBLE);
-            cbMaschinenbau.setVisibility(view.INVISIBLE);
-            cbMedien.setVisibility(view.INVISIBLE);
-            cbMotorsport.setVisibility(view.INVISIBLE);
-            cbPresseschau.setVisibility(view.INVISIBLE);
-            cbRatgeber.setVisibility(view.INVISIBLE);
-            cbRecht.setVisibility(view.INVISIBLE);
-            cbSoziales.setVisibility(view.INVISIBLE);
-            cbTelekommunikation.setVisibility(view.INVISIBLE);
-            cbTouristik.setVisibility(view.INVISIBLE);
-            cbUmwelt.setVisibility(view.INVISIBLE);
-            cbUnterhaltung.setVisibility(view.INVISIBLE);
-            cbVersicherungen.setVisibility(view.INVISIBLE);
-            cbWissenschaft.setVisibility(view.INVISIBLE);
-            checkboxNewsEinschalten = false;
-        }
-        else {
-            cbNewsEinschalten.setChecked(!cbNewsEinschalten.isChecked());
-            checkboxNewsEinschalten = true;
-        }
-        cbNewsEinschalten.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkboxNewsEinschalten) {
-                    cbArbeit.setVisibility(v.VISIBLE);
-                    cbAuto.setVisibility(v.VISIBLE);
-                    cbBanken.setVisibility(v.VISIBLE);
-                    cbBauwesen.setVisibility(v.VISIBLE);
-                    cbBildung.setVisibility(v.VISIBLE);
-                    cbCelebrities.setVisibility(v.VISIBLE);
-                    cbChemie.setVisibility(v.VISIBLE);
-                    cbComputer.setVisibility(v.VISIBLE);
-                    cbEnergie.setVisibility(v.VISIBLE);
-                    cbFernsehen.setVisibility(v.VISIBLE);
-                    cbFussball.setVisibility(v.VISIBLE);
-                    cbGesundheit.setVisibility(v.VISIBLE);
-                    cbHandel.setVisibility(v.VISIBLE);
-                    cbImmobilien.setVisibility(v.VISIBLE);
-                    cbKinder.setVisibility(v.VISIBLE);
-                    cbLebensmittel.setVisibility(v.VISIBLE);
-                    cbLifestyle.setVisibility(v.VISIBLE);
-                    cbLogistik.setVisibility(v.VISIBLE);
-                    cbMaschinenbau.setVisibility(v.VISIBLE);
-                    cbMedien.setVisibility(v.VISIBLE);
-                    cbMotorsport.setVisibility(v.VISIBLE);
-                    cbPresseschau.setVisibility(v.VISIBLE);
-                    cbRatgeber.setVisibility(v.VISIBLE);
-                    cbRecht.setVisibility(v.VISIBLE);
-                    cbSoziales.setVisibility(v.VISIBLE);
-                    cbTelekommunikation.setVisibility(v.VISIBLE);
-                    cbTouristik.setVisibility(v.VISIBLE);
-                    cbUmwelt.setVisibility(v.VISIBLE);
-                    cbUnterhaltung.setVisibility(v.VISIBLE);
-                    cbVersicherungen.setVisibility(v.VISIBLE);
-                    cbWissenschaft.setVisibility(v.VISIBLE);
 
-                    checkboxNewsEinschalten = true;
-                } else {
-                    cbArbeit.setVisibility(v.INVISIBLE);
-                    cbAuto.setVisibility(v.INVISIBLE);
-                    cbBanken.setVisibility(v.INVISIBLE);
-                    cbBauwesen.setVisibility(v.INVISIBLE);
-                    cbBildung.setVisibility(v.INVISIBLE);
-                    cbCelebrities.setVisibility(v.INVISIBLE);
-                    cbChemie.setVisibility(v.INVISIBLE);
-                    cbComputer.setVisibility(v.INVISIBLE);
-                    cbEnergie.setVisibility(v.INVISIBLE);
-                    cbFernsehen.setVisibility(v.INVISIBLE);
-                    cbFussball.setVisibility(v.INVISIBLE);
-                    cbGesundheit.setVisibility(v.INVISIBLE);
-                    cbHandel.setVisibility(v.INVISIBLE);
-                    cbImmobilien.setVisibility(v.INVISIBLE);
-                    cbKinder.setVisibility(v.INVISIBLE);
-                    cbLebensmittel.setVisibility(v.INVISIBLE);
-                    cbLifestyle.setVisibility(v.INVISIBLE);
-                    cbLogistik.setVisibility(v.INVISIBLE);
-                    cbMaschinenbau.setVisibility(v.INVISIBLE);
-                    cbMedien.setVisibility(v.INVISIBLE);
-                    cbMotorsport.setVisibility(v.INVISIBLE);
-                    cbPresseschau.setVisibility(v.INVISIBLE);
-                    cbRatgeber.setVisibility(v.INVISIBLE);
-                    cbRecht.setVisibility(v.INVISIBLE);
-                    cbSoziales.setVisibility(v.INVISIBLE);
-                    cbTelekommunikation.setVisibility(v.INVISIBLE);
-                    cbTouristik.setVisibility(v.INVISIBLE);
-                    cbUmwelt.setVisibility(v.INVISIBLE);
-                    cbUnterhaltung.setVisibility(v.INVISIBLE);
-                    cbVersicherungen.setVisibility(v.INVISIBLE);
-                    cbWissenschaft.setVisibility(v.INVISIBLE);
-
-                    checkboxNewsEinschalten = false;
-                }
-            }
-        });
         mBTSaveNewsSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,104 +119,101 @@ public class NewsSettings extends Fragment {
     private void saveNesSettings(){
         ArrayList currentTasks = new ArrayList<String>();
         Set<String> set = new HashSet<String>();
-        if(!checkboxNewsEinschalten) {
-            currentTasks.add("Nicht Ausgewählt");
+
+        if (cbArbeit.isChecked()) {
+            currentTasks.add("arbeit");
         }
-        else {
-            if (cbArbeit.isChecked()) {
-                currentTasks.add("arbeit");
-            }
-            if (cbAuto.isChecked()) {
-                currentTasks.add("auto");
-            }
-            if (cbBanken.isChecked()) {
-                currentTasks.add("banken");
-            }
-            if (cbBauwesen.isChecked()) {
-                currentTasks.add("bauwesen");
-            }
-            if (cbBildung.isChecked()) {
-                currentTasks.add("bildung");
-            }
-            if (cbCelebrities.isChecked()) {
-                currentTasks.add("celebrities");
-            }
-            if (cbChemie.isChecked()) {
-                currentTasks.add("chemie");
-            }
-            if (cbComputer.isChecked()) {
-                currentTasks.add("computer");
-            }
-            if (cbEnergie.isChecked()) {
-                currentTasks.add("energie");
-            }
-            if (cbFernsehen.isChecked()) {
-                currentTasks.add("fernsehen");
-            }
-            if (cbFussball.isChecked()) {
-                currentTasks.add("fussball");
-            }
-            if (cbGesundheit.isChecked()) {
-                currentTasks.add("gesundheit");
-            }
-            if (cbHandel.isChecked()) {
-                currentTasks.add("handel");
-            }
-            if (cbImmobilien.isChecked()) {
-                currentTasks.add("immobilien");
-            }
-            if (cbKinder.isChecked()) {
-                currentTasks.add("kinder");
-            }
-            if (cbLebensmittel.isChecked()) {
-                currentTasks.add("lebensmittel");
-            }
-            if (cbLifestyle.isChecked()) {
-                currentTasks.add("lifestyle");
-            }
-            if (cbLogistik.isChecked()) {
-                currentTasks.add("logistik");
-            }
-            if (cbMaschinenbau.isChecked()) {
-                currentTasks.add("maschinenbau");
-            }
-            if (cbMedien.isChecked()) {
-                currentTasks.add("medien");
-            }
-            if (cbMotorsport.isChecked()) {
-                currentTasks.add("motorsport");
-            }
-            if (cbPresseschau.isChecked()) {
-                currentTasks.add("presseschau");
-            }
-            if (cbRatgeber.isChecked()) {
-                currentTasks.add("ratgeber");
-            }
-            if (cbRecht.isChecked()) {
-                currentTasks.add("recht");
-            }
-            if (cbSoziales.isChecked()) {
-                currentTasks.add("soziales");
-            }
-            if (cbTelekommunikation.isChecked()) {
-                currentTasks.add("telekommunikation");
-            }
-            if (cbTouristik.isChecked()) {
-                currentTasks.add("touristik");
-            }
-            if (cbUmwelt.isChecked()) {
-                currentTasks.add("umwelt");
-            }
-            if (cbUnterhaltung.isChecked()) {
-                currentTasks.add("unterhaltung");
-            }
-            if (cbVersicherungen.isChecked()) {
-                currentTasks.add("versicherungen");
-            }
-            if (cbWissenschaft.isChecked()) {
-                currentTasks.add("wissenschaft");
-            }
+        if (cbAuto.isChecked()) {
+            currentTasks.add("auto");
         }
+        if (cbBanken.isChecked()) {
+            currentTasks.add("banken");
+        }
+        if (cbBauwesen.isChecked()) {
+            currentTasks.add("bauwesen");
+        }
+        if (cbBildung.isChecked()) {
+            currentTasks.add("bildung");
+        }
+        if (cbCelebrities.isChecked()) {
+            currentTasks.add("celebrities");
+        }
+        if (cbChemie.isChecked()) {
+            currentTasks.add("chemie");
+        }
+        if (cbComputer.isChecked()) {
+            currentTasks.add("computer");
+        }
+        if (cbEnergie.isChecked()) {
+            currentTasks.add("energie");
+        }
+        if (cbFernsehen.isChecked()) {
+            currentTasks.add("fernsehen");
+        }
+        if (cbFussball.isChecked()) {
+            currentTasks.add("fussball");
+        }
+        if (cbGesundheit.isChecked()) {
+            currentTasks.add("gesundheit");
+        }
+        if (cbHandel.isChecked()) {
+            currentTasks.add("handel");
+        }
+        if (cbImmobilien.isChecked()) {
+            currentTasks.add("immobilien");
+        }
+        if (cbKinder.isChecked()) {
+            currentTasks.add("kinder");
+        }
+        if (cbLebensmittel.isChecked()) {
+            currentTasks.add("lebensmittel");
+        }
+        if (cbLifestyle.isChecked()) {
+            currentTasks.add("lifestyle");
+        }
+        if (cbLogistik.isChecked()) {
+            currentTasks.add("logistik");
+        }
+        if (cbMaschinenbau.isChecked()) {
+            currentTasks.add("maschinenbau");
+        }
+        if (cbMedien.isChecked()) {
+            currentTasks.add("medien");
+        }
+        if (cbMotorsport.isChecked()) {
+            currentTasks.add("motorsport");
+        }
+        if (cbPresseschau.isChecked()) {
+            currentTasks.add("presseschau");
+        }
+        if (cbRatgeber.isChecked()) {
+            currentTasks.add("ratgeber");
+        }
+        if (cbRecht.isChecked()) {
+            currentTasks.add("recht");
+        }
+        if (cbSoziales.isChecked()) {
+            currentTasks.add("soziales");
+        }
+        if (cbTelekommunikation.isChecked()) {
+            currentTasks.add("telekommunikation");
+        }
+        if (cbTouristik.isChecked()) {
+            currentTasks.add("touristik");
+        }
+        if (cbUmwelt.isChecked()) {
+            currentTasks.add("umwelt");
+        }
+        if (cbUnterhaltung.isChecked()) {
+            currentTasks.add("unterhaltung");
+        }
+        if (cbVersicherungen.isChecked()) {
+            currentTasks.add("versicherungen");
+        }
+        if (cbWissenschaft.isChecked()) {
+            currentTasks.add("wissenschaft");
+        }
+
         set.addAll(currentTasks);
         FitbitUserProfile.getmActiveUser().setmNewsSettings(set);
         FitbitUserProfile.saveUser(getActivity());

@@ -9,35 +9,23 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:layout_margin="5dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="389dp"
-            android:layout_height="166dp">
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="1">
-
-            <TextView
-                android:layout_width="333dp"
-                android:layout_height="match_parent"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Anwendung muss sich mit einem Fitbit Account verbinden"
-                android:id="@+id/textView4" />
-        </LinearLayout>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Die App muss sich zuerst mit einem Fitbit Account verbinden."
+            android:id="@+id/textView4" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="OK"
-            android:id="@+id/startOauthButton"
-            android:layout_gravity="center_horizontal" />
+            android:id="@+id/startOauthButton" />
 
     </LinearLayout>
 </FrameLayout>

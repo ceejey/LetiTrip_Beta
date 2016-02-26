@@ -29,7 +29,7 @@ import de.ehealth.project.letitrip_beta.handler.polar.PolarCallback;
 import de.ehealth.project.letitrip_beta.handler.polar.PolarHandler;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitbitUserProfile;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class GPSService extends Service implements PolarCallback {
@@ -172,7 +172,7 @@ public class GPSService extends Service implements PolarCallback {
         }
         res.close();
 
-        FitbitUserProfile fitbitUserProfile = FitbitUserProfile.getmActiveUser();
+        UserSettings fitbitUserProfile = UserSettings.getmActiveUser();
 
         try {
             weight = (float)Integer.parseInt(fitbitUserProfile.getmWeight());

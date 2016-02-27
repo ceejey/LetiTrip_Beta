@@ -240,11 +240,14 @@ public class GPSService extends Service implements PolarCallback {
                             firstPoint = false;
 
                             speedMperS = l.getSpeed();
+                            double passedTime = 0;
+
                             int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
                             if ((currentID != lastID) && (lastID != -1)){
                                 walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
                                 altitudeDifference = GPSDatabaseHandler.getInstance().getData().getAltitudeDifference(lastID, currentID);
                                 distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
+                                passedTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
                             }
 
                             float angleToWind = (float) Math.abs(windDirection-walkDirection);
@@ -269,14 +272,18 @@ public class GPSService extends Service implements PolarCallback {
                                             0.007F,
                                             0.276F,
                                             1.1F);
-
-                                    if (!Double.isNaN(watt) && (watt >0)){
-                                        double passedTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
-                                        double newKcal = wattHandler.calcKcal(watt, passedTime);
-                                        kcaloriesBurned = kcaloriesBurned + newKcal;
-                                    }
                                 } else { //walking
-
+                                    watt = wattHandler.calcRunningWatts(
+                                            weight,
+                                            height,
+                                            9.81F,
+                                            (float)speedMperS,
+                                            (float)altitudeDifference,
+                                            (float)passedTime);
+                                }
+                                if (!Double.isNaN(watt) && (watt > 0)){
+                                    double newKcal = wattHandler.calcKcal(watt, passedTime);
+                                    kcaloriesBurned = kcaloriesBurned + newKcal;
                                 }
                             } catch (NumberFormatException ex){
                                 ex.printStackTrace();
@@ -284,10 +291,10 @@ public class GPSService extends Service implements PolarCallback {
                             }
 
                             lastID = currentID;
-/*
+
                             Log.w("session","used paras\n"+
-                                "weight"+(float)Integer.parseInt(fitbitUserProfile.getmWeight())+"\n"+
-                                "heigth"+(float)Integer.parseInt(fitbitUserProfile.getmHeight())+"\n"+
+                                "weight"+weight+"\n"+
+                                "heigth"+height+"\n"+
                                 "speed(m/s)"+(float) speedMperS+"\n"+
                                 "altitudeChange"+(float) altitudeDifference+"\n"+
                                 "distSinceLastUpdate"+(float) distSinceLastUpdate +"\n"+
@@ -296,7 +303,9 @@ public class GPSService extends Service implements PolarCallback {
                                 "temp"+(float) temperature+"\n"+
                                 "pressure"+(float) (pressure * 100)+"\n"+
                                 "humidity"+ ((float)humidity)/100+"\n"+
-                                "watt: "+watt);*/
+                                "watt: "+watt+"\n"+
+                                "calories:"+kcaloriesBurned+"\n"+
+                                "passedTime:"+passedTime);
 
                             boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate,l.getSpeed(),watt, kcaloriesBurned);
                             if (ins) {
@@ -312,6 +321,7 @@ public class GPSService extends Service implements PolarCallback {
                                 Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
                                 status = Status.TRACKINGSTARTED;
                                 startTime = new Date().getTime();
+                                lastID = -1; //only 1 position is set so far. in the next loop the calculation part would assumes 2 positions are already available
                                 sendBroadcast("GPSService", 4);
                             }
                         }

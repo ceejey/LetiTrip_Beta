@@ -153,7 +153,11 @@ public class Session extends Fragment {
         txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(gps.getWalkDirection()));
         imgWalkDir.setRotation(gps.getWalkDirection());
         txtgeschw.setText(df.format(gps.getSpeedMperS()*3.6) + " km/h");
-        txtgeschwSession.setText(df.format((3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)))+ " km/h");
+        //txtgeschwSession.setText(df.format((3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)))+ " km/h");
+
+        double seconds = (TimeUnit.MILLISECONDS.toSeconds(new Date().getTime()-((MainActivity)getActivity()).getGps().getStartTime()));
+        double avgKmH = ((((float)gps.getTotalDistance()/seconds))*3.6);
+        txtgeschwSession.setText(df.format(avgKmH)+" km/h");
         txtdistanz.setText(gps.getTotalDistance() + " Meter");
         txtwatt.setText((gps.getTemperature() == -300 ? "N/A" : (gps.getWatt() < 0 ? "0" : df.format(gps.getWatt()))));
         txtCalories.setText(gps.getTemperature() == -300 ? "N/A" : (gps.getKcaloriesBurned() == -1)?"N/A":df.format(gps.getKcaloriesBurned())+" kcal");

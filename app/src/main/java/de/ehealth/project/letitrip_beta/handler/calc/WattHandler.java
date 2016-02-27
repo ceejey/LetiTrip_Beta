@@ -49,16 +49,16 @@ public class WattHandler {
 
     //Should never get negative!!!!!
     public double calcRunningWatts(Float weightPerson, Float heightPerson, Float gravityAcceleration,
-                                   Float speed, Float attitudeGain, Float pastTime){
+                                   Float speed, Float attitudeGain, Float passedTime){
 
         RunWattCalculator wc = new RunWattCalculator();
 
         //h = 2F;
-        //pastTime = 100F; //In 100sek zb 2 meter hochgestiegen.
+        //passedTime = 100F; //In 100sek zb 2 meter hochgestiegen.
         Float stepsPerSecond = speed;
         Float focusHub = wc.calculateFocusHub(heightPerson);
         Double weightWatts = wc.calculateWeightWatts(weightPerson, gravityAcceleration, stepsPerSecond, focusHub);
-        Double uphillWatts = wc.calculateUphillWatts(weightPerson, gravityAcceleration, attitudeGain, pastTime);
+        Double uphillWatts = wc.calculateUphillWatts(weightPerson, gravityAcceleration, attitudeGain, passedTime);
         Double pMet = wc.calculateRunningWatts(weightWatts, uphillWatts);
 
 

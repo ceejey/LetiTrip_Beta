@@ -7,10 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-//import com.github.mikephil.charting.charts.BarChart;
-//import com.github.mikephil.charting.data.BarData;
-//import com.github.mikephil.charting.data.BarDataSet;
-//import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,19 +27,18 @@ public class CaloriesDiagramm extends android.support.v4.app.Fragment {
 
     private FragmentChanger mlistener;
 
-//    private ArrayList<BarEntry> mMoveEntries = new ArrayList<>();
+    private ArrayList<BarEntry> mMoveEntries = new ArrayList<>();
     ArrayList<String> mlabels = new ArrayList<String>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         createDataSet();
-//        BarChart Chart = new BarChart(getActivity());
-//        BarDataSet dataset = new BarDataSet(mMoveEntries, "Steps");
-//        BarData data = new BarData(mlabels, dataset);
-//        Chart.setData(data);
+        BarChart Chart = new BarChart(getActivity());
+        BarDataSet dataset = new BarDataSet(mMoveEntries, "Steps");
+        BarData data = new BarData(mlabels, dataset);
+        Chart.setData(data);
 
-        //return Chart;
-        return null;
+        return Chart;
     }
     public void createDataSet(){
         try {
@@ -54,7 +53,7 @@ public class CaloriesDiagramm extends android.support.v4.app.Fragment {
             days[i] = format.format(now.getTime());
             Summary sum = FitBitUserDataSQLite.getInstance(getActivity()).getFitBitData(days[i]);
             if(sum.getSteps() != "0") {
-               // mMoveEntries.add(new BarEntry(Integer.parseInt(sum.getCaloriesOut()), i));
+                mMoveEntries.add(new BarEntry(Integer.parseInt(sum.getCaloriesOut()), i));
                 mlabels.add(days[i]);
             }
             now.add(Calendar.DAY_OF_MONTH, 1);

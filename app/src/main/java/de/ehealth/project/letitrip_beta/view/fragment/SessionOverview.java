@@ -113,10 +113,6 @@ public class SessionOverview extends Fragment {
 
                     //bind again
                     ((MainActivity)getActivity()).bindToService();
-                    gpsStatusTextView.setText("Aufnahme deaktiviert");
-                    btnStartSession.setText("Session starten");
-                    btnPauseSession.setText("Pause");
-                    btnPauseSession.setVisibility(View.GONE);
                 }
             } else Log.w("sessionoverview", "bind error");
             }

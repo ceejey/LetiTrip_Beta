@@ -1,0 +1,7 @@
+@startuml
+
+===rest==
+MainActivity -> OAuth:init
+MainActivity -> UserSettings:loadUser
+
+@enduml

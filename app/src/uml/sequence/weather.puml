@@ -1,0 +1,12 @@
+@startuml
+Dashboard->WeatherService:execute
+WeatherService->YahooWeather:requestWeather(city)
+return weatherData
+WeatherService->Dashboard:success(weatherData)
+Dashboard->WeatherDatabase:addData(date,temp,speed,winddirection,humidity,pressure,description)
+
+MainActivity->GPSService:start
+GPSService->WeatherDatabase:getLatestWeather
+return weatherData
+
+@enduml

@@ -66,8 +66,8 @@ public class WattHandler {
     }
 
     //Wirkungsgrad beim Laufen / Fahrradfahren sind in etwa gleich 20 - 25 %
-    public double calcKcal(double pMech, double pastTime){
-        double kJMech = (pMech/1000) * pastTime;
+    public double calcKcal(double pMech, double passedTime){
+        double kJMech = (pMech/1000) * passedTime;
         double kJMet = kJMech / 0.22F;
         double kcal = kJMet * 0.239006F;
         Log.d("Test", "Nach Formel: " + kcal);

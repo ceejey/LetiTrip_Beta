@@ -1,0 +1,40 @@
+@startuml
+MainActivity -> GPSService: bind
+MainActivity <-- GPSService: gps
+
+SessionOverview -> MainActivity:getGps
+return gps
+Session -> MainActivity:getGps
+return gps
+SessionDetail -> MainActivity:getGps
+return gps
+
+SessionOverview ->MainActivity: startService
+MainActivity->GPSService: start
+Activate GPSService
+GPSService->PolarHandler: start
+GPSService<--PolarHandler: pulse
+GPSService->WeatherDatabase: getLatestWeather
+GPSService<--WeatherDatabase: weather
+
+GPSService->WattHandler: calcWatts(height, weight, time,..)
+GPSService<--WattHandler: pMech
+GPSService->WattHandler: calcKcal(pMech,passedTime)
+GPSService<--WattHandler: kcal
+
+GPSDatabase<-GPSService: addData(sessionID, lat, lon, alt, bicycle, pulse, speed, watt, calories)
+GPSService-->Session: broadcast
+GPSService-->SessionDetail: broadcast
+GPSService-->MainActivity: broadcast
+
+SessionOverview ->MainActivity: stopService
+
+MainActivity ->GPSService: unbind
+MainActivity ->GPSService: stop
+Deactivate GPSService
+
+GPSService->PolarHandler: stop
+MainActivity ->GPSService: bind
+MainActivity <-- GPSService: gps
+
+@enduml

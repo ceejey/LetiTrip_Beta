@@ -16,7 +16,6 @@ import java.net.URLConnection;
 
 import de.ehealth.project.letitrip_beta.model.weather.Channel;
 
-//select * from weather.forecast where woeid in (SELECT woeid FROM geo.placefinder WHERE text="52.4242,6.52342" and gflags="R")
 
 public class WeatherService extends AsyncTask<String, Void, String> {
 

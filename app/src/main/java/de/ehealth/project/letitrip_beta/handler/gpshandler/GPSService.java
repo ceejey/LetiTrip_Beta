@@ -44,13 +44,14 @@ public class GPSService extends Service implements PolarCallback {
     private PolarHandler polar;
 
     private WattHandler wattHandler;
+
     private List <BluetoothDevice> deviceList;
     private boolean firstPoint = true;
     private Status status;
-
     private NotificationManager notificationManager;
 
     private double kcaloriesBurned; //total
+
     private double speedMperS;
     private double distSinceLastUpdate;
     private int totalDistance;
@@ -64,7 +65,6 @@ public class GPSService extends Service implements PolarCallback {
     private int lastID;
     private float weight,height;
     private double watt;
-
     private IBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
@@ -72,12 +72,12 @@ public class GPSService extends Service implements PolarCallback {
         public GPSService getService() {
             return GPSService.this;
         }
+
     }
     /**
      * status of the service
      */
     public enum Status {TRACKINGSTARTED, SEARCHINGGPS, IDLE, PAUSED;}
-
     /**
      * service was stopped
      * stop location updates, remove notification, disconnect from polar
@@ -121,6 +121,7 @@ public class GPSService extends Service implements PolarCallback {
         Log.w("service", "onbind");
         return mBinder;
     }
+
     @Override
     public void onCreate() {
         Log.w("service", "created");
@@ -132,11 +133,27 @@ public class GPSService extends Service implements PolarCallback {
         status = Status.IDLE;
         super.onCreate();
     }
-
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
         Log.w("service", "rebind");
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.w("gpsservice","onunbind");
+        return super.onUnbind(intent);
+    }
+
+    /**
+     * is called when the user swipes the app away. stop the service, otherwise it will crash
+     * @param rootIntent
+     */
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopSelf();
+        Log.w("gpsservice","task removed");
     }
 
     /**
@@ -148,7 +165,13 @@ public class GPSService extends Service implements PolarCallback {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.w("service", "started");
+        Log.w("service", "started-flag:"+flags+"startID:"+startId);
+
+        //app was swiped away, android deleted everything already. stop the service too
+        if (GPSDatabaseHandler.getInstance().getData() == null){
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         activeRecordingID = (GPSDatabaseHandler.getInstance().getData().getLastSessionID()) + 1;
         recordingAsBicycle = SessionHandler.getRunType();
 

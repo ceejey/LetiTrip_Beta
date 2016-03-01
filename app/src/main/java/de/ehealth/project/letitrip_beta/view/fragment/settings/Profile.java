@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -178,9 +179,14 @@ public class Profile extends Fragment {
         mBtnSaveUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUser();
+                if (mEtxtCity.getText().toString().equals("") || mVtxtAge.getText().toString().equals("") || mVtxtHeight.getText().toString().equals("")) {
+                    Toast.makeText(getActivity(), "Bitte füllen Sie alle notwendigen Felder aus!", Toast.LENGTH_LONG).show();
+                } else {
+                    saveUser();
+                }
             }
         });
+
         mVtxtFullName.setText(mUser.getmFullname());
         mVtxtAge.setText(mUser.getmAge());
         mVtxtHeight.setText(mUser.getmHeight());
@@ -191,7 +197,6 @@ public class Profile extends Fragment {
             mRbMale.setChecked(true);
         else if (mUser.getmGender().equals("FEMALE"))
             mRbFemale.setChecked(true);
-
         return view;
     }
 

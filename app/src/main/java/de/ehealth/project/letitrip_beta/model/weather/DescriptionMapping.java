@@ -62,6 +62,7 @@ public class DescriptionMapping {
             descriptionMap.put("light rain", "Leichter Regen");
             descriptionMap.put("rain", "Regen");
             descriptionMap.put("mist", "Sprühregen");
+            descriptionMap.put("light snow", "Leichter Schneefall");
         }
         return descriptionMap;
     }

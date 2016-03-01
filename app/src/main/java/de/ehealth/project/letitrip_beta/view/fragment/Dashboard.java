@@ -41,6 +41,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mTaskComplete = false;
     private LinearLayout gpsPlaceHolder = null;
+    private LinearLayout firstRun = null;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -99,6 +100,10 @@ public class Dashboard extends Fragment implements WeatherCallback {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (((MainActivity)getActivity()).isFirstRun()){
+            showFirstAppRunView();
+        }
         showActivityScoreView();
         setSessionOnDashBoard();
         refreshWeather();
@@ -114,7 +119,24 @@ public class Dashboard extends Fragment implements WeatherCallback {
     public void showActivityScoreView(){
         LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
         mInflater.inflate(R.layout.score_view, placeHolder);
-        ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder,0);
+        ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder, 0);
+    }
+
+    public void showFirstAppRunView(){
+        if (getView() != null){
+            firstRun = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+            mInflater.inflate(R.layout.firstrun_view, firstRun);
+            ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(firstRun);
+            ImageView imgInfo = (ImageView) firstRun.findViewById(R.id.imageView);
+            imgInfo.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+            firstRun.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(firstRun);
+                    mListener.changeFragment(MainActivity.FragmentName.FIT_BIT_INIT);
+                }
+            });
+        }
     }
 
     public void refreshWeather(){
@@ -158,65 +180,16 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
     }
 
-    public void success(Channel channel) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
-        Date date = new Date();
-
-        WeatherDatabaseHandler.getInstance().getData().addData(
-                dateFormat.format(date),
-                channel.getItem().getCondition().getTemp(),
-                channel.getWind().getSpeed(),
-                channel.getWind().getDirection(),
-                channel.getAtmosphere().getHumidity(),
-                channel.getAtmosphere().getPressure(),
-                channel.getItem().getCondition().getText()
-        );
-        Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
-        showWeather(res);
-        res.close();
-    }
-
-    @Override
-    public void onPause() {
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-        super.onPause();
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        if (!hidden){
-            setSessionOnDashBoard();
-        }
-        super.onHiddenChanged(hidden);
-    }
-
-    //Receiver to add gps status when service located the position
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int message = intent.getIntExtra("MainActivity", -1);
-            if (message == 1){ //MainActivity connected to gps;tacking started/stopped
-                setSessionOnDashBoard();
-            }
-        }
-    };
-
-    @Override
-    public void onResume() {
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
-        super.onResume();
-    }
-
     public void setSessionOnDashBoard(){
         if ((((MainActivity)getActivity()).getGps()) != null){
             if ((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED) || (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.PAUSED)){
 
-            if (gpsPlaceHolder != null) {
-                if (gpsPlaceHolder.getVisibility() == View.VISIBLE) {
-                    ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
-                    gpsPlaceHolder = null;
+                if (gpsPlaceHolder != null) {
+                    if (gpsPlaceHolder.getVisibility() == View.VISIBLE) {
+                        ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
+                        gpsPlaceHolder = null;
+                    }
                 }
-            }
                 if (gpsPlaceHolder != null){
                     ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(gpsPlaceHolder);
                 }
@@ -246,6 +219,24 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 gpsPlaceHolder = null;
             }
         }
+    }
+
+    public void success(Channel channel) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
+        Date date = new Date();
+
+        WeatherDatabaseHandler.getInstance().getData().addData(
+                dateFormat.format(date),
+                channel.getItem().getCondition().getTemp(),
+                channel.getWind().getSpeed(),
+                channel.getWind().getDirection(),
+                channel.getAtmosphere().getHumidity(),
+                channel.getAtmosphere().getPressure(),
+                channel.getItem().getCondition().getText()
+        );
+        Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
+        showWeather(res);
+        res.close();
     }
 
     public void failure(Exception exc) {
@@ -281,6 +272,37 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
         mTaskComplete = true;
     }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
+        super.onResume();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden){
+            setSessionOnDashBoard();
+        }
+        super.onHiddenChanged(hidden);
+    }
+
+    //Receiver to add gps status when service located the position
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int message = intent.getIntExtra("MainActivity", -1);
+            if (message == 1){ //MainActivity connected to gps;tacking started/stopped
+                setSessionOnDashBoard();
+            }
+        }
+    };
 
 
     @Override

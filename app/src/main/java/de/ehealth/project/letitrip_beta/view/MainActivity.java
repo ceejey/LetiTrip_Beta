@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
@@ -67,12 +68,18 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     public ServiceConnection mConnection;
     private boolean notificationClicked = false;
 
+    //for firstRun check
+    private SharedPreferences sharedPreferences = null;
+
+    private boolean firstRun = false;
+
+
+
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT,
-        NEWS, POLAR_DEVICE, NEWS_SETTINGS, FITBIT_TRACKER_DATA
+        NEWS, POLAR_DEVICE, NEWS_SETTINGS, FITBIT_TRACKER_DATA;
     }
-
     /**
      * creates a connection to the gps service
      */
@@ -96,6 +103,11 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     @Override
     protected void onStart() {
         bindToService();
+        //is it the first run?
+        if (sharedPreferences.getBoolean("firstRun", true)) {
+            firstRun = true;
+            sharedPreferences.edit().putBoolean("firstRun", false).commit();
+        }
         super.onStart();
     }
 
@@ -125,11 +137,12 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         setContentView(R.layout.activity_main);
 
         Oauth.getOauth().initOauth("3444e1985fcecca0dd97ff85e4253c45", "e4263b0e379b61c4916e4427d594f5c2", "http://www.google.de", FitBitAPI.class);
-
         UserSettings.loadUser(this);
 
         GPSDatabaseHandler.getInstance().setData(new GPSDatabase(this));
         WeatherDatabaseHandler.getInstance().setData(new WeatherDatabase(this));
+
+        sharedPreferences = getSharedPreferences("de.ehealth.project.letitrip_beta", MODE_PRIVATE);
 
         mConnection = new ServiceConnection() {
             @Override
@@ -530,5 +543,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         } else {
             Log.w("main","no extra");
         }
+    }
+
+    public boolean isFirstRun() {
+        return firstRun;
     }
 }

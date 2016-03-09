@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Die App muss sich zuerst mit einem Fitbit Account verbinden. Dabei werden Profileigenschaften überschrieben."
+            android:text="Die App verbindet sich nun zu Fitbit. Dabei werden Profileigenschaften überschrieben."
             android:id="@+id/textView4" />
         <View
             android:layout_width="match_parent"

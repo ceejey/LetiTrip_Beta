@@ -29,6 +29,17 @@
             android:contextClickable="false"
             android:layout_alignParentTop="true">
 
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fitbit Profil importieren"
+                android:id="@+id/bnImportFitbit"
+                android:textColor="#5c6bc0"
+                style="@style/Base.Widget.AppCompat.Button.Borderless" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

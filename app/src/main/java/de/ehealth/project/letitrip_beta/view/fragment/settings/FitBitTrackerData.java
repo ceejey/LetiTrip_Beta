@@ -31,7 +31,7 @@ import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
  * The information of the last two weeks are separated in two fragments "MoveDiagramm" ans "Calories
  * Diagramm. "
  */
-public class FitBit_Tracker_Data extends android.support.v4.app.Fragment{
+public class FitBitTrackerData extends android.support.v4.app.Fragment{
 
     private FragmentChanger mListener;
     private TextView mEtxtDate;

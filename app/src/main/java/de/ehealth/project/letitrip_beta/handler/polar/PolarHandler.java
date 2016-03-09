@@ -16,7 +16,6 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;

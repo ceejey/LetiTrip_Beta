@@ -44,6 +44,7 @@ public class Profile extends Fragment {
     private EditText mEtxtWeight;
     private EditText mEtxtCity;
     private Button mBtnSaveUser;
+    private Button mBtnImportFitbit;
     private CheckBox mCbBike;
     private Spinner mSpReifentyp;
     private Spinner mSpFahrradTyp;
@@ -61,6 +62,7 @@ public class Profile extends Fragment {
         mRbMale = (RadioButton) view.findViewById(R.id.rdMale);
         mRbFemale = (RadioButton) view.findViewById(R.id.rdFemale);
         mBtnSaveUser = (Button) view.findViewById(R.id.bnSaveUserProfile);
+        mBtnImportFitbit = (Button) view.findViewById(R.id.bnImportFitbit);
         mCbBike = (CheckBox) view.findViewById(R.id.cbFahrrad);
         mVtxtFahrradTyp = (TextView) view.findViewById(R.id.vtxtFahrradtyp);
         mVtxtReifenTyp = (TextView) view.findViewById(R.id.vtxtReifentyp);
@@ -184,6 +186,13 @@ public class Profile extends Fragment {
                 } else {
                     saveUser();
                 }
+            }
+        });
+
+        mBtnImportFitbit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.changeFragment(MainActivity.FragmentName.FIT_BIT_INIT);
             }
         });
 

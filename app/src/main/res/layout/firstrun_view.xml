@@ -34,13 +34,6 @@
                 android:id="@+id/txtHeading"
                 android:textSize="16sp"
                 android:textColor="#000000" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Oder Klicken Sie hier, um sich mit Ihrem Fitbit Account zu verbinden."
-                android:id="@+id/txtHeading2"
-                android:textSize="16sp"
-                android:textColor="#000000" />
 
         </LinearLayout>
     </LinearLayout>

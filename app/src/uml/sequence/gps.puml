@@ -13,6 +13,7 @@ SessionOverview ->MainActivity: startService
 MainActivity->GPSService: start
 Activate GPSService
 GPSService->PolarHandler: start
+Activate PolarHandler
 GPSService<--PolarHandler: pulse
 GPSService->WeatherDatabase: getLatestWeather
 GPSService<--WeatherDatabase: weather
@@ -34,6 +35,7 @@ MainActivity ->GPSService: stop
 Deactivate GPSService
 
 GPSService->PolarHandler: stop
+Deactivate PolarHandler
 MainActivity ->GPSService: bind
 MainActivity <-- GPSService: gps
 

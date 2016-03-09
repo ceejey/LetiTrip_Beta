@@ -39,7 +39,7 @@ import de.ehealth.project.letitrip_beta.view.fragment.SessionOverview;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.FitBitInit;
 import de.ehealth.project.letitrip_beta.view.fragment.fitbit.WebviewOauth;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Device;
-import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBit_Tracker_Data;
+import de.ehealth.project.letitrip_beta.view.fragment.settings.FitBitTrackerData;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.General;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Help;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.NewsSettings;
@@ -438,7 +438,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
 
-                fragmentContent = new FitBit_Tracker_Data();
+                fragmentContent = new FitBitTrackerData();
                 break;
             default:
                 break;

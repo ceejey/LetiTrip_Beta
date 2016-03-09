@@ -133,7 +133,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 @Override
                 public void onClick(View v) {
                     ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(firstRun);
-                    mListener.changeFragment(MainActivity.FragmentName.FIT_BIT_INIT);
+                    mListener.changeFragment(MainActivity.FragmentName.SETTINGS_PROFILE);
                 }
             });
         }

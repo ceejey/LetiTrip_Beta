@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.database.Cursor;
@@ -165,7 +166,7 @@ public class GPSService extends Service implements PolarCallback {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.w("service", "started-flag:"+flags+"startID:"+startId);
+        Log.w("service", "started");
 
         //app was swiped away, android deleted everything already. stop the service too
         if (GPSDatabaseHandler.getInstance().getData() == null){
@@ -210,8 +211,8 @@ public class GPSService extends Service implements PolarCallback {
         polar.searchPolarDevice();
 
         //gps enabled?
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(GPSService.this, "GPS aktivieren!", Toast.LENGTH_LONG).show();
+        if ((!BluetoothAdapter.getDefaultAdapter().isEnabled())||(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
+            Toast.makeText(GPSService.this, ((!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))?"GPS aktivieren!\n":"")+""+((BluetoothAdapter.getDefaultAdapter().isEnabled()?"":"Bluetooth aktivieren, um Pulsmesserdaten zu erfassen!")), Toast.LENGTH_LONG).show();
             sendBroadcast("GPSService", 1);
         } else startTracking();
         return super.onStartCommand(intent, flags, startId);

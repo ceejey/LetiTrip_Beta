@@ -57,7 +57,7 @@ public class Device extends Fragment {
                     case MotionEvent.ACTION_DOWN: {
                         ImageView view = (ImageView) v;
                         //overlay is black with transparency of 0x77 (119)
-                        view.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        view.getDrawable().setColorFilter(0xff5c6bc0, PorterDuff.Mode.SRC_ATOP);
                         view.invalidate();
                         showDevicesDialog();
                         break;

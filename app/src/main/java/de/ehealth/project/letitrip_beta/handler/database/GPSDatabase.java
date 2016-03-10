@@ -129,19 +129,31 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
     /**
-     * get the last id
-     * @return the last stored ID
+     * get the last id of
+     * - a run (if id != -1)
+     * - in general (if id == -1)
+     * @param id the session id or -1
+     * @return the last stored ID (of the session)
      */
-    public int getLastID(){
+    public int getLastID(int id){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select max(" + COLUMN0 + ") from " + TABLE_NAME, null);
-
+        Cursor res;
+        if (id == -1){
+            res = db.rawQuery("select max(" + COLUMN0 + ") from " + TABLE_NAME, null);
+        } else {
+            res = db.rawQuery("select max(" + COLUMN0 + "),"+COLUMN3+" from " + TABLE_NAME + " where "+COLUMN1 + " = "+id, null);
+        }
+        Log.w("gpsDB","getlastIDCount:"+res.getCount());
         if (res != null) if (res.getCount() > 0){
             res.moveToFirst();
+            if (res.getDouble(1) == 0){
+                return -1;
+            }
+            Log.w("gpsDB","bla:"+res.getDouble(1));
             int result = res.getInt(0);
             res.close();
             return result;
-        } else return 0; else return 0;
+        } else return -1; else return -1;
     }
 
     /**

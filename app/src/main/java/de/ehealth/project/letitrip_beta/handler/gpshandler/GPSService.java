@@ -47,7 +47,7 @@ public class GPSService extends Service implements PolarCallback {
     private WattHandler wattHandler;
 
     private List <BluetoothDevice> deviceList;
-    private boolean firstPoint = true;
+    private boolean firstPoint;
     private Status status;
     private NotificationManager notificationManager;
 
@@ -105,6 +105,7 @@ public class GPSService extends Service implements PolarCallback {
         pressure = 0;
         walkDirection = 0;
         altitudeDifference = 0;
+        firstPoint = true;
 
         lastID = -1;
         if (notificationManager != null)
@@ -134,27 +135,16 @@ public class GPSService extends Service implements PolarCallback {
         status = Status.IDLE;
         super.onCreate();
     }
-    @Override
-    public void onRebind(Intent intent) {
-        super.onRebind(intent);
-        Log.w("service", "rebind");
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.w("gpsservice","onunbind");
-        return super.onUnbind(intent);
-    }
 
     /**
-     * is called when the user swipes the app away. stop the service, otherwise it will crash
+     * is called when the user swipes the app away. stop the service, everything else is already destroyed (database handler, UI,..)
      * @param rootIntent
      */
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         stopSelf();
-        Log.w("gpsservice","task removed");
+        Log.w("gpsservice", "task removed");
     }
 
     /**
@@ -179,6 +169,7 @@ public class GPSService extends Service implements PolarCallback {
         kcaloriesBurned = 0;
         wattHandler = new WattHandler();
         lastID = -1;
+        firstPoint = true;
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         res.moveToFirst();
         if (res.getCount() == 1){
@@ -211,13 +202,20 @@ public class GPSService extends Service implements PolarCallback {
         polar.searchPolarDevice();
 
         //gps enabled?
-        if ((!BluetoothAdapter.getDefaultAdapter().isEnabled())||(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
-            Toast.makeText(GPSService.this, ((!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))?"GPS aktivieren!\n":"")+""+((BluetoothAdapter.getDefaultAdapter().isEnabled()?"":"Bluetooth aktivieren, um Pulsmesserdaten zu erfassen!")), Toast.LENGTH_LONG).show();
+        boolean bluetoothDisabled = (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER));
+        if ((!BluetoothAdapter.getDefaultAdapter().isEnabled())||(bluetoothDisabled)) {
+            Toast.makeText(GPSService.this, ((!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))?"GPS aktivieren!\n":"")+""+((BluetoothAdapter.getDefaultAdapter().isEnabled()?"":"Bluetooth aktivieren, um Pulsmesserdaten zu erfassen.")), Toast.LENGTH_LONG).show();
+        }
+
+        if (bluetoothDisabled){
             sendBroadcast("GPSService", 1);
         } else startTracking();
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * callback function. is called after finishing the search
+     */
     public void polarDiscoveryFinished(){
         //Connect to Polar
         if(polar.isDeviceFound()) {
@@ -229,6 +227,9 @@ public class GPSService extends Service implements PolarCallback {
         }
     }
 
+    /**
+     * callback function. is called after a device is connected
+     */
     public void polarDeviceConnected(){
         if(polar.isDeviceConnected()) {
             Log.d("Polar", "Connected: " + polar.isDeviceConnected() + "\nTrying to receive Heartrate!");
@@ -248,7 +249,7 @@ public class GPSService extends Service implements PolarCallback {
     }
 
     /**
-     * connects to the polar device and starts the gps tracking
+     * connects to the polar device (if available) and starts the gps tracking
      */
     public void startTracking() {
 
@@ -256,22 +257,26 @@ public class GPSService extends Service implements PolarCallback {
             @Override
             public void onLocationChanged(Location l) {
                 if ((l != null) && (status != Status.PAUSED) && (!Double.isNaN(l.getLongitude())) && (!Double.isNaN(l.getLatitude())) && (!Double.isNaN(l.getAltitude()))) {
+                    Log.w("service", "count:" + GPSDatabaseHandler.getInstance().getData().getSession(activeRecordingID).getCount());
                     //only insert data when accuaracy is good enough
                     if (l.getAccuracy() < 25){
 
                         Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
-                        if(l.getSpeed() >= 2.5f || firstPoint) { //Also take the first point
+                        if((l.getSpeed() >= 1f) || (firstPoint)) { //take the first point and points faster than 1 meter per second
                             firstPoint = false;
 
                             speedMperS = l.getSpeed();
-                            double passedTime = 0;
+                            double passedTime;
 
-                            int currentID = GPSDatabaseHandler.getInstance().getData().getLastID();
-                            if ((currentID != lastID) && (lastID != -1)){
+                            int currentID = GPSDatabaseHandler.getInstance().getData().getLastID(activeRecordingID);
+                            if ((currentID != lastID) && (lastID != -1) && (currentID != -1)){
                                 walkDirection = (int)GPSDatabaseHandler.getInstance().getData().getWalkDirection(lastID, currentID);
                                 altitudeDifference = GPSDatabaseHandler.getInstance().getData().getAltitudeDifference(lastID, currentID);
                                 distSinceLastUpdate = GPSDatabaseHandler.getInstance().getData().getWalkDistance(lastID, currentID);
                                 passedTime = TimeUnit.MILLISECONDS.toSeconds(GPSDatabaseHandler.getInstance().getData().getDuration(lastID, currentID));
+                            } else { //not 2 points received yet
+                                distSinceLastUpdate = 0;
+                                passedTime = 0;
                             }
 
                             float angleToWind = (float) Math.abs(windDirection-walkDirection);
@@ -345,9 +350,11 @@ public class GPSService extends Service implements PolarCallback {
                                 Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
                                 status = Status.TRACKINGSTARTED;
                                 startTime = new Date().getTime();
-                                lastID = -1; //only 1 position is set so far. in the next loop the calculation part would assumes 2 positions are already available
+                                //lastID = -1; //only 1 position is set so far. in the next loop the calculation part would assumes 2 positions are already available
                                 sendBroadcast("GPSService", 4);
                             }
+                        } else {
+                            Log.w("gpsservice","speed too low. probably standing");
                         }
                     } else {
                         Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");

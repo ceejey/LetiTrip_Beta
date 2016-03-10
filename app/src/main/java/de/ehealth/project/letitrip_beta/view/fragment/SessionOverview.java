@@ -4,7 +4,6 @@ package de.ehealth.project.letitrip_beta.view.fragment;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -66,7 +65,6 @@ public class SessionOverview extends Fragment {
     private ImageView imgRun, imgBike;
     private Button btnPauseSession;
 
-    private NotificationManager myNotificationManager;
     private DialogInterface.OnClickListener dialogListener;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private GPSHelper myGPSObject;
@@ -162,7 +160,7 @@ public class SessionOverview extends Fragment {
             @Override
             public void onClick(View v) {
                 SessionHandler.setRunType(0);
-                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+                myGPSObject.updateTrackingUI();
             }
         });
 
@@ -170,7 +168,7 @@ public class SessionOverview extends Fragment {
             @Override
             public void onClick(View v) {
                 SessionHandler.setRunType(1);
-                myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+                myGPSObject.updateTrackingUI();
             }
         });
 
@@ -184,11 +182,12 @@ public class SessionOverview extends Fragment {
                     } else {
                         ((MainActivity)getActivity()).getGps().pause();
                     }
-                    myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+                    myGPSObject.updateTrackingUI();
                 } else Log.w("sessionoverview", "bind error");
             }
         });
 
+        myGPSObject = new GPSHelper(((MainActivity) getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike,getResources(),getContext());
         return view;
     }
 
@@ -233,7 +232,6 @@ public class SessionOverview extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Log.d("sessionoverview", "onCreate");
-        myGPSObject = new GPSHelper();
     }
 
     @Override
@@ -258,7 +256,7 @@ public class SessionOverview extends Fragment {
             SessionHandler.setSelectedRunId(-1);
         }
 
-        myGPSObject.updateTrackingUI(((MainActivity) getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+        myGPSObject.updateTrackingUI();
         updateList();
     }
 
@@ -317,9 +315,9 @@ public class SessionOverview extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("GPSService", -1);
-            if (message == 1)  myGPSObject.updateTrackingUI(((MainActivity)getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+            if (message == 1)  myGPSObject.updateTrackingUI();
             if ((message == 2) ||(message == 4)){ //tracking started/stopped in service
-                myGPSObject.updateTrackingUI(((MainActivity) getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike);
+                myGPSObject.updateTrackingUI();
                 updateList();
                 if (message == 4){
                     SessionHandler.setSelectedRunId(((MainActivity)getActivity()).getGps().getActiveRecordingID());

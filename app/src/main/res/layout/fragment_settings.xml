@@ -5,8 +5,6 @@
     tools:context="de.ehealth.project.letitrip_beta.view.fragment.settings.Settings"
     android:background="#ffffff">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

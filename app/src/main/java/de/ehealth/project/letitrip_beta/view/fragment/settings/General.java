@@ -3,8 +3,10 @@ package de.ehealth.project.letitrip_beta.view.fragment.settings;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -67,14 +69,14 @@ public class General extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder //
+                builder
                         .setMessage("Sind Sie sicher ?")
                         .setPositiveButton(getString(R.string.accept), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // TODO
                                 resetApp();
                             }
-                        }) //
+                        })
                         .setNegativeButton(getString(R.string.decline), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // TODO
@@ -122,6 +124,15 @@ public class General extends Fragment {
         if (getActivity().deleteDatabase("LetitripDB2")) Log.w("general","DB deleted");
         if (getActivity().deleteDatabase("LetitripDB3")) Log.w("general","DB deleted");
         if (getActivity().deleteDatabase("FitbitUserDB")) Log.w("general","DB deleted");
+
+        SharedPreferences prefs = getActivity().getApplicationContext().getSharedPreferences("userprofile", Context.MODE_PRIVATE);
+        prefs.edit().clear().commit();
+
+        SharedPreferences prefs2 = getActivity().getApplicationContext().getSharedPreferences("de.ehealth.project.letitrip_beta", Context.MODE_PRIVATE);
+        prefs2.edit().clear().commit();
+
+        SharedPreferences prefs3 = getActivity().getApplicationContext().getSharedPreferences("firstRun", Context.MODE_PRIVATE);
+        prefs3.edit().clear().commit();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Zurücksetzen erfolgreich.\nDie App wird nun neugestartet.")

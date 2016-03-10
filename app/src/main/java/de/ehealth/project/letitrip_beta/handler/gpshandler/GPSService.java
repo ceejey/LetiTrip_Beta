@@ -350,7 +350,6 @@ public class GPSService extends Service implements PolarCallback {
                                 Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
                                 status = Status.TRACKINGSTARTED;
                                 startTime = new Date().getTime();
-                                //lastID = -1; //only 1 position is set so far. in the next loop the calculation part would assumes 2 positions are already available
                                 sendBroadcast("GPSService", 4);
                             }
                         } else {
@@ -368,8 +367,8 @@ public class GPSService extends Service implements PolarCallback {
             public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
         try {
-                                                   //TODO set time to 2000
-            locationManager.requestLocationUpdates("gps", 1000, 0, locationListener);
+                                                   //TODO change sensitivity in settings?
+            locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
             status = Status.SEARCHINGGPS;
             speedMperS = -1;
         } catch (SecurityException e) {

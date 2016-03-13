@@ -114,7 +114,6 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.w("sessiondetail", "oncreate" + SessionHandler.getSelectedRunId() + "");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         route = new PolylineOptions();
@@ -140,25 +139,23 @@ public class SessionDetail extends Fragment {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-        int message = intent.getIntExtra("GPSService",-1);
-        //Log.w("sessionDetail","broadcast:"+message);
+            int message = intent.getIntExtra("GPSService",-1);
+            //new position received, add it to the route+update liveMarker if the active track is displayed
+            if ((message == 5) && (SessionHandler.getSelectedRunId() == ((MainActivity)getActivity()).getGps().getActiveRecordingID())) {
+                Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(((MainActivity)getActivity()).getGps().getActiveRecordingID());
+                res.moveToFirst();
+                LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
+                res.close();
 
-        //new position received, add it to the route+update liveMarker if the active track is displayed
-        if ((message == 5) && (SessionHandler.getSelectedRunId() == ((MainActivity)getActivity()).getGps().getActiveRecordingID())) {
-            Cursor res = GPSDatabaseHandler.getInstance().getData().getLastPosOfSession(((MainActivity)getActivity()).getGps().getActiveRecordingID());
-            res.moveToFirst();
-            LatLng temp = new LatLng(res.getDouble(0), res.getDouble(1));
-            res.close();
-
-            route.add(temp);
-            mMap.addPolyline(route);
-            liveMarker.remove();
-            liveMarker = mMap.addMarker(new MarkerOptions()
-                    .position(temp)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-            updatePulseMarker(temp);
-            updateInfoBox();
-        }
+                route.add(temp);
+                mMap.addPolyline(route);
+                liveMarker.remove();
+                liveMarker = mMap.addMarker(new MarkerOptions()
+                        .position(temp)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                updatePulseMarker(temp);
+                updateInfoBox();
+            }
         }
     };
 
@@ -190,7 +187,6 @@ public class SessionDetail extends Fragment {
             //30 seconds passed since the pulse got displayed the last time
             float difference = Math.abs(((temp / ((float) average / 100)))-100);
             int timePassedLastPulseShown = (int)(((new Date().getTime()-lastTimePulsShown.getTime())/1000));
-            //Log.w("sessionDetail","dif:"+difference +"--timePassed:"+timePassedLastPulseShown);
             if ((difference>20) || (timePassedLastPulseShown>=30)){
                 mMap.addMarker(new MarkerOptions()
                                 .position(pos)
@@ -238,7 +234,6 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onStart() {
-        Log.w("sessiondetail", "onstart");
         if (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()){
             duration = GPSDatabaseHandler.getInstance().getData().getStartTimeOfSession(((MainActivity)(getActivity())).getGps().getActiveRecordingID());
             handler.postDelayed(runnable, 1000);
@@ -253,7 +248,6 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onResume() {
-        Log.w("sessiondetail", "onresume");
         mapView.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("gps-event"));
         super.onResume();
@@ -261,7 +255,6 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onPause() {
-        Log.w("sessiondetail", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
         //getActivity().getSupportFragmentManager().popBackStack();
         handler.removeCallbacks(runnable);
@@ -270,7 +263,6 @@ public class SessionDetail extends Fragment {
 
     @Override
     public void onDestroy() {
-        Log.w("sessiondetail", "ondestroy");
         mapView.onDestroy();
         super.onDestroy();
     }
@@ -362,8 +354,6 @@ public class SessionDetail extends Fragment {
                 .visible(false));
 
         //is the int set to show a specific run at activity startup?
-        Log.w("sessiondetail","showthisrun:"+SessionHandler.getSelectedRunId());
-
         if (SessionHandler.getSelectedRunId() != -1) {
             showRunOnMap();
         }

@@ -14,16 +14,22 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView2"
+            android:src="@drawable/ic_assessment_white_24dp" />
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp">
+            android:layout_marginLeft="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Activity Score Dummy"
+                android:text="Activity Score: 0\nKlicke hier für Details!"
                 android:id="@+id/txtHeading"
                 android:textSize="16sp"
                 android:textColor="#000000" />

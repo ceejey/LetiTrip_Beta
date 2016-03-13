@@ -36,7 +36,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Today "
+                        android:text="Heute "
                         android:id="@+id/textView10"
                         android:layout_marginTop="10dp"
                         android:layout_weight="0.68" />
@@ -53,7 +53,7 @@
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
-                        android:text="Refresh"
+                        android:text="Aktualisieren"
                         android:id="@+id/btRefresh"
                         android:layout_marginTop="10dp" />
 
@@ -85,7 +85,7 @@
                     <TextView
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:text="Steps"
+                        android:text="Schritte"
                         android:id="@+id/txt"
                         android:textStyle="bold"
                         android:layout_weight="0.55" />
@@ -132,7 +132,7 @@
                     <TextView
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:text="Burned Calories"
+                        android:text="Verbrannte Kalorien"
                         android:id="@+id/vtxtCaloriesText"
                         android:textStyle="bold"
                         android:layout_weight="0.55" />
@@ -161,7 +161,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Steps Of Last Two Weeks"
+                android:text="Schritte der letzten 2 Wochen"
                 android:id="@+id/textView8"
                 android:layout_below="@+id/fragment2"
                 android:layout_alignParentLeft="true"
@@ -182,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Calories Of Last Two Weeks"
+                android:text="Kalorien der letzten 2 Wochen"
                 android:id="@+id/textView11"
                 android:layout_marginTop="10dp" />
 

@@ -27,14 +27,14 @@ public class DeviceSelectorDialog extends DialogFragment {
         int id = getArguments().getInt("id");
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         if(id == 1) {
-            builder.setTitle("FitBit Account").setItems(new String[]{"Löschen", "Abbrechen", "Zeige gesammelte Daten"}, new DialogInterface.OnClickListener() {
+            builder.setTitle("FitBit Account").setItems(new String[]{"Zeige Daten", "Löschen"}, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     getTargetFragment().onActivityResult(1, which, getActivity().getIntent());
                 }
             });
         }
         else{
-            builder.setTitle("Polar").setItems(new String[]{"Löschen", "Abbrechen"}, new DialogInterface.OnClickListener() {
+            builder.setTitle("Polar").setItems(new String[]{"Löschen"}, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     getTargetFragment().onActivityResult(1, which, getActivity().getIntent());
                 }

@@ -25,12 +25,12 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp">
+            android:layout_marginLeft="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Richten Sie Ihr Profil in den Einstellungen ein!"
+                android:text="Richten Sie Ihr Profil vollständig in den Einstellungen ein!"
                 android:id="@+id/txtHeading"
                 android:textSize="16sp"
                 android:textColor="#000000" />

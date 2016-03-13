@@ -195,10 +195,9 @@ public class GPSService extends Service implements PolarCallback {
             height = (float)Integer.parseInt(fitbitUserProfile.getmHeight());
         } catch (NumberFormatException e){
             e.printStackTrace();
-            Toast.makeText(GPSService.this, "Kann Fitbit Daten nicht laden!", Toast.LENGTH_LONG).show();
+            Toast.makeText(GPSService.this, "Kann Profildaten nicht laden!", Toast.LENGTH_LONG).show();
             return super.onStartCommand(intent, flags, startId);
         }
-
 
         polar.searchPolarDevice();
 

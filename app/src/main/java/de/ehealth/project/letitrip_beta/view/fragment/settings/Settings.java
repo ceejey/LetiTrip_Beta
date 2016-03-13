@@ -37,7 +37,7 @@ public class Settings extends Fragment {
         itemList.add(new SettingsRow("Profil", "Gewicht, Trainingsort oder den Fahrradtyp ändern?"));
         itemList.add(new SettingsRow("Geräte", "App mit einem Gerät koppeln?"));
         itemList.add(new SettingsRow("News", "Welche Themen sollen angezeigt werden?"));
-        itemList.add(new SettingsRow("Hilfe", "Allgemein"));
+        itemList.add(new SettingsRow("Hilfe", "Antworten zu den häufigsten Problemen!"));
         ListAdapter customAdapter = new SettingsAdapter(getActivity(), itemList);
         listSettings.setAdapter(customAdapter);
 

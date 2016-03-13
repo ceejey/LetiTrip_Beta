@@ -131,9 +131,6 @@ public class General extends Fragment {
         SharedPreferences prefs2 = getActivity().getApplicationContext().getSharedPreferences("de.ehealth.project.letitrip_beta", Context.MODE_PRIVATE);
         prefs2.edit().clear().commit();
 
-        SharedPreferences prefs3 = getActivity().getApplicationContext().getSharedPreferences("firstRun", Context.MODE_PRIVATE);
-        prefs3.edit().clear().commit();
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Zurücksetzen erfolgreich.\nDie App wird nun neugestartet.")
                 .setCancelable(false)

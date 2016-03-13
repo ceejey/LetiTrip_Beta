@@ -72,23 +72,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     //for firstRun check
     private SharedPreferences sharedPreferences = null;
 
-    private boolean firstRun = false;
-
-
-
     public static enum FragmentName{
         DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, RECIPE_DETAIL, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT,
         NEWS, POLAR_DEVICE, NEWS_SETTINGS, FITBIT_TRACKER_DATA;
-    }
-    /**
-     * creates a connection to the gps service
-     */
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -104,11 +91,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     @Override
     protected void onStart() {
         bindToService();
-        //is it the first run?
-        if (sharedPreferences.getBoolean("firstRun", true)) {
-            firstRun = true;
-            sharedPreferences.edit().putBoolean("firstRun", false).commit();
-        }
         super.onStart();
     }
 
@@ -570,9 +552,5 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         } else {
             Log.w("main","no extra");
         }
-    }
-
-    public boolean isFirstRun() {
-        return firstRun;
     }
 }

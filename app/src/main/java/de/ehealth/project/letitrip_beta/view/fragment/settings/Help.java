@@ -33,9 +33,9 @@ public class Help extends Fragment {
         Parent parent = new Parent();
         parent.setTitle("Warum muss die App mit einem Fitbit Account verbunden werden?");
         arrayChildren.add("In dieser Version der App wird davon ausgegangen," +
-                " dass ein FitBit Tracker definitiv verwendet wird. Um mehrfaches Eingeben der persönlichen" +
-                " Daten zu vermeiden, basiert die App auf den vollständigen Daten des Benutzer Fitbit Accounts " +
-                " Bitte beachte immer dein aktuelles Gewicht, sowie dein Standort anzugeben." +
+                " dass ein FitBit Tracker verwendet wird. Um mehrfaches Eingeben der persönlichen" +
+                " Daten zu vermeiden, basiert die App auf den vollständigen Daten des Fitbit Accounts des Benutzers." +
+                " Bitte beachte immer dein aktuelles Gewicht, sowie deinen Standort anzugeben." +
                 "\nStand: 24.Februar 2016");
         parent.setArrayChildren(arrayChildren);
         //in this array we add the Parent object. We will use the arrayParents at the setAdapter
@@ -54,11 +54,11 @@ public class Help extends Fragment {
         parent = new Parent();
         arrayChildren = new ArrayList<String>();
         parent.setTitle("Was ist der Activity Score?");
-        arrayChildren.add("1. Der Fitbit Tracker dient zur Besstimmung des Aktivitätsgrades de Benutzters im Alltag." +
+        arrayChildren.add("Der Fitbit Tracker dient zur Bestimmung des Aktivitätsgrades des Benutzters im Alltag." +
                 "Der Fitbit interne Algorithmus bestimmt anhand der Benutzerinformationen, sowie der gelaufen Schritte, grob" +
                 "die verbrauchten Kalorien. Die Anzahl an gelaufenen Schritten, sowie den verbrannten Kalorien werden hier pro Tag gespeichert. " +
                 "Wird nun dieser alltagspezifische Activity Score berechnet, so basiert die Rechnung auf den Daten der letzten zwei Wochen. Deshalb" +
-                "ist dieser Wert erst nach zwei Wochen korrekt!");
+                "ist dieser Wert erst nach zwei Wochen korrekt!\nNatürlich wird der Score nur berechnet und angezeigt, wenn ein Fitbit Account verbunden ist.");
         parent.setArrayChildren(arrayChildren);
         //in this array we add the Parent object. We will use the arrayParents at the setAdapter
         arrayParents.add(parent);
@@ -76,7 +76,7 @@ public class Help extends Fragment {
         parent = new Parent();
         arrayChildren = new ArrayList<String>();
         parent.setTitle("Wird mein mobiles Datenvolumen während einer Session verbraucht?");
-        arrayChildren.add("Nein. Alle benötigten Daten werden vor Beginn der Session gesammelt. Unter Umständen wird+" +
+        arrayChildren.add("Nein. Alle benötigten Daten werden vor Beginn der Session gesammelt. Unter Umständen wird" +
                 " Datenvolumen verbraucht, wenn die Kartenansicht aufgerufen wird und der aktuelle Ort nicht im Zwischenspeicher gespeichert ist.");
         parent.setArrayChildren(arrayChildren);
         //in this array we add the Parent object. We will use the arrayParents at the setAdapter

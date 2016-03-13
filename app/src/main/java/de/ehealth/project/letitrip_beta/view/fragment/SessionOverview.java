@@ -97,25 +97,21 @@ public class SessionOverview extends Fragment {
         btnStartSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Log.d("sessionoverview", "bound:" + ((MainActivity) getActivity()).isBound());
+                if (((MainActivity)getActivity()).isBound()) {
+                    if ((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.IDLE)) {
+                        Intent i = new Intent(getActivity(), GPSService.class);
+                        getActivity().startService(i);
+                        gpsStatusTextView.setText("Session wird vorbereitet..");
+                        btnStartSession.setText("Session beenden");
+                    } else {
+                        //unbindFromService from service to be able to stop it
+                        ((MainActivity)getActivity()).unbindFromService();
+                        ((MainActivity)getActivity()).stopService();
 
-            if (((MainActivity)getActivity()).isBound()) {
-                if ((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.IDLE)) {
-                    Log.w("sessionoverview", "starting...");
-                    Intent i = new Intent(getActivity(), GPSService.class);
-                    getActivity().startService(i);
-                    gpsStatusTextView.setText("Session wird vorbereitet..");
-                    btnStartSession.setText("Session beenden");
-                } else {
-                    Log.w("sessionoverview", "stopping...");
-                    //unbindFromService from service to be able to stop it
-                    ((MainActivity)getActivity()).unbindFromService();
-                    ((MainActivity)getActivity()).stopService();
-
-                    //bind again
-                    ((MainActivity)getActivity()).bindToService();
-                }
-            } else Log.w("sessionoverview", "bind error");
+                        //bind again
+                        ((MainActivity)getActivity()).bindToService();
+                    }
+                } else Log.w("sessionoverview", "bind error");
             }
         });
 
@@ -144,7 +140,6 @@ public class SessionOverview extends Fragment {
                         int deletes = GPSDatabaseHandler.getInstance().getData().deleteSession(SessionHandler.getSelectedRunId());
                         Toast.makeText(getActivity(),"Session gelöscht.", Toast.LENGTH_SHORT).show();
                         updateList();
-                        Log.w("sessionoverview", GPSDatabaseHandler.getInstance().getData().getLastSessionID() + "");
                         if (GPSDatabaseHandler.getInstance().getData().getLastSessionID() != 0) {
                             SessionHandler.setSelectedRunId(GPSDatabaseHandler.getInstance().getData().getLastSessionID());
                         } else {
@@ -180,7 +175,6 @@ public class SessionOverview extends Fragment {
             public void onClick(View v) {
                 if (((MainActivity)getActivity()).isBound()) {
                     if (((MainActivity)getActivity()).getGps().isPaused()) {
-                        Log.w("soverview","isPaused");
                         ((MainActivity)getActivity()).getGps().resume();
                     } else {
                         ((MainActivity)getActivity()).getGps().pause();
@@ -197,7 +191,7 @@ public class SessionOverview extends Fragment {
         if (id > 0){
             DialogFragment newFragment = RunSelectorDialog.newInstance(id);
             newFragment.setTargetFragment(this, 1);
-            newFragment.show(getFragmentManager().beginTransaction(),"DialogTag");
+            newFragment.show(getFragmentManager().beginTransaction(), "DialogTag");
         }
     }
 
@@ -212,34 +206,13 @@ public class SessionOverview extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //Log.w("sessionoverview","ondestroy");
-    }
-
-    @Override
     public void onDetach() {
-        //Log.d("sessionoverview", "deattach");
         super.onDetach();
         mListener = null;
     }
 
     public void updateActivity(MainActivity.FragmentName fn) {
-        //Log.d("sessionoverview", "update");
         mListener.changeFragment(fn);
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //Log.d("sessionoverview", "onCreate");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("sessionoverview", "onStop");
     }
 
     /**
@@ -248,9 +221,6 @@ public class SessionOverview extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("sessionoverview", "onStart");
-        testMethod();
-
         //for >= android 6.0
         if (Build.VERSION.SDK_INT >= 23) doPermissionCheck();
 
@@ -260,12 +230,6 @@ public class SessionOverview extends Fragment {
 
         updateTrackingUI();
         updateList();
-    }
-
-    //todo delete later
-    public void testMethod() {
-      GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50, 0, 100, 5, 70, 0.4);
-      GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50, 0, 120, 5, 80, 0.6);
     }
 
     /**
@@ -296,9 +260,7 @@ public class SessionOverview extends Fragment {
 
     @TargetApi(Build.VERSION_CODES.M)
     public void doPermissionCheck() {
-        Log.w("sessionOverview", "permission check");
         if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.w("sessionOverview", "not granted");
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -308,7 +270,6 @@ public class SessionOverview extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        //Log.w("sessionoverview", "onpause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 
@@ -339,7 +300,6 @@ public class SessionOverview extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -373,14 +333,6 @@ public class SessionOverview extends Fragment {
                         builder.setMessage("Sind Sie sich sicher?").setPositiveButton("Ja", dialogListener)
                                 .setNegativeButton("Nein", dialogListener).show();
                         break;
-                    /*case 2:
-                        getRunOutput(SessionHandler.getSelectedRunId());
-                        Log.w("sessionoverview", "weatheravailable?" + WeatherDatabaseHandler.getInstance().getData().getLatestWeather());
-                        WeatherDatabaseHandler.getInstance().getData().outPutAll();
-                        Log.w("sessionoverview", "bound:" + ((MainActivity)getActivity()).isBound());
-                        Log.w("sessionoverview", "status:" + ((MainActivity)getActivity()).getGps().getStatus());
-
-                        break;*/
                     default:
                         break;
                 }

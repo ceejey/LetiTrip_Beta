@@ -60,7 +60,6 @@ public class Session extends Fragment {
 
     @Override
     public void onStart() {
-        Log.w("session", "onStart");
         updateStaticUI();
         updateUI();
         handler.postDelayed(runnable, 1000);
@@ -171,7 +170,6 @@ public class Session extends Fragment {
 
     @Override
     public void onPause() {
-        Log.w("session", "pause");
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
         handler.removeCallbacks(runnable);
         super.onPause();

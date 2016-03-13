@@ -31,7 +31,7 @@ public class PolarSelectorDialog extends DialogFragment {
         int id = getArguments().getInt("id");
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setTitle("Gerät #" + id)
-                .setItems(new String[]{"Verbinden", "Abbrechen"}, new DialogInterface.OnClickListener() {
+                .setItems(new String[]{"Verbinden"}, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         getTargetFragment().onActivityResult(1,which,getActivity().getIntent());
                     }

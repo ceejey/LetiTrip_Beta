@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,7 +43,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mTaskComplete = false;
     private LinearLayout gpsPlaceHolder = null;
-    private LinearLayout firstRun = null;
+    private LinearLayout incompleteProfile = null;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -60,7 +61,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 viewGroup.removeAllViews();
 
                 showActivityScoreView();
-
+                showIncompleteProfileView();
                 refreshWeather();
 
                 Thread thread = new Thread() {
@@ -87,9 +88,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                     }
                 };
                 thread.start();
-
                 setSessionOnDashBoard();
-
             }
         });
 
@@ -102,9 +101,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (((MainActivity)getActivity()).isFirstRun()){
-            showFirstAppRunView();
-        }
+        showIncompleteProfileView();
         showActivityScoreView();
         setSessionOnDashBoard();
         refreshWeather();
@@ -118,28 +115,46 @@ public class Dashboard extends Fragment implements WeatherCallback {
     }
 
     public void showActivityScoreView(){
-        LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
-        mInflater.inflate(R.layout.score_view, placeHolder);
-        TextView txtActivityScore = (TextView) placeHolder.findViewById(R.id.txtHeading);
-        FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
-        txtActivityScore.setText("" + (FitBitActivityScoreHandler.getmActivtiyScoreSteps() + FitBitActivityScoreHandler.getmActivtiyScoreCalories()) / 2);
-        ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder, 0);
-    }
-
-    public void showFirstAppRunView(){
-        if (getView() != null){
-            firstRun = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
-            mInflater.inflate(R.layout.firstrun_view, firstRun);
-            ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(firstRun);
-            ImageView imgInfo = (ImageView) firstRun.findViewById(R.id.imageView);
-            imgInfo.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
-            firstRun.setOnClickListener(new View.OnClickListener() {
+        if (UserSettings.getmActiveUser().getmFitBitUserID() != ""){ //only show the activity score when a fitbit account is connected
+            LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+            mInflater.inflate(R.layout.score_view, placeHolder);
+            TextView txtActivityScore = (TextView) placeHolder.findViewById(R.id.txtHeading);
+            FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
+            double activityScore = (FitBitActivityScoreHandler.getmActivtiyScoreSteps() + FitBitActivityScoreHandler.getmActivtiyScoreCalories()) / 2;
+            txtActivityScore.setText("Activity Score: " + new DecimalFormat("0.00").format(activityScore) + "\nKlicke hier für Details!");
+            ImageView img = (ImageView) placeHolder.findViewById(R.id.imageView2);
+            img.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+            placeHolder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(firstRun);
-                    mListener.changeFragment(MainActivity.FragmentName.SETTINGS_PROFILE);
+                    updateActivity(MainActivity.FragmentName.FITBIT_TRACKER_DATA);
                 }
             });
+            ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder, 0);
+        }
+    }
+
+    public void showIncompleteProfileView(){
+        if (getView() != null){
+            if ((UserSettings.getmActiveUser().getmAge()=="") ||
+                (UserSettings.getmActiveUser().getmCity()=="") ||
+                (UserSettings.getmActiveUser().getmGender()=="")||
+                (UserSettings.getmActiveUser().getmHeight()=="")||
+                (UserSettings.getmActiveUser().getmWeight()==""))
+            {
+                    incompleteProfile = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+                    mInflater.inflate(R.layout.incomplete_profile_view, incompleteProfile);
+                    ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(incompleteProfile);
+                    ImageView imgInfo = (ImageView) incompleteProfile.findViewById(R.id.imageView);
+                    imgInfo.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+                    incompleteProfile.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).removeView(incompleteProfile);
+                            mListener.changeFragment(MainActivity.FragmentName.SETTINGS_PROFILE);
+                        }
+                    });
+            }
         }
     }
 

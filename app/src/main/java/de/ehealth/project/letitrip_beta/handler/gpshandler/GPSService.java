@@ -66,6 +66,7 @@ public class GPSService extends Service implements PolarCallback {
     private int lastID;
     private float weight,height;
     private double watt;
+
     private IBinder mBinder = new LocalBinder();
 
     public class LocalBinder extends Binder {
@@ -191,7 +192,7 @@ public class GPSService extends Service implements PolarCallback {
 
         try {
             weight = (float)Integer.parseInt(fitbitUserProfile.getmWeight());
-            height = (float)Integer.parseInt(fitbitUserProfile.getmWeight());
+            height = (float)Integer.parseInt(fitbitUserProfile.getmHeight());
         } catch (NumberFormatException e){
             e.printStackTrace();
             Toast.makeText(GPSService.this, "Kann Fitbit Daten nicht laden!", Toast.LENGTH_LONG).show();
@@ -368,7 +369,7 @@ public class GPSService extends Service implements PolarCallback {
         };
         try {
                                                    //TODO change sensitivity in settings?
-            locationManager.requestLocationUpdates("gps", 2000, 0, locationListener);
+            locationManager.requestLocationUpdates("gps", 2000, 1, locationListener);
             status = Status.SEARCHINGGPS;
             speedMperS = -1;
         } catch (SecurityException e) {

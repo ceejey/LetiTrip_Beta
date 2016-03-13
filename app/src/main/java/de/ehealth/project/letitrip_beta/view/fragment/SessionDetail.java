@@ -35,6 +35,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
@@ -161,20 +163,7 @@ public class SessionDetail extends Fragment {
     };
 
     public int randInt(int min, int max) {
-
-        // NOTE: This will (intentionally) not run as written so that folks
-        // copy-pasting have to think about how to initialize their
-        // Random instance.  Initialization of the Random instance is outside
-        // the main scope of the question, but some decent options are to have
-        // a field that is initialized once and then re-used as needed or to
-        // use ThreadLocalRandom (if using at least Java 1.7).
-        Random rand = new Random();
-
-        // nextInt is normally exclusive of the top value,
-        // so add 1 to make it inclusive
-        int randomNum = rand.nextInt((max - min) + 1) + min;
-
-        return randomNum;
+        return new Random().nextInt((max - min) + 1) + min;
     }
 
     /**
@@ -184,6 +173,7 @@ public class SessionDetail extends Fragment {
      */
     private void updatePulseMarker(LatLng pos) {
         int temp =  PolarHandler.mHeartRate;
+        //temp = randInt(70,130);
         if (temp == 0) return;
         if (last5Pulses.size()<5){
             last5Pulses.add(temp);
@@ -204,7 +194,7 @@ public class SessionDetail extends Fragment {
             if ((difference>20) || (timePassedLastPulseShown>=30)){
                 mMap.addMarker(new MarkerOptions()
                                 .position(pos)
-                                .icon(BitmapDescriptorFactory.defaultMarker(mapPulseToColor(temp)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(mapPulseToColor(temp,true)))
                                 .title("Puls: "+temp)
                 );
                 lastTimePulsShown = new Date();
@@ -218,7 +208,7 @@ public class SessionDetail extends Fragment {
      * @param pulse the pulse
      * @return a matching color hue
      */
-    public float mapPulseToColor(int pulse){
+    public float mapPulseToColor(int pulse, boolean vibrate){
 //        public static final float HUE_RED = 0.0F;
 //        public static final float HUE_ORANGE = 30.0F;
 //        public static final float HUE_YELLOW = 60.0F;
@@ -237,7 +227,7 @@ public class SessionDetail extends Fragment {
 
             return (-1*((240 * (float)percentOfMaxPulse/ 100) - 240));
         } else {
-            if ((new Date().getTime()-vibrated.getTime()/1000)>30){
+            if ((vibrate) && ((new Date().getTime()-vibrated.getTime()/1000)>30)){
                 Vibrator v = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(200);
             }
@@ -388,8 +378,41 @@ public class SessionDetail extends Fragment {
 
         //display the data
         updateInfoBox();
+        Date lastPulseShown = null;
+        Date temp = null;
+        int count=0;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
         while (res.moveToNext()){
+            if (count==0){
+                try {
+                    lastPulseShown = dateFormat.parse(res.getString(2));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            //show pulse marker on map every 30 seconds
+            if ((count>3) && (res.getInt(7)!=0)){
+                try {
+                    temp = dateFormat.parse(res.getString(2));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                int timePassedLastPulseShown = (int)(((temp.getTime()-lastPulseShown.getTime())/1000));
+                if (timePassedLastPulseShown>30){
+                    mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(res.getDouble(3), res.getDouble(4)))
+                                    .icon(BitmapDescriptorFactory.defaultMarker(mapPulseToColor(res.getInt(7),false)))
+                                    .title("Puls: "+res.getInt(7))
+                    );
+                    try {
+                        lastPulseShown = dateFormat.parse(res.getString(2));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             route.add(new LatLng(res.getDouble(3), res.getDouble(4)));
+            count++;
         }
 
         res.moveToFirst();

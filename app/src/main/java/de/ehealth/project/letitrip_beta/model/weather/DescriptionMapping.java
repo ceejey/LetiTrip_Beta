@@ -41,8 +41,8 @@ public class DescriptionMapping {
             descriptionMap.put("partly cloudy (day)", "Wechselnd bewölkt (Tag)");
             descriptionMap.put("clear (night)", "Klar (Nacht)");
             descriptionMap.put("sunny", "Sonnig");
-            descriptionMap.put("fair (night)", "Fair (Nacht)");
-            descriptionMap.put("fair (day)", "Fair (Tag)");
+            descriptionMap.put("fair (night)", "Schön (Nacht)");
+            descriptionMap.put("fair (day)", "Schön (Tag)");
             descriptionMap.put("mixed rain and hail", "Misch regen und Hagel");
             descriptionMap.put("hot", "Heiß");
             descriptionMap.put("isolated thunderstorms", "Vereinzelte Gewitter");
@@ -63,6 +63,8 @@ public class DescriptionMapping {
             descriptionMap.put("rain", "Regen");
             descriptionMap.put("mist", "Sprühregen");
             descriptionMap.put("light snow", "Leichter Schneefall");
+            descriptionMap.put("fair", "Schön");
+
         }
         return descriptionMap;
     }

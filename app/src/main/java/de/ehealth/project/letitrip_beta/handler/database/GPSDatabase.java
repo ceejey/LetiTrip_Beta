@@ -107,7 +107,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
         contentValues.put(COLUMN9, watt);
         contentValues.put(COLUMN10, calories);
 
-
         long result = db.insert(TABLE_NAME, null, contentValues);
         return (result != -1);
     }

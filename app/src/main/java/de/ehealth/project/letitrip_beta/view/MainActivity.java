@@ -127,7 +127,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
     }
 
     public void bindToService() {
-        Intent i = new Intent(this, de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService.class);
+        Intent i = new Intent(this, GPSService.class);
         this.getApplicationContext().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -175,7 +175,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 notificationClicked = true;
                 getIntent().removeExtra("notification");
             }
-
         }
 
         mFragmentCaption = new Bar();

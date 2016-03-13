@@ -10,6 +10,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -35,10 +41,8 @@ import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSHelper;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
-import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.GPSCustomListItem;
 import de.ehealth.project.letitrip_beta.view.adapter.GPSListAdapter;
@@ -67,7 +71,6 @@ public class SessionOverview extends Fragment {
 
     private DialogInterface.OnClickListener dialogListener;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private GPSHelper myGPSObject;
 
     /**
      * creates all ui elements and their listeners
@@ -139,7 +142,7 @@ public class SessionOverview extends Fragment {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         int deletes = GPSDatabaseHandler.getInstance().getData().deleteSession(SessionHandler.getSelectedRunId());
-                        Toast.makeText(getActivity(), deletes + " Einträge gelöscht.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"Session gelöscht.", Toast.LENGTH_SHORT).show();
                         updateList();
                         Log.w("sessionoverview", GPSDatabaseHandler.getInstance().getData().getLastSessionID() + "");
                         if (GPSDatabaseHandler.getInstance().getData().getLastSessionID() != 0) {
@@ -160,7 +163,7 @@ public class SessionOverview extends Fragment {
             @Override
             public void onClick(View v) {
                 SessionHandler.setRunType(0);
-                myGPSObject.updateTrackingUI();
+                updateTrackingUI();
             }
         });
 
@@ -168,7 +171,7 @@ public class SessionOverview extends Fragment {
             @Override
             public void onClick(View v) {
                 SessionHandler.setRunType(1);
-                myGPSObject.updateTrackingUI();
+                updateTrackingUI();
             }
         });
 
@@ -182,12 +185,11 @@ public class SessionOverview extends Fragment {
                     } else {
                         ((MainActivity)getActivity()).getGps().pause();
                     }
-                    myGPSObject.updateTrackingUI();
+                    updateTrackingUI();
                 } else Log.w("sessionoverview", "bind error");
             }
         });
 
-        myGPSObject = new GPSHelper(((MainActivity) getActivity()).getGps(), btnStartSession, btnPauseSession, gpsStatusTextView, imgRun, imgBike,getResources(),getContext());
         return view;
     }
 
@@ -256,14 +258,14 @@ public class SessionOverview extends Fragment {
             SessionHandler.setSelectedRunId(-1);
         }
 
-        myGPSObject.updateTrackingUI();
+        updateTrackingUI();
         updateList();
     }
 
     //todo delete later
     public void testMethod() {
-      GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50,0,100,5,70,0.4);
-      GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50,0,120,5,80,0.6);
+      GPSDatabaseHandler.getInstance().getData().addData(1, 26.790425, 17.537951, 50, 0, 100, 5, 70, 0.4);
+      GPSDatabaseHandler.getInstance().getData().addData(1, 68.222841, 14.725451, 50, 0, 120, 5, 80, 0.6);
     }
 
     /**
@@ -315,16 +317,16 @@ public class SessionOverview extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("GPSService", -1);
-            if (message == 1)  myGPSObject.updateTrackingUI();
+            if (message == 1)  updateTrackingUI();
             if ((message == 2) ||(message == 4)){ //tracking started/stopped in service
-                myGPSObject.updateTrackingUI();
+                updateTrackingUI();
                 updateList();
                 if (message == 4){
                     SessionHandler.setSelectedRunId(((MainActivity)getActivity()).getGps().getActiveRecordingID());
                     mListener.changeFragment(MainActivity.FragmentName.SESSION);
                 }
             } else if (message == 3) {
-                gpsStatusTextView.setText("Warte auf GPS..");
+                gpsStatusTextView.setText("Warte auf GPS...");
             }
         }
     };
@@ -371,18 +373,112 @@ public class SessionOverview extends Fragment {
                         builder.setMessage("Sind Sie sich sicher?").setPositiveButton("Ja", dialogListener)
                                 .setNegativeButton("Nein", dialogListener).show();
                         break;
-                    case 2:
-                        myGPSObject.getRunOutput(SessionHandler.getSelectedRunId());
+                    /*case 2:
+                        getRunOutput(SessionHandler.getSelectedRunId());
                         Log.w("sessionoverview", "weatheravailable?" + WeatherDatabaseHandler.getInstance().getData().getLatestWeather());
                         WeatherDatabaseHandler.getInstance().getData().outPutAll();
                         Log.w("sessionoverview", "bound:" + ((MainActivity)getActivity()).isBound());
                         Log.w("sessionoverview", "status:" + ((MainActivity)getActivity()).getGps().getStatus());
 
-                        break;
+                        break;*/
                     default:
                         break;
                 }
             break;
+        }
+    }
+
+    /**
+     * updates all UI components of SessionOverview
+     */
+    public void updateTrackingUI(){
+        if (((MainActivity)getActivity()).getGps().getStatus()== GPSService.Status.SEARCHINGGPS) {
+            btnStartSession.setText("Session beenden");
+            gpsStatusTextView.setText("Session wird vorbereitet..");
+            btnPauseSession.setText("Pause");
+            btnPauseSession.setVisibility(View.GONE);
+        } else if (((MainActivity)getActivity()).getGps().getStatus()== GPSService.Status.TRACKINGSTARTED) {
+            btnStartSession.setText("Session beenden");
+            gpsStatusTextView.setText("Session läuft.");
+            btnPauseSession.setText("Pause");
+            btnPauseSession.setVisibility(View.VISIBLE);
+        } else if (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.PAUSED) {
+            btnStartSession.setText("Session beenden");
+            gpsStatusTextView.setText("Session pausiert.");
+            btnPauseSession.setText("Fortfahren");
+            btnPauseSession.setVisibility(View.VISIBLE);
+        } else {
+            btnStartSession.setText("Session starten");
+            gpsStatusTextView.setText("Session deaktiviert.");
+            btnPauseSession.setText("Pause");
+            btnPauseSession.setVisibility(View.GONE);
+        }
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+        Bitmap bitmap;
+        imgRun.setImageResource(R.drawable.ic_directions_run_white_24dp);
+        imgBike.setImageResource(R.drawable.ic_directions_bike_white_24dp);
+
+        if (SessionHandler.getRunType() == 1){
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_directions_bike_white_24dp,options);
+            imgRun.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+            imgBike.setColorFilter(0xff5c6bc0, PorterDuff.Mode.MULTIPLY);
+        } else {
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_directions_run_white_24dp,options);
+            imgRun.setColorFilter(0xff5c6bc0, PorterDuff.Mode.MULTIPLY);
+            imgBike.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+        }
+
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(0xff757575);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(3);
+        Bitmap mutableBitmap = Bitmap.createBitmap(bitmap).copy(Bitmap.Config.ARGB_8888, true);
+
+        Canvas canvas = new Canvas(mutableBitmap);
+        canvas.drawRect(0, 0, bitmap.getWidth(), bitmap.getHeight(), paint);
+
+        if (SessionHandler.getRunType() == 1){
+            imgRun.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+            imgBike.setColorFilter(0xff5c6bc0, PorterDuff.Mode.MULTIPLY);
+            imgBike.setAdjustViewBounds(true);
+            imgBike.setImageBitmap(mutableBitmap);
+        } else {
+            imgRun.setColorFilter(0xff5c6bc0, PorterDuff.Mode.MULTIPLY);
+            imgBike.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
+            imgRun.setAdjustViewBounds(true);
+            imgRun.setImageBitmap(mutableBitmap);
+        }
+    }
+
+    /**
+     * debug method. prints all information of a specific session
+     * @param selectedSession the session ID
+     */
+    public void getRunOutput(int selectedSession) {
+        Cursor res = GPSDatabaseHandler.getInstance().getData().getSession(Integer.parseInt(selectedSession + ""));
+
+        if (res != null){
+            String str="";
+            while (res.moveToNext()){
+                str="";
+                str+=("ID:"+res.getString(0)+"\t");
+                str+=("RunID:"+res.getString(1)+"\t");
+                str+=("Time:"+res.getString(2)+"\t");
+                str+=("Latitude:"+res.getString(3)+"\t");
+                str+=("Longitude:"+res.getString(4)+"\t");
+                str+=("Altitude:"+res.getString(5)+"\t");
+                str+=("bicycle:"+res.getString(6)+"\n");
+                str+=("pulse:"+res.getString(7)+"\n");
+                str+=("speed:"+res.getString(8)+"\n");
+                str+=("watt:"+res.getString(9)+"\n");
+                str+=("calories:"+res.getString(10)+"\n");
+                Log.w("gps", str);
+            }
+            res.close();
         }
     }
 }

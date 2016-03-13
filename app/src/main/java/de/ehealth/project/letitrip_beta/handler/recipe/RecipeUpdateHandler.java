@@ -3,6 +3,7 @@ package de.ehealth.project.letitrip_beta.handler.recipe;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,42 +28,55 @@ import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
 public class RecipeUpdateHandler {
     private String requestUrl ="http://recipeapi-ehealthrecipes.rhcloud.com/recipes?since=";
     private String mRecepiUrl ="";
+    private Activity mActivity;
 
     public void updateRecipeDatabase(Activity activity){
+        String since = UserSettings.getmActiveUser().getmLastRezeptUpdateSince();
+        if(!since.isEmpty())
+            mRecepiUrl = requestUrl + since;
+        else
+            mRecepiUrl = requestUrl + "0";
 
-        mRecepiUrl = requestUrl + UserSettings.getmActiveUser().getmLastRezeptUpdateSince();
-
-        Date date = new Date();
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        // Get the date today using Calendar object.
-        Date today = Calendar.getInstance().getTime();
-        // Using DateFormat format method we can create a string
-        // representation of a date with the defined format.
-        String reportDate = df.format(today);
+        mActivity = activity;
 
         try {
             final String recipeJson = new UpdateRecipeDatabase().execute().get();
+            if(!recipeJson.isEmpty()) {
 
-            RecipeWrapper.getInstance().fromJsonToRecipes(recipeJson);
-            RecipeDatabase recipeDb = new RecipeDatabase(activity);
-            List<Recipe> recipes = RecipeWrapper.getInstance().getRecipes();
-            for(Recipe recipe : recipes) {
-                if(recipeDb.getRecipe(recipe.getId()) == null) {
-                    recipeDb.addData(recipe.getCookTime(), recipe.getDifficulty(), recipe.getDate_added(), recipe.getKcal(),
-                            recipe.getPortion(), recipe.getName(), recipe.getRecipe(), recipe.getPreparationTime(),
-                            recipe.getIngredients(), recipe.getId(), recipe.getPic(), recipe.getType());
+                Date date = new Date();
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                // Get the date today using Calendar object.
+                Date today = Calendar.getInstance().getTime();
+                // Using DateFormat format method we can create a string
+                // representation of a date with the defined format.
+                String reportDate = df.format(today);
+
+                RecipeWrapper.getInstance().fromJsonToRecipes(recipeJson);
+                RecipeDatabase recipeDb = new RecipeDatabase(activity);
+
+                List<Recipe> recipes = RecipeWrapper.getInstance().getRecipes();
+                for (Recipe recipe : recipes) {
+                    if (recipeDb.getRecipe(recipe.getId()) == null) {
+                        recipeDb.addData(recipe.getCookTime(), recipe.getDifficulty(), recipe.getDate_added(), recipe.getKcal(),
+                                recipe.getPortion(), recipe.getName(), recipe.getRecipe(), recipe.getPreparationTime(),
+                                recipe.getIngredients(), recipe.getId(), recipe.getPic(), recipe.getType());
+                    }
                 }
+
+                UserSettings.getmActiveUser().setmLastRezeptUpdateSince(reportDate);
+                UserSettings.saveUser(activity);
+                Toast.makeText(activity, "Update erfolgreich!", Toast.LENGTH_SHORT).show();
             }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Toast.makeText(activity,"Update fehlgeschlagen! Prüfen Sie ihre Internetverbindung.", Toast.LENGTH_SHORT).show();
         } catch (ExecutionException e) {
+            Toast.makeText(activity,"Update fehlgeschlagen! Prüfen Sie ihre Internetverbindung.", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-
-        UserSettings.getmActiveUser().setmLastRezeptUpdateSince(reportDate);
-        UserSettings.saveUser(activity);
     }
+
     public class UpdateRecipeDatabase extends AsyncTask<Void, Void, String> {
         protected String doInBackground(Void... params) {
 
@@ -89,6 +103,12 @@ public class RecipeUpdateHandler {
                 Log.d("TEST", responseJson);
 
             } catch (IOException ex) {
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mActivity, "Update fehlgeschlagen! Prüfen Sie ihre Internetverbindung.", Toast.LENGTH_LONG).show();
+                    }
+                });
                 ex.printStackTrace();
             }
             return responseJson;

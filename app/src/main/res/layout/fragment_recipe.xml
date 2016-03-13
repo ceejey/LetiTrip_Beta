@@ -2,9 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragment.Recipe"
+    tools:context=".view.fragment.RecipeFragment"
     android:background="#ffffff">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ScrollView
+        android:id="@+id/scrollViewRecipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+
+        <LinearLayout
+            android:id="@+id/layoutRecipe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

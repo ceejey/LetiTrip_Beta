@@ -151,6 +151,8 @@ public class RecipeDatabase extends SQLiteOpenHelper {
             } while (res.moveToNext());
         }
 
+        res.close();
+
         return recipes;
     }
 
@@ -195,6 +197,8 @@ public class RecipeDatabase extends SQLiteOpenHelper {
             } while (res.moveToNext());
         }
 
+        res.close();
+
         return recipes;
     }
 
@@ -232,8 +236,12 @@ public class RecipeDatabase extends SQLiteOpenHelper {
                 ingredients.add(ingredient);
             }
 
+            ingRes.close();
+
             recipe.setIngredients(ingredients);
         } else return null;
+
+        res.close();
 
         return recipe;
     }

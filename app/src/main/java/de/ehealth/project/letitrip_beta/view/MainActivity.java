@@ -32,7 +32,8 @@ import de.ehealth.project.letitrip_beta.view.fragment.Dashboard;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 import de.ehealth.project.letitrip_beta.view.fragment.Header;
 import de.ehealth.project.letitrip_beta.view.fragment.News;
-import de.ehealth.project.letitrip_beta.view.fragment.Recipe;
+import de.ehealth.project.letitrip_beta.view.fragment.RecipeDetail;
+import de.ehealth.project.letitrip_beta.view.fragment.RecipeFragment;
 import de.ehealth.project.letitrip_beta.view.fragment.Session;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionDetail;
 import de.ehealth.project.letitrip_beta.view.fragment.SessionOverview;
@@ -76,7 +77,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
 
     public static enum FragmentName{
-        DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, SETTINGS, SETTINGS_GENERAL,
+        DASHBOARD, SESSION_OVERVIEW, SESSION_DETAIL, SESSION, RECIPE, RECIPE_DETAIL, SETTINGS, SETTINGS_GENERAL,
         SETTINGS_PROFILE, SETTINGS_DEVICE, SETTINGS_HELP, WEB_VIEW_OAUTH, FIT_BIT_INIT,
         NEWS, POLAR_DEVICE, NEWS_SETTINGS, FITBIT_TRACKER_DATA;
     }
@@ -276,7 +277,34 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 break;
             case RECIPE:
                 txtHeader.setText("Rezepte");
-                fragmentContent = new Recipe();
+                newTag = "recipe";
+
+                expectedEntryCount = 1;
+                expectedEntry = "dashboard";
+                refillEntrys.add("dashboard");
+                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+
+                fragmentContent = fragmentManager.findFragmentByTag(newTag);
+                if (fragmentContent != null)
+                    alreadyAdded = true;
+                else
+                    fragmentContent = new RecipeFragment();
+                break;
+            case RECIPE_DETAIL:
+                txtHeader.setText("Rezepte");
+                newTag = "recipe_detail";
+
+                expectedEntryCount = 2;
+                expectedEntry = "recipe";
+                refillEntrys.add("dashboard");
+                refillEntrys.add("recipe");
+                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+
+                fragmentContent = fragmentManager.findFragmentByTag(newTag);
+                if (fragmentContent != null)
+                    alreadyAdded = true;
+                else
+                    fragmentContent = new RecipeDetail();
                 break;
             case SETTINGS:
                 txtHeader.setText("Einstellungen");

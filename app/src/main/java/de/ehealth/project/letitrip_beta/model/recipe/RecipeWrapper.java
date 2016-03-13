@@ -11,6 +11,7 @@ public class RecipeWrapper {
 
     private List<Recipe> recipes;
     private static RecipeWrapper instance = new RecipeWrapper();
+    public static Recipe selectedRecipe;
 
     private RecipeWrapper(){ }
 

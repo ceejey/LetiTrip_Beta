@@ -156,7 +156,7 @@ public class UserSettings {
         profile.mPolarDeviceID = pref.getString("PolarDeviceID", "");
         //nun überprüfen, ob der letzte update leer ist falls die app neu installiert wurde
         if(profile.mLastRezeptUpdateSince == ""){
-            profile.mLastRezeptUpdateSince = "noch nicht";
+            profile.mLastRezeptUpdateSince = "";
         }
         profile.mActScoreResetDate = pref.getString("ActScoreResetDate","");
         profile.mClickOffsetForBarSensibility = pref.getString("ClickOffsetForBarSensibility","");

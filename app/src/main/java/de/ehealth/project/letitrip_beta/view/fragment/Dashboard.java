@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitActivityScoreHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
@@ -119,6 +120,9 @@ public class Dashboard extends Fragment implements WeatherCallback {
     public void showActivityScoreView(){
         LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
         mInflater.inflate(R.layout.score_view, placeHolder);
+        TextView txtActivityScore = (TextView) placeHolder.findViewById(R.id.txtHeading);
+        FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
+        txtActivityScore.setText("" + (FitBitActivityScoreHandler.getmActivtiyScoreSteps() + FitBitActivityScoreHandler.getmActivtiyScoreCalories()) / 2);
         ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder, 0);
     }
 

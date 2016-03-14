@@ -28,7 +28,7 @@ public class RecipeFragment extends Fragment {
 
     private FragmentChanger mListener;
     private LayoutInflater mInflater;
-    private Recipe mSelectedRecipe;
+    private View mView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,15 +43,42 @@ public class RecipeFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mView = view;
+        fillRecipeList();
+
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden){
+        super.onHiddenChanged(hidden);
+        if(!hidden) {
+            ViewGroup viewGroup = (ViewGroup) mView.findViewById(R.id.layoutRecipe);
+            viewGroup.removeAllViews();
+
+            fillRecipeList();
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        ViewGroup viewGroup = (ViewGroup) mView.findViewById(R.id.layoutRecipe);
+        viewGroup.removeAllViews();
+
+        fillRecipeList();
+    }
+
+    private void fillRecipeList(){
         if (getView() != null) { //if the fragment gets changed before the task complete, the view becomes a null object reference.
             Log.d("Recipe", "recipe started");
             RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
             List<Recipe> recipeList = recipeDb.getAllRecipes();
             Log.d("Recipe", "" + recipeList.size());
             for (Recipe recipe : recipeList) {
-                LinearLayout placeHolder = new LinearLayout(view.findViewById(R.id.scrollViewRecipe).getContext());
+                LinearLayout placeHolder = new LinearLayout(mView.findViewById(R.id.scrollViewRecipe).getContext());
                 mInflater.inflate(R.layout.recipe_view, placeHolder);
-                ((LinearLayout) view.findViewById(R.id.layoutRecipe)).addView(placeHolder);
+                ((LinearLayout) mView.findViewById(R.id.layoutRecipe)).addView(placeHolder);
 
                 ImageView imgRecipe = (ImageView) placeHolder.findViewById(R.id.imgRecipe);
                 TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);

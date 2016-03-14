@@ -217,18 +217,18 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 refillEntrys.add("dashboard");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
+                /*fragmentContent = fragmentManager.findFragmentByTag(newTag);
 
                 if (fragmentContent != null)
                     alreadyAdded = true;
-                else
+                else*/
                     fragmentContent = new SessionOverview();
                 break;
             case SESSION_DETAIL: //Initializes everytime again with new session id
                 txtHeader.setText("Session Details");
                 newTag = "session_details";
 
-                expectedEntryCount = 2;
+                /*expectedEntryCount = 2;
                 expectedEntry = "session_overview";
                 refillEntrys.add("dashboard");
                 refillEntrys.add("session_overview");
@@ -237,6 +237,11 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     transaction.remove(fragmentContent); //REMOVE THE SESSION DETAILS AND PUT NEW EXTRAS
+                */
+                expectedEntryCount = 1;
+                expectedEntry = "dashboard";
+                refillEntrys.add("dashboard");
+                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = new SessionDetail();
                 break;
@@ -244,7 +249,7 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 txtHeader.setText("Session");
                 newTag = "session";
 
-                expectedEntryCount = 2;
+                /*expectedEntryCount = 2;
                 expectedEntry = "session_overview";
                 refillEntrys.add("dashboard");
                 refillEntrys.add("session_overview");
@@ -253,8 +258,13 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 if (fragmentContent != null)
                     alreadyAdded = true;
-                else
-                    fragmentContent = new Session();
+                else*/
+                expectedEntryCount = 1;
+                expectedEntry = "dashboard";
+                refillEntrys.add("dashboard");
+                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+
+                fragmentContent = new Session();
                 break;
             case RECIPE:
                 txtHeader.setText("Rezepte");
@@ -281,19 +291,15 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 refillEntrys.add("recipe");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else
-                    fragmentContent = new RecipeDetail();
+                fragmentContent = new RecipeDetail();
                 break;
             case SETTINGS:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings";
 
                 expectedEntryCount = 1;
-                expectedEntry = "settings";
-                refillEntrys.add("settings");
+                expectedEntry = "dashboard";
+                refillEntrys.add("dashboard");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
                 fragmentContent = fragmentManager.findFragmentByTag(newTag);
@@ -306,8 +312,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
@@ -321,8 +327,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
@@ -336,8 +342,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
@@ -349,8 +355,8 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
@@ -363,9 +369,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 expectedEntryCount = 2;
                 expectedEntry = "settings_device";
-                refillEntrys.add("settings_device");
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
+                refillEntrys.add("settings_device");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
@@ -380,9 +386,9 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 expectedEntryCount = 3;
                 expectedEntry = "settings_device";
 
-                refillEntrys.add("settings_device");
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
+                refillEntrys.add("settings_device");
 
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
@@ -404,14 +410,14 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = new News();
                 break;
             case POLAR_DEVICE:
-                txtHeader.setText("Polar-Einstellungen");
+                txtHeader.setText("Einstellungen");
                 newTag = "settings_polar";
 
                 expectedEntryCount = 3;
                 expectedEntry = "settings_device";
-                refillEntrys.add("settings_device");
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
+                refillEntrys.add("settings_device");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
@@ -420,13 +426,13 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = new Polar();
                 break;
             case NEWS_SETTINGS:
-                txtHeader.setText("News-Einstellungen");
+                txtHeader.setText("Einstellungen");
                 newTag = "settings_news";
 
                 expectedEntryCount = 2;
                 expectedEntry = "settings";
-                refillEntrys.add("settings");
                 refillEntrys.add("dashboard");
+                refillEntrys.add("settings");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
@@ -435,12 +441,11 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 fragmentContent = new NewsSettings();
                 break;
             case FITBIT_TRACKER_DATA:
-                txtHeader.setText("News-Einstellungen");
-                newTag = "settings_news";
+                txtHeader.setText("Leistungsübersicht");
+                newTag = "tracker_data";
 
-                expectedEntryCount = 2;
-                expectedEntry = "settings";
-                refillEntrys.add("settings");
+                expectedEntryCount = 1;
+                expectedEntry = "dashboard";
                 refillEntrys.add("dashboard");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
@@ -528,16 +533,101 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed(); //war vorher am ende der methode. verursacht evtl fehler
         Log.d("Test", "Current backstack count: " + getSupportFragmentManager().getBackStackEntryCount());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if(fragmentManager.getBackStackEntryCount() >= 1) {
+            Log.d("Test", "Remove from Backstack: " + mOldTag);
             transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
             //There is no proper way to get the latest inserted fragment in the back stack
             String tag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
             transaction.show(fragmentManager.findFragmentByTag(tag)).commit();
             mOldTag = tag;
+            changeHeaderOnBackPressed(tag);
+        }
+        super.onBackPressed();
+    }
+
+    private void changeHeaderOnBackPressed(String tag){
+        TextView txtHeader = (TextView) mFragmentHeader.getView().findViewById(R.id.txtHeader);
+        switch(tag){
+            case "dashboard":
+                txtHeader.setText("Startseite");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffa726, 0xffffffff, 0xffffffff, 0xffffffff);
+                break;
+            case "session_overview":
+                txtHeader.setText("Session");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffa726, 0xffffffff, 0xffffffff);
+                break;
+            case "session_details":
+                txtHeader.setText("Session Details");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffa726, 0xffffffff, 0xffffffff);
+                break;
+            case "session":
+                txtHeader.setText("Session");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffa726, 0xffffffff, 0xffffffff);
+                break;
+            case "recipe":
+                txtHeader.setText("Rezepte");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffa726, 0xffffffff);
+                break;
+            case "recipe_detail":
+                txtHeader.setText("Rezepte");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffa726, 0xffffffff);
+                break;
+            case "settings":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "settings_general":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "settings_profile":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "settings_device":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "settings_help":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "settings_fitbit":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "news":
+                txtHeader.setText("Nachrichten");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "settings_polar":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            case "settings_news":
+                txtHeader.setText("Einstellungen");
+                Bar.BarHandler.changeButtonColors(Bar.mImgDashboard, Bar.mImgSession, Bar.mImgRecipe, Bar.mImgSettings,
+                        0xffffffff, 0xffffffff, 0xffffffff, 0xffffa726);
+                break;
+            default:
+                break;
         }
     }
 

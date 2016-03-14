@@ -23,7 +23,13 @@ public class Bar extends Fragment {
     public static void setClickOffset(int clickOffset) {
         BarHandler.clickOffset = clickOffset;
     }
-    private static final class BarHandler {
+
+    public static ImageView mImgDashboard;
+    public static ImageView mImgSession;
+    public static ImageView mImgRecipe;
+    public static ImageView mImgSettings;
+
+    public static final class BarHandler {
         private static String selBtn = "";
 
         private static int clickOffset = Integer.parseInt(UserSettings.getmActiveUser().getmClickOffsetForBarSensibility());
@@ -34,7 +40,7 @@ public class Bar extends Fragment {
             return layout.getRight() - layout.getLeft();
         }
 
-        private static void changeButtonColors(ImageView dashboard, ImageView session, ImageView recipe,
+        public static void changeButtonColors(ImageView dashboard, ImageView session, ImageView recipe,
                                               ImageView settings, int dashBoardColor, int sessionColor,
                                               int recipeColor, int settingsColor) {
 
@@ -56,6 +62,11 @@ public class Bar extends Fragment {
         final ImageView imgSession = (ImageView) view.findViewById(R.id.imgSession);
         final ImageView imgRecipe = (ImageView) view.findViewById(R.id.imgRecipe);
         final ImageView imgSettings = (ImageView) view.findViewById(R.id.imgSettings);
+
+        mImgDashboard = imgDashboard;
+        mImgSession = imgSession;
+        mImgRecipe = imgRecipe;
+        mImgSettings = imgSettings;
 
         final RelativeLayout btnDashboard = (RelativeLayout) view.findViewById(R.id.btnDashboard);
         final RelativeLayout btnSession = (RelativeLayout) view.findViewById(R.id.btnSession);

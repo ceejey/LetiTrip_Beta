@@ -122,7 +122,7 @@ public class SessionOverview extends Fragment {
                 SessionHandler.setSelectedRunId(row.getID());
 
                 //the dialog menu is only available for finished sessions, live sessions will be shown in the "session" fragment
-                if (((MainActivity)getActivity()).getGps() != null) {
+                if ((((MainActivity)getActivity()).getGps() != null)  && (row.getDisplayType() != 2)){
                     if (((MainActivity)getActivity()).getGps().getActiveRecordingID() == SessionHandler.getSelectedRunId()) {
                         updateActivity(MainActivity.FragmentName.SESSION);
                         return;
@@ -239,12 +239,17 @@ public class SessionOverview extends Fragment {
         List valueList = new ArrayList<GPSCustomListItem>();
         int lastRun = GPSDatabaseHandler.getInstance().getData().getLastSessionID();
 
+        if (lastRun==0){
+            GPSCustomListItem emptyPlaceHolder = new GPSCustomListItem();
+            emptyPlaceHolder.setDisplayType(2);
+            valueList.add(emptyPlaceHolder);
+        } else
         for (int i = lastRun; i > 0; i--) {
             GPSCustomListItem ins = GPSDatabaseHandler.getInstance().getData().getOverviewOfSession(i);
             if (ins != null) {
                 if (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED){
                     if (i == lastRun) {
-                        ins.setLive(true);
+                        ins.setDisplayType(1);
                     }
                 }
 

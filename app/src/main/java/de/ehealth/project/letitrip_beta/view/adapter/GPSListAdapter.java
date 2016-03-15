@@ -42,25 +42,32 @@ public class GPSListAdapter extends ArrayAdapter<GPSCustomListItem>{
             TextView txtDistance = (TextView) v.findViewById(R.id.txtDistance);
             ImageView imgType = (ImageView) v.findViewById(R.id.imgType);
 
-            txtSessionNumber.setText(gpsCustomListItem.getVisibleID()+"");
-
-            if (gpsCustomListItem.isLive()){
+            if (gpsCustomListItem.getDisplayType() == 2){
+                txtHeading.setText("Keine Sessions gefunden. Jetzt loslegen!");
+                txtDuration.setText("-");
+                txtDistance.setText("-");
+                txtSessionNumber.setText("-");
+            } else if (gpsCustomListItem.getDisplayType() == 1){
                 txtHeading.setText("(Läuft) Klicke hier für Details!");
-                txtDuration.setText("");
-                txtDistance.setText("");
+                txtDuration.setText("-");
+                txtDistance.setText("-");
+                txtSessionNumber.setText(gpsCustomListItem.getVisibleID()+"");
             } else {
                 txtHeading.setText(gpsCustomListItem.getStarted());
                 txtDuration.setText(gpsCustomListItem.getDuration());
                 txtDistance.setText(gpsCustomListItem.getDistanceMeter() + " m");
+                txtSessionNumber.setText(gpsCustomListItem.getVisibleID()+"");
             }
 
             if (imgType != null) {
-                if (gpsCustomListItem.getType() == 1){
-                    imgType.setImageResource(R.drawable.ic_directions_bike_white_24dp);
-                } else {
-                    imgType.setImageResource(R.drawable.ic_directions_run_white_24dp);
+                if (gpsCustomListItem.getDisplayType()!=2){
+                    if (gpsCustomListItem.getType() == 1){
+                        imgType.setImageResource(R.drawable.ic_directions_bike_white_24dp);
+                    } else {
+                        imgType.setImageResource(R.drawable.ic_directions_run_white_24dp);
+                    }
+                    imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
                 }
-                imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
             }
         }
 

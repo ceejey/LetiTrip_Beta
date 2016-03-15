@@ -21,7 +21,8 @@
                 android:layout_height="match_parent"
                 android:id="@+id/scrollView2"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp">
+                android:layout_marginRight="5dp"
+                android:fillViewport="false">
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -201,6 +202,43 @@
                             android:layout_weight="0.5">
 
                             <TextView
+                                android:id="@+id/txtWattHeading"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textSize="20sp"
+                                android:text="Ø Leistung" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:id="@+id/txtWatt"
+                                android:text="0 Watt" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentStart="true"
+                        android:background="@android:color/darker_gray" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="1"
+                        android:layout_gravity="center_horizontal" >
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5" >
+
+                            <TextView
                                 android:id="@+id/textView34"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -216,8 +254,30 @@
                                 android:id="@+id/txtTemp" />
 
                         </LinearLayout>
-                    </LinearLayout>
 
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5" >
+
+                            <TextView
+                                android:id="@+id/textView38"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:text="Wind"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:text="3 km/h"
+                                android:id="@+id/txtWind" />
+
+                        </LinearLayout>
+                    </LinearLayout>
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
@@ -259,21 +319,6 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5" >
-
-                            <TextView
-                                android:id="@+id/textView38"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif"
-                                android:text="Wind"
-                                android:textSize="20sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:text="3 km/h"
-                                android:id="@+id/txtWind" />
 
                         </LinearLayout>
                     </LinearLayout>

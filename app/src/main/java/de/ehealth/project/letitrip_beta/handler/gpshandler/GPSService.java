@@ -202,12 +202,16 @@ public class GPSService extends Service implements PolarCallback {
         polar.searchPolarDevice();
 
         //gps enabled?
-        boolean bluetoothDisabled = (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER));
-        if ((!BluetoothAdapter.getDefaultAdapter().isEnabled())||(bluetoothDisabled)) {
-            Toast.makeText(GPSService.this, ((!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))?"GPS aktivieren!\n":"")+""+((BluetoothAdapter.getDefaultAdapter().isEnabled()?"":"Bluetooth aktivieren, um Pulsmesserdaten zu erfassen.")), Toast.LENGTH_LONG).show();
+        boolean gpsDisabled = (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER));
+        boolean bluetoothDisabled = (!BluetoothAdapter.getDefaultAdapter().isEnabled());
+        boolean polarDeviceKnown = !(UserSettings.getmActiveUser().getmPolarDeviceID().equals(""));
+
+        if ((bluetoothDisabled && polarDeviceKnown) || gpsDisabled) {
+            Toast.makeText(GPSService.this, (gpsDisabled?"GPS aktivieren!\n":"")+
+                    ""+((bluetoothDisabled && polarDeviceKnown)?"Bluetooth aktivieren, um Pulsmesserdaten zu erfassen.":""), Toast.LENGTH_LONG).show();
         }
 
-        if (bluetoothDisabled){
+        if (gpsDisabled){
             sendBroadcast("GPSService", 1);
         } else startTracking();
         return super.onStartCommand(intent, flags, startId);
@@ -221,8 +225,13 @@ public class GPSService extends Service implements PolarCallback {
         if(polar.isDeviceFound()) {
             deviceList = polar.getDeviceList();
             if (deviceList.size() != 0) {
-                Log.d("Polar", "Try to connect with device: " + deviceList.get(0).getName());
-                polar.connectToPolarDevice(deviceList.get(0));
+                //connect to the stored polar device
+                for (int i=0; i < deviceList.size();i++){ //TODO muss getestet werden
+                    if (deviceList.get(i).getName().equals(UserSettings.getmActiveUser().getmPolarDeviceID())){
+                        Log.d("Polar", "Try to connect with device: " + deviceList.get(i).getName());
+                        polar.connectToPolarDevice(deviceList.get(i));
+                    }
+                }
             }
         }
     }

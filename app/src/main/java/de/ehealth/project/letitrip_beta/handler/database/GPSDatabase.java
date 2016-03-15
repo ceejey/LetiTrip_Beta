@@ -148,7 +148,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
             if (res.getDouble(1) == 0){
                 return -1;
             }
-            Log.w("gpsDB","bla:"+res.getDouble(1));
+            Log.w("gpsDB", "bla:" + res.getDouble(1));
             int result = res.getInt(0);
             res.close();
             return result;
@@ -251,7 +251,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
      */
     public long getStartTimeOfSession(int id){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + id + " order by "+ COLUMN0 + " asc limit 1", null);
+        Cursor res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + id + " order by " + COLUMN0 + " asc limit 1", null);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startTime = null;
@@ -498,6 +498,25 @@ public class GPSDatabase extends SQLiteOpenHelper {
         double kcal = res.getDouble(0);
         res.close();
         return kcal;
+    }
+
+    /**
+     * get the average watt value of a session
+     * @param id the session ID
+     * @return the average watt
+     */
+    public double getAverageWatt(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select " + COLUMN9 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + id, null);
+        if (res.getCount() == 0) return -1;
+
+        double watt = 0;
+        while (res.moveToNext()){
+            watt+=res.getDouble(0);
+        }
+
+        res.close();
+        return watt/res.getCount();
     }
 
     /**

@@ -21,8 +21,6 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +37,6 @@ import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherService;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
 import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
 import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
@@ -151,15 +148,15 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
     public void showRecipeSuggestion(){
         if (getView() != null) {
-            Calendar now = Calendar.getInstance();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
 
             Recipe bestMatchRecipe = new Recipe();
             bestMatchRecipe.setKcal("0");
 
             try {
-                /*new FitBitGetJsonTask(Oauth.getmOauth(), FitBitGetJsonTask.ENDPOINT_MOVES, getActivity()).execute().get();
-                Summary sum = FitBitUserDataSQLite.getInstance(getActivity()).getFitBitData(format.format(now.getTime()));
+                new FitBitGetJsonTask(Oauth.getmOauth(), FitBitGetJsonTask.ENDPOINT_MOVE, getActivity()).execute().get();
+                Summary sum = FitBitUserDataSQLite.getInstance(getActivity())
+                        .getCurFitBitUserMovement().getSummary();
                 Log.d("Test", sum.getActivityCalories() + " " + sum.getCaloriesBMR() + " " + sum.getCaloriesOut()); //null object reference*/
 
                 //Ab hier ist alles in Ordnung, nur die auskommentierte Zeile Code unten muss nach dem Fixxen wieder eingefügt werden.

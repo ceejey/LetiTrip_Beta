@@ -89,7 +89,7 @@ public class FitBitGetJsonTask extends AsyncTask<Void, Void, Void> {
     }
 
     /**This method calls up a Json object for the current user. The Request URL can be found in the API documentation:
-    "https://dev.fitbit.com/docs". The JSon object is parsed to be a Object of the class "UserSettings"  */
+    "https://dev.fitbit.com/docs". The JSon object is parsed to be a Object of the class "UserSettings"*/
     private void getProfile() {
         sendRequestUrl("https://api.fitbit.com/1/user/-/profile.json");
         UserSettings.JsonToUserProfile(mJson, mOauth.getmAccessToken());

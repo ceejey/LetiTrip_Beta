@@ -12,7 +12,7 @@ import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
 
 /** ActivityScore calculation for the FitBit Data. Note the interval of 2 weeks is only settled
  * if the User login to the app was 14 or above days ago, else the average calculation of this data is for an interval
- * of the difference between the Timestemp (NewUserlogin or Activity reset)and todays date. The Timestamp has been created in
+ * of the difference between the Timestemp (NewUserlogin or ActivityScore Reset)and todays date. The Timestamp has been created in
  * the class UserSettings and General setting Fragment. Note an another Timestemp will be created if the User decided to
  * RESET his ActivityScore*/
 

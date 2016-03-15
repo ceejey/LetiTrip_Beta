@@ -35,7 +35,7 @@ public class Help extends Fragment {
         arrayChildren.add("In dieser Version der App wird davon ausgegangen," +
                 " dass ein FitBit Tracker verwendet wird. Um mehrfaches Eingeben der persönlichen" +
                 " Daten zu vermeiden, basiert die App auf den vollständigen Daten des Fitbit Accounts des Benutzers." +
-                " Bitte beachte immer dein aktuelles Gewicht, sowie deinen Standort anzugeben." +
+                " Bitte beachte immer dein aktuelles Gewicht, Größe, Alter sowie deinen Standort anzugeben." +
                 "\nStand: 24.Februar 2016");
         parent.setArrayChildren(arrayChildren);
         //in this array we add the Parent object. We will use the arrayParents at the setAdapter
@@ -44,7 +44,7 @@ public class Help extends Fragment {
         parent = new Parent();
         arrayChildren = new ArrayList<String>();
         parent.setTitle("Wozu muss ich meinen Standort angeben?");
-        arrayChildren.add("Die App benötigt Wetterinformationen, die abhängig vom Standort sind." +
+        arrayChildren.add("Die App benötigt Wetterinformationen, die abhängig vom Standort sind. " +
                 "Die Berechnung der erbrachten Leistung (siehe Dokumentation) wird unter anderem mit diesen " +
                 "Informationen während des Trainings bestimmt.");
         parent.setArrayChildren(arrayChildren);
@@ -55,9 +55,9 @@ public class Help extends Fragment {
         arrayChildren = new ArrayList<String>();
         parent.setTitle("Was ist der Activity Score?");
         arrayChildren.add("Der Fitbit Tracker dient zur Bestimmung des Aktivitätsgrades des Benutzters im Alltag." +
-                "Der Fitbit interne Algorithmus bestimmt anhand der Benutzerinformationen, sowie der gelaufen Schritte, grob" +
+                "Der Fitbit interne Algorithmus bestimmt anhand der Benutzerinformationen, sowie der gelaufen Schritte, grob " +
                 "die verbrauchten Kalorien. Die Anzahl an gelaufenen Schritten, sowie den verbrannten Kalorien werden hier pro Tag gespeichert. " +
-                "Wird nun dieser alltagspezifische Activity Score berechnet, so basiert die Rechnung auf den Daten der letzten zwei Wochen. Deshalb" +
+                "Wird nun dieser alltagspezifische Activity Score berechnet, so basiert die Rechnung auf den Daten der letzten zwei Wochen. Deshalb " +
                 "ist dieser Wert erst nach zwei Wochen korrekt!\nNatürlich wird der Score nur berechnet und angezeigt, wenn ein Fitbit Account verbunden ist.");
         parent.setArrayChildren(arrayChildren);
         //in this array we add the Parent object. We will use the arrayParents at the setAdapter
@@ -65,9 +65,18 @@ public class Help extends Fragment {
 
         parent = new Parent();
         arrayChildren = new ArrayList<String>();
+        parent.setTitle("Was ist ein idealer Activity Score?");
+        arrayChildren.add("Ein idealer Activity Score liegt bei 1. Dieser wird erreicht, wenn Sie sich im Alltag ausreichend bewegen.");
+        parent.setArrayChildren(arrayChildren);
+        //in this array we add the Parent object. We will use the arrayParents at the setAdapter
+        arrayParents.add(parent);
+
+
+        parent = new Parent();
+        arrayChildren = new ArrayList<String>();
         parent.setTitle("Warum ist mein Activity Score so hoch, nachdem ich diesen zurückgesetzt habe?");
         arrayChildren.add("Die App merkt sich den Zeitpunkt, an dem der Activity Score zurückgesetzt wurde. Ab diesem " +
-                "Zeitpunkt fängt nun die Scoreberechnung an, was zu Ungenauigkeiten führt. Deshalb ist dieser Werst erst nach zwei" +
+                "Zeitpunkt fängt nun die Scoreberechnung an, was zu Ungenauigkeiten führt. Deshalb ist dieser Wert erst nach zwei " +
                 "Wochen aussagekräftig");
         parent.setArrayChildren(arrayChildren);
         //in this array we add the Parent object. We will use the arrayParents at the setAdapter
@@ -95,7 +104,8 @@ public class Help extends Fragment {
         parent = new Parent();
         arrayChildren = new ArrayList<String>();
         parent.setTitle("Warum wird der Watt/Kalorien-Wert während einer Session nicht berechnet?");
-        arrayChildren.add("Die Watt/Kalorien-Berechnung zieht Wetterdaten mit heran. Diese müssen in aktueller Form vorhanden sein.");
+        arrayChildren.add("Die Watt/Kalorien-Berechnung zieht Wetterdaten mit heran. Diese müssen in aktueller Form vorhanden sein."+
+                            "Die Stadt muss selbstverständlich in den Einstellungen eingetragen sein.");
         parent.setArrayChildren(arrayChildren);
         //in this array we add the Parent object. We will use the arrayParents at the setAdapter
         arrayParents.add(parent);

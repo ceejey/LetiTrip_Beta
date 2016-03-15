@@ -66,7 +66,7 @@ public class SessionDetail extends Fragment {
 
     private Handler handler; //update duration every second
 
-    private TextView txtSessionID, txtDistance, txtAvgSpeed, txtDuration, txtTemp, txtWind, txtCalories,txtCondition;
+    private TextView txtSessionID, txtDistance, txtAvgSpeed, txtDuration, txtTemp, txtWind, txtCalories,txtCondition, txtWatt;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,7 +81,7 @@ public class SessionDetail extends Fragment {
         txtWind = (TextView) view.findViewById(R.id.txtWind);
         txtCondition = (TextView) view.findViewById(R.id.txtCondition);
         txtCalories = (TextView) view.findViewById(R.id.txtCalories);
-
+        txtWatt = (TextView) view.findViewById(R.id.txtWatt);
         btnSwitchMapType = (Button) view.findViewById(R.id.button);
         btnSwitchMapType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,6 +281,7 @@ public class SessionDetail extends Fragment {
         txtDistance.setText((int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(SessionHandler.getSelectedRunId(),-1) + " Meter");
         txtAvgSpeed.setText(decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getSpeed(SessionHandler.getSelectedRunId(), -1) * 3.6) + "km/h");
         txtCalories.setText(decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getCaloriesBurned(SessionHandler.getSelectedRunId()))+" kcal");
+        txtWatt.setText(decimalFormat.format(GPSDatabaseHandler.getInstance().getData().getAverageWatt(SessionHandler.getSelectedRunId()))+" Watt");
     }
 
     public void updateStaticInfoBox(){

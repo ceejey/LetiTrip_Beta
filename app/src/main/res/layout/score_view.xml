@@ -33,6 +33,7 @@
                 android:id="@+id/txtHeading"
                 android:fontFamily="sans-serif"
                 android:textSize="16sp"
+                android:fontFamily="sans-serif"
                 android:textColor="#000000" />
 
             <TextView

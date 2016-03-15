@@ -102,8 +102,8 @@ public class FitBitTrackerData extends android.support.v4.app.Fragment{
             mEtxtCaloriesAim.setText(String.valueOf((int) FitBitActivityScoreHandler.getmCaloriesAim()));
         }catch(Exception ex){
             new AlertDialog.Builder(getActivity())
-                    .setTitle("Warning")
-                    .setMessage("Connection Problems!")
+                    .setTitle("Warnung")
+                    .setMessage("Verbindungsprobleme!")
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
             ex.printStackTrace();

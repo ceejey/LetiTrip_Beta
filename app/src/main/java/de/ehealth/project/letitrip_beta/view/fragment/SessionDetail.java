@@ -198,7 +198,6 @@ public class SessionDetail extends Fragment {
         }
     }
 
-
     /**
      * maps the pulse to a matching color (low pulse = blue; high pulse = red)
      * @param pulse the pulse

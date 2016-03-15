@@ -75,7 +75,47 @@ public class RecipeFragment extends Fragment {
             RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
             List<Recipe> recipeList = recipeDb.getAllRecipes();
             Log.d("Recipe", "" + recipeList.size());
-            for (Recipe recipe : recipeList) {
+            if(!recipeList.isEmpty()) {
+                for (Recipe recipe : recipeList) {
+                    LinearLayout placeHolder = new LinearLayout(mView.findViewById(R.id.scrollViewRecipe).getContext());
+                    mInflater.inflate(R.layout.recipe_view, placeHolder);
+                    ((LinearLayout) mView.findViewById(R.id.layoutRecipe)).addView(placeHolder);
+
+                    ImageView imgRecipe = (ImageView) placeHolder.findViewById(R.id.imgRecipe);
+                    TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
+                    TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
+
+                    new DownloadImageTask(imgRecipe).execute(recipe.getPic());
+                    txtRecipeSubHeading.setText(recipe.getName());
+                    String type = recipe.getType();
+                    if (type.equals("breakfast"))
+                        type = "Fr\u00fchstück";
+                    else if (type.equals("lunch"))
+                        type = "Mittagessen";
+                    else if (type.equals("dinner"))
+                        type = "Abendessen";
+                    txtRecipeBody.setText(type + " mit " + recipe.getKcal() + " kcal");
+                    final Recipe clickedRecipe = recipe;
+                    placeHolder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            if (getActivity() instanceof FragmentChanger) {
+
+                                RecipeWrapper.selectedRecipe = clickedRecipe;
+
+                                FragmentChanger changer = (FragmentChanger) getActivity();
+                                changer.changeFragment(MainActivity.FragmentName.RECIPE_DETAIL);
+
+                            } else {
+                                Log.e("Error", "Can't bind onClickListener for showing Recipe");
+                            }
+
+                        }
+
+                    });
+                }
+            } else {
                 LinearLayout placeHolder = new LinearLayout(mView.findViewById(R.id.scrollViewRecipe).getContext());
                 mInflater.inflate(R.layout.recipe_view, placeHolder);
                 ((LinearLayout) mView.findViewById(R.id.layoutRecipe)).addView(placeHolder);
@@ -84,35 +124,9 @@ public class RecipeFragment extends Fragment {
                 TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
                 TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
 
-                new DownloadImageTask(imgRecipe).execute(recipe.getPic());
-                txtRecipeSubHeading.setText(recipe.getName());
-                String type = recipe.getType();
-                if(type.equals("breakfast"))
-                    type = "Fr\u00fchstück";
-                else if(type.equals("lunch"))
-                    type = "Mittagessen";
-                else if(type.equals("dinner"))
-                    type = "Abendessen";
-                txtRecipeBody.setText(type + " mit " + recipe.getKcal() + " kcal");
-                final Recipe clickedRecipe = recipe;
-                placeHolder.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        if (getActivity() instanceof FragmentChanger) {
-
-                            RecipeWrapper.selectedRecipe = clickedRecipe;
-
-                            FragmentChanger changer = (FragmentChanger) getActivity();
-                            changer.changeFragment(MainActivity.FragmentName.RECIPE_DETAIL);
-
-                        } else {
-                            Log.e("Error", "Can't bind onClickListener for showing Recipe");
-                        }
-
-                    }
-
-                });
+                imgRecipe.setVisibility(View.GONE);
+                txtRecipeSubHeading.setText("Ooops!");
+                txtRecipeBody.setText("Es konnten keine Rezepte gefunden werden. Aktualisieren Sie die Datenbank in den Einstellungen.");
             }
         }
     }

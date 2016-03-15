@@ -29,10 +29,29 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Activity Score: 0\nKlicke hier für Details!"
+                android:text="Activity Score: 0"
                 android:id="@+id/txtHeading"
+                android:fontFamily="sans-serif"
                 android:textSize="16sp"
                 android:textColor="#000000" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Verbessere deinen Activityscore, indem du das Armband trägst!"
+                android:id="@+id/txtSuggestion"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Klicke hier für Details!"
+                android:id="@+id/txtInfo"
+                android:fontFamily="sans-serif"
+                android:textSize="14sp" />
 
         </LinearLayout>
     </LinearLayout>

@@ -21,16 +21,28 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
+import de.ehealth.project.letitrip_beta.handler.database.FitBitUserDataSQLite;
+import de.ehealth.project.letitrip_beta.handler.database.RecipeDatabase;
 import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitActivityScoreHandler;
+import de.ehealth.project.letitrip_beta.handler.fitbit.FitBitGetJsonTask;
+import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
+import de.ehealth.project.letitrip_beta.handler.news.DownloadImageTask;
 import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherService;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
+import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
+import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
+import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
 import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.model.weather.Channel;
 import de.ehealth.project.letitrip_beta.model.weather.DescriptionMapping;
@@ -63,11 +75,13 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 showActivityScoreView();
                 showIncompleteProfileView();
                 refreshWeather();
+                showRecipeSuggestion();
 
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
                         NewsHandler.fillNewsFeed(view, inflater, getActivity());
+
 
                         while (true) {
                             try {
@@ -105,6 +119,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
         showActivityScoreView();
         setSessionOnDashBoard();
         refreshWeather();
+        showRecipeSuggestion();
         Thread thread = new Thread(new Runnable(){
             @Override
             public void run(){
@@ -121,7 +136,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
             TextView txtActivityScore = (TextView) placeHolder.findViewById(R.id.txtHeading);
             FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
             double activityScore = (FitBitActivityScoreHandler.getmActivtiyScoreSteps() + FitBitActivityScoreHandler.getmActivtiyScoreCalories()) / 2;
-            txtActivityScore.setText("Activity Score: " + new DecimalFormat("0.00").format(activityScore) + "\nKlicke hier für Details!");
+            txtActivityScore.setText("Activity Score: " + new DecimalFormat("0.00").format(activityScore));
             ImageView img = (ImageView) placeHolder.findViewById(R.id.imageView2);
             img.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
             placeHolder.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +146,112 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 }
             });
             ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder, 0);
+        }
+    }
+
+    public void showRecipeSuggestion(){
+        if (getView() != null) {
+            Calendar now = Calendar.getInstance();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+            Recipe bestMatchRecipe = new Recipe();
+            bestMatchRecipe.setKcal("0");
+
+            try {
+                /*new FitBitGetJsonTask(Oauth.getmOauth(), FitBitGetJsonTask.ENDPOINT_MOVES, getActivity()).execute().get();
+                Summary sum = FitBitUserDataSQLite.getInstance(getActivity()).getFitBitData(format.format(now.getTime()));
+                Log.d("Test", sum.getActivityCalories() + " " + sum.getCaloriesBMR() + " " + sum.getCaloriesOut()); //null object reference*/
+
+                //Ab hier ist alles in Ordnung, nur die auskommentierte Zeile Code unten muss nach dem Fixxen wieder eingefügt werden.
+                Log.d("Recipe", "recipe started");
+                RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
+                List<Recipe> recipeList = recipeDb.getAllRecipes();
+                Log.d("Recipe", "" + recipeList.size());
+
+                if (!recipeList.isEmpty()) {
+                    boolean foundRecipe = false;
+
+                    //Integer caloriesBurned = Integer.parseInt(sum.getCaloriesBMR()) + Integer.parseInt(sum.getCaloriesOut());
+                    Integer caloriesBurned = 500000;
+
+                    for (Recipe recipe : recipeList) {
+
+                        if (caloriesBurned > Integer.parseInt(recipe.getKcal()) &&
+                                caloriesBurned - Integer.parseInt(recipe.getKcal()) < caloriesBurned - Integer.parseInt(bestMatchRecipe.getKcal())) {
+                            bestMatchRecipe = recipe;
+                            foundRecipe = true;
+                        }
+
+                    }
+
+                    if(foundRecipe) {
+                        LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+                        mInflater.inflate(R.layout.recipe_view, placeHolder);
+                        ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder);
+
+                        ImageView imgRecipe = (ImageView) placeHolder.findViewById(R.id.imgRecipe);
+                        TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
+                        TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
+
+                        new DownloadImageTask(imgRecipe).execute(bestMatchRecipe.getPic());
+                        txtRecipeSubHeading.setText(bestMatchRecipe.getName());
+                        String type = bestMatchRecipe.getType();
+                        if (type.equals("breakfast"))
+                            type = "Fr\u00fchstück";
+                        else if (type.equals("lunch"))
+                            type = "Mittagessen";
+                        else if (type.equals("dinner"))
+                            type = "Abendessen";
+                        txtRecipeBody.setText(type + " mit " + bestMatchRecipe.getKcal() + " kcal");
+                        final Recipe clickedRecipe = bestMatchRecipe;
+                        placeHolder.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                if (getActivity() instanceof FragmentChanger) {
+
+                                    RecipeWrapper.selectedRecipe = clickedRecipe;
+
+                                    FragmentChanger changer = (FragmentChanger) getActivity();
+                                    changer.changeFragment(MainActivity.FragmentName.RECIPE_DETAIL);
+
+                                } else {
+                                    Log.e("Error", "Can't bind onClickListener for showing Recipe");
+                                }
+
+                            }
+
+                        });
+                    }
+                    else{
+                        LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+                        mInflater.inflate(R.layout.recipe_view, placeHolder);
+                        ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder);
+
+                        ImageView imgRecipe = (ImageView) placeHolder.findViewById(R.id.imgRecipe);
+                        TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
+                        TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
+
+                        imgRecipe.setVisibility(View.GONE);
+                        txtRecipeSubHeading.setText("Ooops!");
+                        txtRecipeBody.setText("Es konnten kein passender Vorschlag angezeigt werden.");
+                    }
+                } else {
+                    LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
+                    mInflater.inflate(R.layout.recipe_view, placeHolder);
+                    ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(placeHolder);
+
+                    ImageView imgRecipe = (ImageView) placeHolder.findViewById(R.id.imgRecipe);
+                    TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
+                    TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
+
+                    imgRecipe.setVisibility(View.GONE);
+                    txtRecipeSubHeading.setText("Ooops!");
+                    txtRecipeBody.setText("Es konnten keine Rezepte gefunden werden. Aktualisieren Sie die Datenbank in den Einstellungen.");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

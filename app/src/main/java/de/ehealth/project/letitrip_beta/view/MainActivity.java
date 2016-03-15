@@ -285,11 +285,21 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 txtHeader.setText("Rezepte");
                 newTag = "recipe_detail";
 
-                expectedEntryCount = 2;
-                expectedEntry = "recipe";
-                refillEntrys.add("dashboard");
-                refillEntrys.add("recipe");
-                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+                fragmentContent = fragmentManager.findFragmentByTag("recipe");
+                if (fragmentContent != null) {
+                    expectedEntryCount = 2;
+                    expectedEntry = "recipe";
+                    refillEntrys.add("dashboard");
+                    refillEntrys.add("recipe");
+                    fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+                }
+                else{
+                    expectedEntryCount = 1;
+                    expectedEntry = "dashboard";
+                    refillEntrys.add("dashboard");
+                    fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+                }
+
 
                 fragmentContent = new RecipeDetail();
                 break;

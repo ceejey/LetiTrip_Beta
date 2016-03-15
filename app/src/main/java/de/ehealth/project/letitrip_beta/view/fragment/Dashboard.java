@@ -37,6 +37,8 @@ import de.ehealth.project.letitrip_beta.handler.news.NewsHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherService;
+import de.ehealth.project.letitrip_beta.model.fitbit.ActivityScoreSuggestion;
+import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
 import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
 import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
@@ -131,9 +133,14 @@ public class Dashboard extends Fragment implements WeatherCallback {
             LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
             mInflater.inflate(R.layout.score_view, placeHolder);
             TextView txtActivityScore = (TextView) placeHolder.findViewById(R.id.txtHeading);
+            TextView txtSuggestion = (TextView) placeHolder.findViewById(R.id.txtSuggestion);
             FitBitActivityScoreHandler.calcActivtiyScore(getActivity());
             double activityScore = (FitBitActivityScoreHandler.getmActivtiyScoreSteps() + FitBitActivityScoreHandler.getmActivtiyScoreCalories()) / 2;
             txtActivityScore.setText("Activity Score: " + new DecimalFormat("0.00").format(activityScore));
+            ActivityScoreSuggestion sugg = new ActivityScoreSuggestion();
+            String suggStr = sugg.getSuggestion(activityScore);
+            Log.d("Suggestion", suggStr);
+            txtSuggestion.setText(suggStr);
             ImageView img = (ImageView) placeHolder.findViewById(R.id.imageView2);
             img.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
             placeHolder.setOnClickListener(new View.OnClickListener() {
@@ -151,32 +158,54 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
 
             Recipe bestMatchRecipe = new Recipe();
-            bestMatchRecipe.setKcal("0");
 
             try {
                 new FitBitGetJsonTask(Oauth.getmOauth(), FitBitGetJsonTask.ENDPOINT_MOVE, getActivity()).execute().get();
                 Summary sum = FitBitUserDataSQLite.getInstance(getActivity())
                         .getCurFitBitUserMovement().getSummary();
-                Log.d("Test", sum.getActivityCalories() + " " + sum.getCaloriesBMR() + " " + sum.getCaloriesOut()); //null object reference*/
+                Log.d("Test", sum.getActivityCalories() + " " + sum.getCaloriesBMR() + " " + sum.getCaloriesOut());
 
-                //Ab hier ist alles in Ordnung, nur die auskommentierte Zeile Code unten muss nach dem Fixxen wieder eingefügt werden.
                 Log.d("Recipe", "recipe started");
                 RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
                 List<Recipe> recipeList = recipeDb.getAllRecipes();
                 Log.d("Recipe", "" + recipeList.size());
 
                 if (!recipeList.isEmpty()) {
+                    boolean firstIter = true;
                     boolean foundRecipe = false;
 
-                    //Integer caloriesBurned = Integer.parseInt(sum.getCaloriesBMR()) + Integer.parseInt(sum.getCaloriesOut());
-                    Integer caloriesBurned = 500000;
+                    Integer caloriesBurned = Integer.parseInt(sum.getActivityCalories());
+
+                    Log.d("TEST", "Calories burned: " + caloriesBurned);
 
                     for (Recipe recipe : recipeList) {
-
-                        if (caloriesBurned > Integer.parseInt(recipe.getKcal()) &&
-                                caloriesBurned - Integer.parseInt(recipe.getKcal()) < caloriesBurned - Integer.parseInt(bestMatchRecipe.getKcal())) {
+                        if(firstIter) {
                             bestMatchRecipe = recipe;
-                            foundRecipe = true;
+                            firstIter = false;
+                        }
+                        Log.d("Calories: ", "" + (Integer.parseInt(recipe.getKcal()) - caloriesBurned) + "\n" + (Integer.parseInt(bestMatchRecipe.getKcal()) - caloriesBurned));
+                        Integer caloriesRecipe = Integer.parseInt(recipe.getKcal());
+                        if(caloriesRecipe <= caloriesBurned){
+                            if(Integer.parseInt(bestMatchRecipe.getKcal()) >= caloriesBurned &&
+                                    Integer.parseInt(bestMatchRecipe.getKcal()) - caloriesBurned >= caloriesBurned - caloriesRecipe){
+                                bestMatchRecipe = recipe;
+                                foundRecipe = true;
+                            }
+                            else if(caloriesRecipe >= Integer.parseInt(bestMatchRecipe.getKcal())){
+                                bestMatchRecipe = recipe;
+                                foundRecipe = true;
+                            }
+                        }
+                        if(caloriesRecipe >= caloriesBurned){
+                            if(Integer.parseInt(bestMatchRecipe.getKcal()) <= caloriesBurned &&
+                                    caloriesBurned - Integer.parseInt(bestMatchRecipe.getKcal())  >= caloriesRecipe - caloriesBurned){
+                                bestMatchRecipe = recipe;
+                                foundRecipe = true;
+                            }
+                            else if(caloriesRecipe <= Integer.parseInt(bestMatchRecipe.getKcal())){
+                                bestMatchRecipe = recipe;
+                                foundRecipe = true;
+                            }
                         }
 
                     }

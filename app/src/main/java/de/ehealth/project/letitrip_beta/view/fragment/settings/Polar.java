@@ -101,7 +101,8 @@ public class Polar extends Fragment {
                         if(mDeviceList.size() != 0) {
                             UserSettings.getmActiveUser().setmPolarDeviceID(mDeviceList.get(mSelectedDevice).getName());
                         }
-                        UserSettings.getmActiveUser().setmPolarDeviceID("Nur zum Listen Test");
+                        UserSettings.getmActiveUser().setmPolarDeviceID(mDeviceList.get(mSelectedDevice).getName());
+                        UserSettings.saveUser(getActivity());
                         updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                         break;
                     default:

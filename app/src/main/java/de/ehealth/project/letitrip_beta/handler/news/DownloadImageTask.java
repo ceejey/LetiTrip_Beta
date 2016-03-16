@@ -31,7 +31,9 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     protected void onPostExecute(Bitmap result) {
         if(mDownsize){
-            result = Bitmap.createScaledBitmap(result,(int)(result.getWidth()*0.5), (int)(result.getHeight()*0.5), true);
+            try {
+                result = Bitmap.createScaledBitmap(result, (int) (result.getWidth() * 0.5), (int) (result.getHeight() * 0.5), true);
+            }catch(Exception ex){ ex.printStackTrace(); }
         }
         bmImage.setImageBitmap(result);
     }

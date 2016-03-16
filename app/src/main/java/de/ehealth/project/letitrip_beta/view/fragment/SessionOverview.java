@@ -43,6 +43,7 @@ import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSService;
 import de.ehealth.project.letitrip_beta.handler.session.SessionHandler;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.adapter.GPSCustomListItem;
 import de.ehealth.project.letitrip_beta.view.adapter.GPSListAdapter;
@@ -83,7 +84,7 @@ public class SessionOverview extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_session_overview, container, false);
-
+        UserSettings.loadUser(getActivity());
         gpsStatusTextView = (TextView) view.findViewById(R.id.gpsStatusTextView);
         btnStartSession = (Button) view.findViewById(R.id.gpsEnabledToggle);
         sessionOverviewListView = (ListView) view.findViewById(R.id.sessionOverviewListView);

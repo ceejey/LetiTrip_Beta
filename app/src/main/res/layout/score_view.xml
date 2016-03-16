@@ -40,7 +40,7 @@
                 android:layout_marginTop="5dp"
                 android:text="Verbessere deinen Activityscore, indem du das Armband trägst!"
                 android:id="@+id/txtSuggestion"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="sans-serif"
                 android:textSize="14sp" />
 
             <TextView
@@ -49,8 +49,9 @@
                 android:layout_marginTop="5dp"
                 android:text="Klicke hier für Details!"
                 android:id="@+id/txtInfo"
-                android:fontFamily="sans-serif"
-                android:textSize="14sp" />
+                android:fontFamily="sans-serif-medium"
+                android:textSize="14sp"
+                android:textColor="#5c6bc0" />
 
         </LinearLayout>
     </LinearLayout>

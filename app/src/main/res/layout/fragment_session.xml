@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,14 +9,17 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp">
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:useDefaultMargins="true">
+            android:layout_marginBottom="12dp"
+            android:weightSum="1">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -31,13 +34,16 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Distanz"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
                     android:text="0 Meter"
+                    android:textColor="#FF000000"
                     android:id="@+id/textView14" />
 
             </LinearLayout>
@@ -55,12 +61,15 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Dauer"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="0:00"
                     android:id="@+id/textView16" />
 
@@ -76,6 +85,8 @@
 
         <LinearLayout
             android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1">
@@ -92,13 +103,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="Geschw."
-                    android:textSize="20sp" />
+                    android:textSize="14sp"
+                    android:text="Geschw."/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="0 km/h"
                     android:id="@+id/textView11" />
 
@@ -117,12 +131,15 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Ø Geschw."
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="0 km/h"
                     android:id="@+id/textView15" />
 
@@ -139,6 +156,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:weightSum="1">
 
             <LinearLayout
@@ -154,12 +173,15 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Watt"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="300"
                     android:id="@+id/textView10" />
 
@@ -178,12 +200,15 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Kalorien"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="0 kcal"
                     android:id="@+id/textView35" />
 
@@ -200,6 +225,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:weightSum="1"
             android:layout_gravity="center_horizontal">
 
@@ -216,12 +243,15 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Puls"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="0bpm"
                     android:id="@+id/textView9" />
 
@@ -239,12 +269,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:id="@+id/textView39" />
             </LinearLayout>
         </LinearLayout>
@@ -259,6 +292,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:weightSum="1">
 
             <LinearLayout
@@ -274,12 +309,15 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Temperatur"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="20°C"
                     android:id="@+id/textView12" />
 
@@ -298,12 +336,15 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Wind"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="#FF000000"
                     android:text="3 km/h"
                     android:id="@+id/textView13" />
 
@@ -320,6 +361,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:weightSum="1">
 
             <LinearLayout
@@ -335,23 +378,28 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Laufrichtung"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
                     android:layout_height="match_parent">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/imgWalkDir"
-                        android:src="@drawable/ic_navigation_white_48dp" />
+                        android:src="@drawable/ic_navigation_white_48dp"
+                        android:tint="#ff757575" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_marginTop="5dp"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#FF000000"
                         android:text="N"
                         android:id="@+id/textView18" />
                 </LinearLayout>
@@ -371,23 +419,28 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="Windrichtung"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/imgWindDir"
-                        android:src="@drawable/ic_navigation_white_48dp" />
+                        android:src="@drawable/ic_navigation_white_48dp"
+                        android:tint="#ff757575" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_marginTop="5dp"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#FF000000"
                         android:text="N"
                         android:id="@+id/textView30" />
                 </LinearLayout>
@@ -410,15 +463,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imgType"
-                android:src="@drawable/ic_directions_run_white_48dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/ic_directions_run_white_24dp"
                 android:layout_row="0"
-                android:layout_column="5" />
+                android:layout_column="5"
+                android:tint="#ff757575" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Auf Karte anzeigen"
                 android:id="@+id/button2"
+                android:textSize="14sp"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
                 android:textColor="#5c6bc0" />
 
@@ -432,4 +488,4 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</ScrollView>

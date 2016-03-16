@@ -10,9 +10,11 @@ import java.io.InputStream;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
+    Boolean mDownsize = false;
 
-    public DownloadImageTask(ImageView bmImage) {
+    public DownloadImageTask(ImageView bmImage, boolean downsize) {
         this.bmImage = bmImage;
+        mDownsize = downsize;
     }
 
     protected Bitmap doInBackground(String... urls) {
@@ -28,6 +30,9 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected void onPostExecute(Bitmap result) {
+        if(mDownsize){
+            result = Bitmap.createScaledBitmap(result,(int)(result.getWidth()*0.5), (int)(result.getHeight()*0.5), true);
+        }
         bmImage.setImageBitmap(result);
     }
 }

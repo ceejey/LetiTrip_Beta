@@ -185,6 +185,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                         }
                         Log.d("Calories: ", "" + (Integer.parseInt(recipe.getKcal()) - caloriesBurned) + "\n" + (Integer.parseInt(bestMatchRecipe.getKcal()) - caloriesBurned));
                         Integer caloriesRecipe = Integer.parseInt(recipe.getKcal());
+
                         if(caloriesRecipe <= caloriesBurned){
                             if(Integer.parseInt(bestMatchRecipe.getKcal()) >= caloriesBurned &&
                                     Integer.parseInt(bestMatchRecipe.getKcal()) - caloriesBurned >= caloriesBurned - caloriesRecipe){
@@ -219,7 +220,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                         TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
                         TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
 
-                        new DownloadImageTask(imgRecipe).execute(bestMatchRecipe.getPic());
+                        new DownloadImageTask(imgRecipe, true).execute(bestMatchRecipe.getPic());
                         txtRecipeSubHeading.setText(bestMatchRecipe.getName());
                         String type = bestMatchRecipe.getType();
                         if (type.equals("breakfast"))
@@ -257,6 +258,9 @@ public class Dashboard extends Fragment implements WeatherCallback {
                         ImageView imgRecipe = (ImageView) placeHolder.findViewById(R.id.imgRecipe);
                         TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
                         TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
+                        TextView txtInfo = (TextView) placeHolder.findViewById(R.id.txtInfo);
+
+                        txtInfo.setVisibility(View.GONE);
 
                         imgRecipe.setVisibility(View.GONE);
                         txtRecipeSubHeading.setText("Ooops!");
@@ -270,8 +274,11 @@ public class Dashboard extends Fragment implements WeatherCallback {
                     ImageView imgRecipe = (ImageView) placeHolder.findViewById(R.id.imgRecipe);
                     TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
                     TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
+                    TextView txtInfo = (TextView) placeHolder.findViewById(R.id.txtInfo);
 
+                    txtInfo.setVisibility(View.GONE);
                     imgRecipe.setVisibility(View.GONE);
+
                     txtRecipeSubHeading.setText("Ooops!");
                     txtRecipeBody.setText("Es konnten keine Rezepte gefunden werden. Aktualisieren Sie die Datenbank in den Einstellungen.");
                 }

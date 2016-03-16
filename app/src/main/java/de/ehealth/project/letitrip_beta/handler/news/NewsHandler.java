@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import de.ehealth.project.letitrip_beta.R;
@@ -18,6 +19,7 @@ import de.ehealth.project.letitrip_beta.model.news.Content;
 import de.ehealth.project.letitrip_beta.model.news.Image;
 import de.ehealth.project.letitrip_beta.model.news.News;
 import de.ehealth.project.letitrip_beta.model.news.Story;
+import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
@@ -28,46 +30,69 @@ public class NewsHandler {
 
     private static Story mSelectedStory;
     private static boolean mTaskComplete = false;
+    private static String newsJson = "";
 
     public static void fillNewsFeed(final View view, final LayoutInflater inflater, final Activity activity) {
 
         mTaskComplete = false;
 
+
         try {
+            Set<String> categorieSet = UserSettings.getmActiveUser().getmNewsSettings();
+            if(categorieSet != null){
+                Integer newsAmount = Math.round(15F / categorieSet.size());
+                for(String categorie : categorieSet){
+                    newsJson = new NewsTask(categorie, "75ba7c79e2aeff0db0e33b1db79ee188", "de", newsAmount).execute().get();
+                    showEntry(view, activity, inflater);
+                }
+            }
+            else {
+                newsJson = new NewsTask("gesundheit", "75ba7c79e2aeff0db0e33b1db79ee188", "de", 15).execute().get();
+                showEntry(view, activity, inflater);
+            }
 
-            final String newsJson = new NewsTask("gesundheit", "75ba7c79e2aeff0db0e33b1db79ee188", "de", 15).execute().get();
 
-            if (!newsJson.isEmpty()) {
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-                activity.runOnUiThread(new Runnable() {
+        mTaskComplete = true;
+    }
 
-                    @Override
-                    public void run() {
+    private static void showEntry(final View view, final Activity activity, final LayoutInflater inflater) {
+        if (!newsJson.isEmpty()) {
 
-                        Gson gson = new Gson();
-                        News news = gson.fromJson(newsJson, News.class);
+            activity.runOnUiThread(new Runnable() {
 
-                        if(news.getSuccess().equals("1") && news.getContent() != null && news.getContent().getStory() != null) {
-                            Content content = news.getContent();
-                            List<Story> storyList = content.getStory();
+                @Override
+                public void run() {
 
-                            for (Story story : storyList) {
+                    Gson gson = new Gson();
+                    News news = gson.fromJson(newsJson, News.class);
 
-                                if (story.getTitle() != null && story.getPublished() != null && story.getRessort() != null &&
-                                        story.getBody() != null && !story.getTitle().isEmpty() && !story.getPublished().isEmpty() &&
-                                        !story.getBody().isEmpty() && !story.getRessort().isEmpty()) {
+                    if (news.getSuccess().equals("1") && news.getContent() != null && news.getContent().getStory() != null) {
+                        Content content = news.getContent();
+                        List<Story> storyList = content.getStory();
 
-                                    LinearLayout placeHolder = new LinearLayout(view.findViewById(R.id.layoutDashboard).getContext());
-                                    inflater.inflate(R.layout.news_view, placeHolder);
-                                    ((LinearLayout) view.findViewById(R.id.layoutDashboard)).addView(placeHolder);
+                        for (Story story : storyList) {
 
-                                    TextView txtNewsImgCaption = (TextView) placeHolder.findViewById(R.id.txtNewsImgCaption);
-                                    ImageView imgNews = (ImageView) placeHolder.findViewById(R.id.imgNews);
+                            if (story.getTitle() != null && story.getPublished() != null && story.getRessort() != null &&
+                                    story.getBody() != null && !story.getTitle().isEmpty() && !story.getPublished().isEmpty() &&
+                                    !story.getBody().isEmpty() && !story.getRessort().isEmpty()) {
 
-                                    if (story.getMedia() != null && story.getMedia().getImage() != null) {
+                                LinearLayout placeHolder = new LinearLayout(view.findViewById(R.id.layoutDashboard).getContext());
+                                inflater.inflate(R.layout.news_view, placeHolder);
+                                ((LinearLayout) view.findViewById(R.id.layoutDashboard)).addView(placeHolder);
 
-                                        List<Image> imageList = story.getMedia().getImage();
+                                TextView txtNewsImgCaption = (TextView) placeHolder.findViewById(R.id.txtNewsImgCaption);
+                                ImageView imgNews = (ImageView) placeHolder.findViewById(R.id.imgNews);
 
+                                if (story.getMedia() != null && story.getMedia().getImage() != null) {
+
+                                    List<Image> imageList = story.getMedia().getImage();
+                                    if (!imageList.isEmpty()) {
                                         for (Image image : imageList) {
 
                                             if (image.getUrl() != null && image.getCaption() != null && !image.getUrl().isEmpty() &&
@@ -76,7 +101,7 @@ public class NewsHandler {
                                                 txtNewsImgCaption.setVisibility(View.VISIBLE);
                                                 imgNews.setVisibility(View.VISIBLE);
 
-                                                new DownloadImageTask(imgNews).execute(image.getUrl());
+                                                new DownloadImageTask(imgNews, false).execute(image.getUrl());
 
                                                 String caption = image.getCaption();
 
@@ -89,65 +114,61 @@ public class NewsHandler {
                                                 imgNews.setVisibility(View.GONE);
                                             }
                                         }
-
                                     } else {
                                         txtNewsImgCaption.setVisibility(View.GONE);
                                         imgNews.setVisibility(View.GONE);
                                     }
 
-                                    TextView txtNewsSubHeading = (TextView) placeHolder.findViewById(R.id.txtNewsSubheading);
-                                    TextView txtNewsBody = (TextView) placeHolder.findViewById(R.id.txtNewsBody);
-
-                                    txtNewsSubHeading.setText(story.getTitle());
-                                    String published = story.getPublished();
-                                    txtNewsBody.setText(story.getRessort() + " vom: " + published.substring(0, published.indexOf("T")));
-
-                                    final Story clickedStory = story;
-
-                                    placeHolder.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                            if (activity instanceof FragmentChanger) {
-
-                                                mSelectedStory = clickedStory;
-
-                                                FragmentChanger changer = (FragmentChanger) activity;
-                                                changer.changeFragment(MainActivity.FragmentName.NEWS);
-
-                                            } else {
-                                                Log.e("Error", "Can't bind onClickListener for reading News");
-                                            }
-
-                                        }
-
-                                    });
+                                } else {
+                                    txtNewsImgCaption.setVisibility(View.GONE);
+                                    imgNews.setVisibility(View.GONE);
                                 }
 
+                                TextView txtNewsSubHeading = (TextView) placeHolder.findViewById(R.id.txtNewsSubheading);
+                                TextView txtNewsBody = (TextView) placeHolder.findViewById(R.id.txtNewsBody);
+
+                                txtNewsSubHeading.setText(story.getTitle());
+                                String published = story.getPublished();
+                                txtNewsBody.setText(story.getRessort() + " vom: " + published.substring(0, published.indexOf("T")));
+
+                                final Story clickedStory = story;
+
+                                placeHolder.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        if (activity instanceof FragmentChanger) {
+
+                                            mSelectedStory = clickedStory;
+
+                                            FragmentChanger changer = (FragmentChanger) activity;
+                                            changer.changeFragment(MainActivity.FragmentName.NEWS);
+
+                                        } else {
+                                            Log.e("Error", "Can't bind onClickListener for reading News");
+                                        }
+
+                                    }
+
+                                });
                             }
-                        } else {
-                            showError(view, inflater, activity);
+
                         }
-                    }
-
-                });
-            } else {
-
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                    } else {
                         showError(view, inflater, activity);
                     }
-                });
+                }
 
-            }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            });
+        } else {
+
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showError(view, inflater, activity);
+                }
+            });
         }
-
-        mTaskComplete = true;
     }
 
     private static void showError(final View view, final LayoutInflater inflater, final Activity activity){
@@ -159,6 +180,9 @@ public class NewsHandler {
         TextView txtNewsSubHeading = (TextView) view.findViewById(R.id.txtNewsSubheading);
         TextView txtNewsBody = (TextView) view.findViewById(R.id.txtNewsBody);
         txtNewsImgCaption.setVisibility(View.GONE);
+        TextView txtInfo = (TextView) placeHolder.findViewById(R.id.txtInfo);
+
+        txtInfo.setVisibility(View.GONE);
         imgNews.setVisibility(View.GONE);
         txtNewsSubHeading.setText("Ooops!");
         txtNewsBody.setText("Leider konnten keine Nachrichten heruntergeladen werden.");

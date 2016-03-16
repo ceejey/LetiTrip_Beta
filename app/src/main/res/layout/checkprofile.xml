@@ -6,24 +6,24 @@
 
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/scrollView2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:fillViewport="false"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
         android:layout_alignParentBottom="true">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="20dp"
             android:weightSum="1"
             android:focusable="false"
             android:contextClickable="false"
@@ -43,14 +43,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
                 android:text="Name"
                 android:id="@+id/textView2"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="12dp" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_marginBottom="12dp"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif"
                 android:id="@+id/vtxtFullName" />
             <View
                 android:layout_width="match_parent"
@@ -60,36 +65,44 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Geschlecht"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
                 android:id="@+id/textView3"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="12dp" />
 
             <RadioGroup
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="1"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="12dp">
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="weiblich"
                     android:id="@+id/rdFemale"
-                    android:checked="false"
+                    android:checked="true"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
                     android:layout_weight="0.29"
                     android:layout_marginTop="0dp"
                     android:layout_marginLeft="40dp"
-                    android:textColor="#000000" />
+                    android:enabled="true"
+                    android:buttonTint="#ff5c6bc0" />
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="männlich"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
                     android:id="@+id/rdMale"
                     android:checked="false"
                     android:layout_weight="0.29"
                     android:layout_marginLeft="30dp"
-                    android:textColor="#000000" />
+                    android:buttonTint="#ff5c6bc0" />
 
             </RadioGroup>
             <View
@@ -100,7 +113,8 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:weightSum="1">
 
                 <LinearLayout
@@ -113,7 +127,8 @@
                         android:layout_height="wrap_content"
                         android:text="Alter"
                         android:id="@+id/textView6"
-                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
                         android:layout_weight="1" />
 
                     <TextView
@@ -121,7 +136,8 @@
                         android:layout_height="wrap_content"
                         android:text="Gewicht in kg"
                         android:id="@+id/textView5"
-                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
                         android:layout_weight="1" />
 
                     <TextView
@@ -129,7 +145,8 @@
                         android:layout_height="wrap_content"
                         android:text="Größe in cm"
                         android:id="@+id/textView7"
-                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
                         android:layout_weight="1" />
                 </LinearLayout>
 
@@ -144,25 +161,34 @@
                         android:layout_height="wrap_content"
                         android:inputType="numberSigned"
                         android:id="@+id/vtxtAge"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
                         android:textColor="#000000"
                         android:ems="10"
-                        android:layout_weight="0.3333" />
+                        android:layout_weight="0.3333"
+                        android:textAlignment="center" />
 
                     <EditText
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/etxtWeight"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
                         android:textColor="#000000"
                         android:inputType="numberSigned"
-                        android:layout_weight="0.333" />
+                        android:layout_weight="0.333"
+                        android:textAlignment="center" />
 
                     <EditText
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:inputType="numberSigned"
                         android:id="@+id/vtxtHeight"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
                         android:textColor="#000000"
-                        android:layout_weight="0.3333" />
+                        android:layout_weight="0.3333"
+                        android:textAlignment="center" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -175,12 +201,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="12dp"
                 android:text="Stadt"
                 android:id="@+id/textView31" />
 
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:textColor="#000000"
                 android:id="@+id/etxtCity"
                 android:layout_gravity="center_horizontal" />
 
@@ -189,7 +221,10 @@
                 android:layout_height="wrap_content"
                 android:text="Fahrrad"
                 android:id="@+id/cbFahrrad"
-                android:checked="false" />
+                android:checked="false"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:buttonTint="#ff5c6bc0" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -197,13 +232,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:weightSum="1"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:id="@+id/ltfahrradTyp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Fahrradtyp"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
                     android:id="@+id/vtxtFahrradtyp" />
 
                 <Spinner
@@ -224,6 +261,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
                     android:text="Reifentyp"
                     android:id="@+id/vtxtReifentyp" />
 
@@ -252,6 +291,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginBottom="12dp"
                 android:background="@android:color/darker_gray"/>
 
         </LinearLayout>

@@ -34,8 +34,10 @@ public class MoveDiagramm extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         createDataSet();
         BarChart Chart = new BarChart(getActivity());
-        BarDataSet dataset = new BarDataSet(mMoveEntries, "# of Calls");
+        BarDataSet dataset = new BarDataSet(mMoveEntries, "Schritte");
+        dataset.setColor(0xFF5c6bc0);
         BarData data = new BarData(mlabels, dataset);
+        Chart.setDescription("");
         Chart.setData(data);
 
         return Chart;

@@ -8,15 +8,18 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_gravity="center_vertical"
-        android:gravity="center"
-        android:layout_margin="5dp">
+        android:gravity="center">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Die App verbindet sich nun zu Fitbit. Dabei werden Profileigenschaften überschrieben."
+            android:layout_marginBottom="12dp"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:text="Die App verbindet sich nun zu Fitbit. Dabei werden Profileigenschaften überschrieben!"
             android:id="@+id/textView4" />
         <View
             android:layout_width="match_parent"
@@ -29,7 +32,8 @@
             android:layout_height="wrap_content"
             android:text="OK"
             android:id="@+id/startOauthButton"
-            style="@style/Base.Widget.AppCompat.Button.Borderless" />
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:textColor="#ff5c6bc0" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

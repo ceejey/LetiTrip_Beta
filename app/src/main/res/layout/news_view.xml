@@ -66,6 +66,16 @@
                 android:fontFamily="sans-serif"
                 android:text="Body"
                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Weiterlesen"
+                android:textSize="14sp"
+                android:textColor="#5c6bc0" />
         </LinearLayout>
 
     </LinearLayout>

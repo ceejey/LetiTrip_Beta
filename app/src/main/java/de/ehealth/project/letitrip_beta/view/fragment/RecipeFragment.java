@@ -85,7 +85,7 @@ public class RecipeFragment extends Fragment {
                     TextView txtRecipeSubHeading = (TextView) placeHolder.findViewById(R.id.txtRecipeSubheading);
                     TextView txtRecipeBody = (TextView) placeHolder.findViewById(R.id.txtRecipeBody);
 
-                    new DownloadImageTask(imgRecipe).execute(recipe.getPic());
+                    new DownloadImageTask(imgRecipe, true).execute(recipe.getPic());
                     txtRecipeSubHeading.setText(recipe.getName());
                     String type = recipe.getType();
                     if (type.equals("breakfast"))

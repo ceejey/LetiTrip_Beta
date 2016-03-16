@@ -3,6 +3,9 @@ package de.ehealth.project.letitrip_beta.handler.gpshandler;
 
 import de.ehealth.project.letitrip_beta.handler.database.GPSDatabase;
 
+/**
+ * the databasehandler singleton
+ */
 public class GPSDatabaseHandler {
     private static final GPSDatabaseHandler holder = new GPSDatabaseHandler();
     private GPSDatabase myDB = null;

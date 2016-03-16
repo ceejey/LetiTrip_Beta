@@ -9,29 +9,6 @@ import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
 public class Forecast implements JSONReceiver{
-/*
-    private String date;
-    private int high;
-    private int low;
-    private String description;
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getLow() {
-        return low;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public int getHigh() {
-        return high;
-    }
-*/
-
     @SerializedName("code")
     @Expose
     private String code;

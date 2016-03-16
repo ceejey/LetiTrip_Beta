@@ -77,22 +77,4 @@ public class Wind implements JSONReceiver {
         direction = data.optInt("direction");
         speed = data.optInt("speed");
     }
-
-    /*
-    private int direction;
-    private int speed;
-
-    @Override
-    public void receive(JSONObject data) {
-        direction = data.optInt("direction");
-        speed = data.optInt("speed");
-    }
-
-    public int getDirection() {
-        return direction;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }*/
 }

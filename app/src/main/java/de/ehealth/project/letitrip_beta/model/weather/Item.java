@@ -191,12 +191,8 @@ public class Item implements JSONReceiver {
 
 
         JSONArray arr = data.optJSONArray("forecast");
-        //forecast = new Forecast[arr.length()];
-
         for (int i = 0; i < arr.length(); i++){
             try {
-                //forecast[i] = new Forecast();
-                //forecast[i].receive(arr.getJSONObject(i));
                 Forecast f = new Forecast();
                 f.receive(arr.getJSONObject(i));
                 forecast.add(f);
@@ -204,63 +200,7 @@ public class Item implements JSONReceiver {
                 e.printStackTrace();
             }
         }
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-    private Condition condition;
-    private Forecast[] forecast;
-
-    /**
-     *
-     * @param ID the future day [0..4]
-     * @return a model class where weather data for this specific date are stored
-     */
-  /*
-    public Forecast getForecast(int ID) {
-        return forecast[ID];
-    }
-
-
-    public Condition getCondition() {
-        return condition;
-    }
-
-    @Override
-    public void receive(JSONObject data) {
-        condition = new Condition();
-        condition.receive(data.optJSONObject("condition"));
-
-
-        JSONArray arr = data.optJSONArray("forecast");
-        forecast = new Forecast[arr.length()];
-
-        for (int i = 0; i < forecast.length; i++){
-            try {
-                forecast[i] = new Forecast();
-                forecast[i].receive(arr.getJSONObject(i));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }*/
 }
 
 

@@ -182,7 +182,7 @@ public class SessionDetail extends Fragment {
                 average+=last5Pulses.get(i);
             }
             average/=last5Pulses.size();
-            //20% higher pulse than the average of the previous 3 pulses
+            //20% higher pulse than the average of the previous 5 pulses
             //OR
             //30 seconds passed since the pulse got displayed the last time
             float difference = Math.abs(((temp / ((float) average / 100)))-100);

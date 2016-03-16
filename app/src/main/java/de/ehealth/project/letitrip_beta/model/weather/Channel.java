@@ -260,32 +260,4 @@ public class Channel implements JSONReceiver {
         atmosphere = new Atmosphere();
         atmosphere.receive(data.optJSONObject("atmosphere"));
     }
-
-/*
-    private Atmosphere atmosphere;
-
-    private Item item;
-    private Units units;
-    private Location location;
-    private Wind wind;
-
-    public Atmosphere getAtmosphere() {
-        return atmosphere;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public Units getUnits() {
-        return units;
-    }
-
-    public Location getLocation() {return location;}
-
-    public Wind getWind() {
-        return wind;
-    }
-*/
-
 }

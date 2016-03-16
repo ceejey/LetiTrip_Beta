@@ -78,6 +78,9 @@ public class WeatherDatabase extends SQLiteOpenHelper {
         return res;
     }
 
+    /**
+     * debug method. prints the whole database to log
+     */
     public void outPutAll(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);

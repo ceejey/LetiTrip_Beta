@@ -92,7 +92,6 @@ public class GPSService extends Service implements PolarCallback {
         } catch (IllegalArgumentException | SecurityException e) {
             e.printStackTrace();
         }
-        Log.w("service", "DESTROYED");
         activeRecordingID = -1;
         speedMperS = 0;
         kcaloriesBurned = 0;
@@ -121,13 +120,11 @@ public class GPSService extends Service implements PolarCallback {
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.w("service", "onbind");
         return mBinder;
     }
 
     @Override
     public void onCreate() {
-        Log.w("service", "created");
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         polar = new PolarHandler(getApplicationContext(), this);
@@ -145,7 +142,6 @@ public class GPSService extends Service implements PolarCallback {
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         stopSelf();
-        Log.w("gpsservice", "task removed");
     }
 
     /**
@@ -157,8 +153,6 @@ public class GPSService extends Service implements PolarCallback {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.w("service", "started");
-
         //app was swiped away, android deleted everything already. stop the service too
         if (GPSDatabaseHandler.getInstance().getData() == null){
             stopSelf();
@@ -266,11 +260,10 @@ public class GPSService extends Service implements PolarCallback {
             @Override
             public void onLocationChanged(Location l) {
                 if ((l != null) && (status != Status.PAUSED) && (!Double.isNaN(l.getLongitude())) && (!Double.isNaN(l.getLatitude())) && (!Double.isNaN(l.getAltitude()))) {
-                    Log.w("service", "count:" + GPSDatabaseHandler.getInstance().getData().getSession(activeRecordingID).getCount());
                     //only insert data when accuaracy is good enough
                     if (l.getAccuracy() < 25){
 
-                        Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
+                        //Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
                         if((l.getSpeed() >= 1f) || (firstPoint)) { //take the first point and points faster than 1 meter per second
                             firstPoint = false;
 
@@ -329,7 +322,7 @@ public class GPSService extends Service implements PolarCallback {
                             }
 
                             lastID = currentID;
-
+                            /*
                             Log.w("session","used paras\n"+
                                 "weight"+weight+"\n"+
                                 "heigth"+height+"\n"+
@@ -343,10 +336,10 @@ public class GPSService extends Service implements PolarCallback {
                                 "humidity"+ ((float)humidity)/100+"\n"+
                                 "watt: "+watt+"\n"+
                                 "calories:"+kcaloriesBurned+"\n"+
-                                "passedTime:"+passedTime);
+                                "passedTime:"+passedTime);*/
 
                             boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate,l.getSpeed(),watt, kcaloriesBurned);
-                            if (ins) {
+                            if (ins) { //insertion successful?
                                 sendBroadcast("GPSService", 5);
                                 totalDistance = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(activeRecordingID,-1);
                             } else {
@@ -356,19 +349,18 @@ public class GPSService extends Service implements PolarCallback {
                             //check this part after first data set is inserted to create an table entry at the SessionOverview fragment
                             if (status != Status.TRACKINGSTARTED) {
                                 createNotification();
-                                Log.w("gpsservice", "tracking started at id:" + activeRecordingID);
                                 status = Status.TRACKINGSTARTED;
                                 startTime = new Date().getTime();
                                 sendBroadcast("GPSService", 4);
                             }
                         } else {
-                            Log.w("gpsservice","speed too low. probably standing");
+                            //Log.w("gpsservice","speed too low. probably standing");
                         }
                     } else {
-                        Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
+                        //Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
                         sendBroadcast("GPSService",3);
                     }
-                } else Log.w("gpsservice","paused or no location");
+                } //else Log.w("gpsservice","paused or no location");
             }
 
             public void onProviderDisabled(String provider) {}
@@ -376,7 +368,7 @@ public class GPSService extends Service implements PolarCallback {
             public void onStatusChanged(String provider, int status, Bundle extras) {}
         };
         try {
-                                                   //TODO change sensitivity in settings?
+            //start location updates
             locationManager.requestLocationUpdates("gps", 2000, 1, locationListener);
             status = Status.SEARCHINGGPS;
             speedMperS = -1;

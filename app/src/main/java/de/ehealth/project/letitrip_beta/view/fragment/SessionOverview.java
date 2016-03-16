@@ -52,7 +52,7 @@ import de.ehealth.project.letitrip_beta.view.adapter.RunSelectorDialog;
  * Broadcastlist:
  * message      value   meaning
  * GPSService   1       GPS not enabled
- * GPSService   2       Tracking stopped; Main connected to gps
+ * GPSService   2       Tracking stopped
  * GPSService   3       GPS accuracy too low
  * GPSService   4       Tracking initially started
  * GPSService   5       new position inserted
@@ -63,7 +63,6 @@ public class SessionOverview extends Fragment {
 
     private FragmentChanger mListener;
     private TextView gpsStatusTextView;
-
     private Button btnStartSession;
     private ListView sessionOverviewListView;
     private ImageView imgRun, imgBike;

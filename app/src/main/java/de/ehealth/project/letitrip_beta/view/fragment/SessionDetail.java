@@ -370,10 +370,10 @@ public class SessionDetail extends Fragment {
         updateInfoBox();
         Date lastPulseShown = null;
         Date temp = null;
-        int count=0;
+        int count = 0;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
         while (res.moveToNext()){
-            if (count==0){
+            if (count == 0){
                 try {
                     lastPulseShown = dateFormat.parse(res.getString(2));
                 } catch (ParseException e) {
@@ -381,7 +381,7 @@ public class SessionDetail extends Fragment {
                 }
             }
             //show pulse marker on map every 30 seconds
-            if ((count > 3) && (res.getInt(7)!=0)){
+            if ((count > 3) && (res.getInt(7) != 0)){
                 try {
                     temp = dateFormat.parse(res.getString(2));
                 } catch (ParseException e) {
@@ -424,6 +424,15 @@ public class SessionDetail extends Fragment {
                     .title("End")
                     .position(new LatLng(res.getDouble(3), res.getDouble(4))
                     ));
+        } else { //add a pulse marker immediately
+            res.moveToLast();
+            if (res.getInt(7) != 0) {
+                mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(res.getDouble(3), res.getDouble(4)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(mapPulseToColor(res.getInt(7), false)))
+                                .title("Puls: " + res.getInt(7))
+                );
+            }
         }
         res.close();
 

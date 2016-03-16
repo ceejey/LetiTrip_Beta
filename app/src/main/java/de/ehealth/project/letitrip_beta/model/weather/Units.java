@@ -94,21 +94,6 @@ public class Units implements JSONReceiver {
     public void setTemperature(String temperature) {
         this.temperature = temperature;
     }
-    /*
-    private String temperature;
-    private String speed;
-
-    private String pressure;
-
-    public String getPressure() {
-        return pressure;
-    }
-    public String getTemperature() {
-        return temperature;
-    }
-    public String getSpeed() {
-        return speed;
-    }*/
 
     @Override
     public void receive(JSONObject data) {

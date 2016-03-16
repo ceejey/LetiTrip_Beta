@@ -17,7 +17,7 @@ public class RunWattCalculator {
         return weightWatts + uphillWatts;
     }
 
-    //pastTime in Seconds
+    //passed time in seconds
     public double calculateUphillWatts(Float mass, Float heavyAcceleration, Float elevation, Float pastTime){
         return mass * heavyAcceleration * (elevation / pastTime);
     }

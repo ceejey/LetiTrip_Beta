@@ -2,7 +2,6 @@ package de.ehealth.project.letitrip_beta.handler.weather;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +47,7 @@ public class WeatherService extends AsyncTask<String, Void, String> {
 
         //build the encoded URL
         encodedURL = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json", Uri.encode(yqlQuery));
-        Log.w("URL:",encodedURL);
+        //Log.w("URL:",encodedURL);
 
             try {
                 URLConnection connection = new URL(encodedURL).openConnection();
@@ -78,6 +77,7 @@ public class WeatherService extends AsyncTask<String, Void, String> {
         }
 
         try {
+            //convert the string to a jsonObject
             JSONObject data = new JSONObject(json);
             JSONObject queryResults = data.optJSONObject("query");
 

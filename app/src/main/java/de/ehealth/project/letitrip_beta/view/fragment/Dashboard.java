@@ -79,7 +79,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
                     public void run() {
                         NewsHandler.fillNewsFeed(view, inflater, getActivity());
 
-
                         while (true) {
                             try {
                                 Thread.sleep(100);
@@ -126,6 +125,9 @@ public class Dashboard extends Fragment implements WeatherCallback {
         thread.start();
     }
 
+    /**
+     * show the activity score of the user (only if a fitbit account is connected)
+     */
     public void showActivityScoreView(){
         if (UserSettings.getmActiveUser().getmFitBitUserID() != ""){ //only show the activity score when a fitbit account is connected
             LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
@@ -146,9 +148,11 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
     }
 
+    /**
+     * shows a suggested recipe on the dashboard
+     */
     public void showRecipeSuggestion(){
         if (getView() != null) {
-
 
             Recipe bestMatchRecipe = new Recipe();
             bestMatchRecipe.setKcal("0");
@@ -252,6 +256,9 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
     }
 
+    /**
+     * set an entry if the profile data is incomplete
+     */
     public void showIncompleteProfileView(){
         if (getView() != null){
             if ((UserSettings.getmActiveUser().getmAge()=="") ||
@@ -276,6 +283,9 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
     }
 
+    /**
+     * starts a request to the yahoo weather service
+     */
     public void refreshWeather(){
         //only check weather if no weather information are in the database
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
@@ -290,6 +300,10 @@ public class Dashboard extends Fragment implements WeatherCallback {
         mTaskComplete = true;
     }
 
+    /**
+     * sets an entry with the current weather information. if no current weather data is available
+     * a REST request is started
+     */
     public void showWeather(Cursor res){
         if (getView() != null) { //if the fragment gets changed before the task complete, the view becomes a null object reference.
 
@@ -317,6 +331,9 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
     }
 
+    /**
+     * sets an entry if a session is currently active
+     */
     public void setSessionOnDashBoard(){
         if ((((MainActivity)getActivity()).getGps()) != null){
             if ((((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.TRACKINGSTARTED) || (((MainActivity)getActivity()).getGps().getStatus() == GPSService.Status.PAUSED)){
@@ -337,7 +354,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                         mListener.changeFragment(MainActivity.FragmentName.SESSION);
                     }
                 });
-                mInflater.inflate(R.layout.gps_view, gpsPlaceHolder);
+                mInflater.inflate(R.layout.session_view, gpsPlaceHolder);
                 ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(gpsPlaceHolder,1);
                 TextView txtHeading = (TextView) gpsPlaceHolder.findViewById(R.id.txtHeading);
                 ImageView imgType = (ImageView) gpsPlaceHolder.findViewById(R.id.imgType);
@@ -358,6 +375,10 @@ public class Dashboard extends Fragment implements WeatherCallback {
         }
     }
 
+    /**
+     * callback function of the weather service
+     * @param channel containing the weather data
+     */
     public void success(Channel channel) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
         Date date = new Date();
@@ -376,6 +397,10 @@ public class Dashboard extends Fragment implements WeatherCallback {
         res.close();
     }
 
+    /**
+     * callback function of the weather service
+     * @param exc contains the error message
+     */
     public void failure(Exception exc) {
         if (getView() != null) { //if the fragment gets changed before the task complete, the view becomes a null object reference.
             LinearLayout placeHolder = new LinearLayout(getView().findViewById(R.id.scrollViewDashboard).getContext());
@@ -435,7 +460,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
         @Override
         public void onReceive(Context context, Intent intent) {
             int message = intent.getIntExtra("MainActivity", -1);
-            if (message == 1){ //MainActivity connected to gps;tacking started/stopped
+            if (message == 1){ //MainActivity connected to gps
                 setSessionOnDashBoard();
             }
         }

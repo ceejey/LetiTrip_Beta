@@ -99,21 +99,3 @@ public class Atmosphere implements JSONReceiver {
         humidity = data.optInt("humidity");
     }
 }
-
-/*
-public class Atmosphere implements JSONReceiver {
-
-    private double pressure;
-    private int humidity;
-
-    public int getHumidity() {
-        return humidity;
-    }
-
-    public double getPressure() {
-        return pressure;
-    }
-
-
-}
-*/

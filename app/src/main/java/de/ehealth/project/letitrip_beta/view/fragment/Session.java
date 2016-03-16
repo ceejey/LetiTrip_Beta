@@ -152,7 +152,6 @@ public class Session extends Fragment {
         txtlaufRichtung.setText(GPSDatabaseHandler.getInstance().getData().getDirectionLetter(gps.getWalkDirection()));
         imgWalkDir.setRotation(gps.getWalkDirection());
         txtgeschw.setText(df.format(gps.getSpeedMperS()*3.6) + " km/h");
-        //txtgeschwSession.setText(df.format((3.6 * GPSDatabaseHandler.getInstance().getData().getSpeed((((MainActivity) (getActivity())).getGps().getActiveRecordingID()), -1)))+ " km/h");
 
         double seconds = (TimeUnit.MILLISECONDS.toSeconds(new Date().getTime()-((MainActivity)getActivity()).getGps().getStartTime()));
         double avgKmH = ((((float)gps.getTotalDistance()/seconds))*3.6);

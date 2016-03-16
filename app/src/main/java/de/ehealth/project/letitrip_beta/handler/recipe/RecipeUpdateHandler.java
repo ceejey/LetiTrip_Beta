@@ -43,7 +43,6 @@ public class RecipeUpdateHandler {
             final String recipeJson = new UpdateRecipeDatabase().execute().get();
             if(!recipeJson.isEmpty()) {
 
-                Date date = new Date();
                 DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
                 // Get the date today using Calendar object.
                 Date today = Calendar.getInstance().getTime();

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -142,13 +141,11 @@ public class GPSDatabase extends SQLiteOpenHelper {
         } else {
             res = db.rawQuery("select max(" + COLUMN0 + "),"+COLUMN3+" from " + TABLE_NAME + " where "+COLUMN1 + " = "+id, null);
         }
-        Log.w("gpsDB","getlastIDCount:"+res.getCount());
         if (res != null) if (res.getCount() > 0){
             res.moveToFirst();
             if (res.getDouble(1) == 0){
                 return -1;
             }
-            Log.w("gpsDB", "bla:" + res.getDouble(1));
             int result = res.getInt(0);
             res.close();
             return result;
@@ -305,7 +302,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
     }
 
 
-    //http://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude-what-am-i-doi
+    //source: http://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude-what-am-i-doi
     /*
      * Calculate distance between two points in latitude and longitude taking
      * into account height difference. If you are not interested in height
@@ -350,7 +347,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
         int outputmeters=0;
         if (res.getCount()==0) return -1;
         while (res.moveToNext()){
-            Log.w("database", res.getString(1) + "-->" + res.getInt(0));
             try {
                 convert=dateFormat.parse(res.getString(1));
             } catch (ParseException e) {
@@ -358,7 +354,6 @@ public class GPSDatabase extends SQLiteOpenHelper {
             }
             dateFinal = dateFormat.format(convert);
 
-            //Log.w("database",date+"<->"+dateFinal+"-->?"+(date.equals(dateFinal)));
             //if the input date = iterated date, add the distance of that run to the output
             if (date.equals(dateFinal)) {
                 outputmeters += (int) getWalkDistance(res.getInt(0),-1);
@@ -399,7 +394,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
      * pass id1=x and id2=y to get the average speed between those points
      * @param ID1 first point or session ID
      * @param ID2 second point or -1
-     * @return speed in !!!meters per second!!! from the track in between those two points (multiply with 3.6 to get km/h)/the session
+     * @return speed in meters per second from the track in between those two points (multiply with 3.6 to get km/h)/the session
      */
     public double getSpeed(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();

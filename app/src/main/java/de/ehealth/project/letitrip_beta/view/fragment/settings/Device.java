@@ -107,11 +107,7 @@ public class Device extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (resultCode){
-
-            case 0: //show data
-                updateActivity(MainActivity.FragmentName.FITBIT_TRACKER_DATA);
-                break;
-            case 1: //delete fitbit account
+            case 0: //delete fitbit account
                 if(mSelectedDevice == 0){
                     if(UserSettings.getmActiveUser().getmFitBitUserID().equals("")){
                         itemList.clear();
@@ -131,6 +127,10 @@ public class Device extends Fragment {
                     itemList.remove(1);
                     updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                 }
+                break;
+
+            case 1: //show data
+                updateActivity(MainActivity.FragmentName.FITBIT_TRACKER_DATA);
                 break;
 
             default:

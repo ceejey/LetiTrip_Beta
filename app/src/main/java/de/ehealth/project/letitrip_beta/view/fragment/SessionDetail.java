@@ -381,14 +381,14 @@ public class SessionDetail extends Fragment {
                 }
             }
             //show pulse marker on map every 30 seconds
-            if ((count>3) && (res.getInt(7)!=0)){
+            if ((count > 3) && (res.getInt(7)!=0)){
                 try {
                     temp = dateFormat.parse(res.getString(2));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                int timePassedLastPulseShown = (int)(((temp.getTime()-lastPulseShown.getTime())/1000));
-                if (timePassedLastPulseShown>30){
+                int timePassedLastPulseShown = (int)((temp.getTime()-lastPulseShown.getTime())/1000);
+                if (timePassedLastPulseShown > 30){
                     mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(res.getDouble(3), res.getDouble(4)))
                                     .icon(BitmapDescriptorFactory.defaultMarker(mapPulseToColor(res.getInt(7),false)))

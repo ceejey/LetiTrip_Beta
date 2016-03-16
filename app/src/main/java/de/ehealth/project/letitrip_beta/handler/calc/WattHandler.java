@@ -1,7 +1,5 @@
 package de.ehealth.project.letitrip_beta.handler.calc;
 
-import android.util.Log;
-
 /**
  * Created by eHealth on 08.12.2015.
  */
@@ -70,7 +68,6 @@ public class WattHandler {
         double kJMech = (pMech/1000) * passedTime;
         double kJMet = kJMech / 0.22F;
         double kcal = kJMet * 0.239006F;
-        Log.d("Test", "Nach Formel: " + kcal);
         return kcal;
     }
 }

@@ -32,7 +32,7 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class Session extends Fragment {
 
     private FragmentChanger mListener;
-    private TextView txtpuls, txtwatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtdistanz, txtgeschwSession, txtzeit, txtWindDirection, txtCalories;
+    private TextView txtpuls, txtWatt, txtgeschw, txtlaufRichtung, txttemp, txtwind, txtDistanz, txtGeschwSession, txtzeit, txtWindDirection, txtCalories;
     private Button showOnMap;
     private ImageView imgType, imgWalkDir, imgWindDir;
     private DecimalFormat df;
@@ -73,14 +73,14 @@ public class Session extends Fragment {
 
         // Inflate the layout for this fragment
         txtpuls = (TextView) view.findViewById(R.id.textView9);
-        txtwatt = (TextView) view.findViewById(R.id.textView10);
+        txtWatt = (TextView) view.findViewById(R.id.textView10);
         txtgeschw = (TextView) view.findViewById(R.id.textView11);
         txtlaufRichtung = (TextView) view.findViewById(R.id.textView18);
         txttemp = (TextView) view.findViewById(R.id.textView12);
         txtwind = (TextView) view.findViewById(R.id.textView13);
         txtWindDirection = (TextView) view.findViewById(R.id.textView30);
-        txtdistanz = (TextView) view.findViewById(R.id.textView14);
-        txtgeschwSession = (TextView) view.findViewById(R.id.textView15);
+        txtDistanz = (TextView) view.findViewById(R.id.textView14);
+        txtGeschwSession = (TextView) view.findViewById(R.id.textView15);
         txtzeit = (TextView) view.findViewById(R.id.textView16);
         imgType = (ImageView) view.findViewById(R.id.imgType);
         showOnMap = (Button) view.findViewById(R.id.button2);
@@ -126,9 +126,9 @@ public class Session extends Fragment {
         imgWindDir.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
 
         if (((MainActivity) getActivity()).getGps().getRecordingAsBicycle() == 1){
-            imgType.setImageResource(R.drawable.ic_directions_bike_white_48dp);
+            imgType.setImageResource(R.drawable.ic_directions_bike_white_24dp);
         } else {
-            imgType.setImageResource(R.drawable.ic_directions_run_white_48dp);
+            imgType.setImageResource(R.drawable.ic_directions_run_white_24dp);
         }
 
         if ((((MainActivity) getActivity()).getGps().getTemperature()) != -300){
@@ -155,9 +155,9 @@ public class Session extends Fragment {
 
         double seconds = (TimeUnit.MILLISECONDS.toSeconds(new Date().getTime()-((MainActivity)getActivity()).getGps().getStartTime()));
         double avgKmH = ((((float)gps.getTotalDistance()/seconds))*3.6);
-        txtgeschwSession.setText(df.format(avgKmH)+" km/h");
-        txtdistanz.setText(gps.getTotalDistance() + " Meter");
-        txtwatt.setText((gps.getTemperature() == -300 ? "N/A" : (gps.getWatt() < 0 ? "0" : df.format(gps.getWatt()))));
+        txtGeschwSession.setText(df.format(avgKmH) + " km/h");
+        txtDistanz.setText(gps.getTotalDistance() + " Meter");
+        txtWatt.setText((gps.getTemperature() == -300 ? "N/A" : (gps.getWatt() < 0 ? "0" : df.format(gps.getWatt()))));
         txtCalories.setText(gps.getTemperature() == -300 ? "N/A" : (gps.getKcaloriesBurned() == -1)?"N/A":df.format(gps.getKcaloriesBurned())+" kcal");
     }
 

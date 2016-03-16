@@ -171,7 +171,7 @@ public class Polar extends Fragment {
                     }
                 }
                 else{
-                    mItemList.add(new DevicesRow(1, "Polar", "NICHT GEFUNDEN!"));
+                    mItemList.add(new DevicesRow(1, "Polar", "Nicht gefunden!"));
                 }
             }
 

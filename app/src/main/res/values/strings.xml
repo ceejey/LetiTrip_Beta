@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LetiTrip_Beta</string>
+    <string name="app_name">LetiTrip</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
      <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyAp9lz6AUJDzrud7fUeFXg--bZlY2pKXg0

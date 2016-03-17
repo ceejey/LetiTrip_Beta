@@ -1,3 +1,0 @@
-@startuml
-General->RecipeUpdateHandler: updateRecipeDatabase
-@enduml

@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -220,7 +219,7 @@ public class GPSService extends Service implements PolarCallback {
             deviceList = polar.getDeviceList();
             if (deviceList.size() != 0) {
                 //connect to the stored polar device
-                for (int i=0; i < deviceList.size();i++){ //TODO muss getestet werden
+                for (int i=0; i < deviceList.size();i++){
                     if (deviceList.get(i).getName().equals(UserSettings.getmActiveUser().getmPolarDeviceID())){
                         polar.connectToPolarDevice(deviceList.get(i));
                     }

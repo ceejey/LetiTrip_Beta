@@ -397,7 +397,7 @@ public class Dashboard extends Fragment implements WeatherCallback {
                     }
                 });
                 mInflater.inflate(R.layout.session_view, gpsPlaceHolder);
-                ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(gpsPlaceHolder,1);
+                ((LinearLayout) getView().findViewById(R.id.layoutDashboard)).addView(gpsPlaceHolder);
                 TextView txtHeading = (TextView) gpsPlaceHolder.findViewById(R.id.txtHeading);
                 ImageView imgType = (ImageView) gpsPlaceHolder.findViewById(R.id.imgType);
                 imgType.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);

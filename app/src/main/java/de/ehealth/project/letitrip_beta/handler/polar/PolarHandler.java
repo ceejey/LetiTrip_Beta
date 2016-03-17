@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This class implements the bluetooth connection to the polar H6 device.
+ */
 public class PolarHandler {
 
     private PolarCallback callback;
@@ -103,11 +106,9 @@ public class PolarHandler {
 
     public boolean isBluetoothEnabled(){
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Log.d("Bluetooth Adapter", "Bluetooth is disabled");
             return false;
         }
         else{
-            Log.d("Bluetooth Adapter", "Bluetooth is enabled");
             return true;
         }
     }
@@ -133,13 +134,11 @@ public class PolarHandler {
                         if(callback != null){
                             callback.polarDiscoveryFinished();
                         }
-                        Log.d("Bluetooth Adapter", "Canceled Discovery");
                     }
                 }
             }, SCAN_PERIOD);
             mDeviceSearch = true;
             mBluetoothAdapter.startDiscovery();
-            Log.d("Bluetooth Adapter", "Started Discovery");
         }
     }
 
@@ -150,7 +149,6 @@ public class PolarHandler {
             if(callback != null){
                 callback.polarDiscoveryFinished();
             }
-            Log.d("Bluetooth Adapter", "Canceled Discovery");
         }
     }
 
@@ -192,16 +190,10 @@ public class PolarHandler {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (mDevice.getName().contains("Polar")) {
-                    Log.d("Bluetooth Device", "Found: " + mDevice.getName());
                     mDeviceFound = true;
-                    //Log.d("Bluetooth Adapter", "Canceled Discovery");
 
                     BluetoothDevice device = mDevice; //Not tested whether the list entry gets changed when the same mDevice gets changed everytime a new device gets found.
                     mDeviceList.add(device);
-                    //mBluetoothAdapter.cancelDiscovery();
-                    //mDeviceSearch = false;
-                    //if(callback != null)
-                    //    callback.polarDiscoveryFinished();
                 }
             }
         }
@@ -212,9 +204,7 @@ public class PolarHandler {
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, final int status, final int newState) {
             super.onConnectionStateChange(gatt, status, newState);
-            Log.d("Statussss", "" + status);
             if(newState == BluetoothProfile.STATE_CONNECTED){
-                Log.d("BluetoothGatt", "Connected to GATT server.");
                 if (mActivity != null){
                     mActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -233,7 +223,6 @@ public class PolarHandler {
                 }
             }
             else if(newState == BluetoothProfile.STATE_DISCONNECTED) {
-                Log.d("BluetoothGatt", "Disconnected from GATT server.");
                 if (mActivity != null){
                     mActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -249,24 +238,23 @@ public class PolarHandler {
             }
         }
 
+        /**
+         * Gets called at the very beginning of the connection, to receive the heartrate
+         * @param gatt
+         * @param status
+         */
         @Override
         public void onServicesDiscovered(final BluetoothGatt gatt, final int status) {
             List<BluetoothGattService> services = mBluetoothGatt.getServices();
             for (BluetoothGattService service : services) {
 
                 List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
-                Log.d("Services", service.toString());
                 for(BluetoothGattCharacteristic characteristic : characteristics){
-                    Log.d("Characteristic", "" + characteristic.getUuid());
 
                     if(mReceiveHeartRate) {
 
                         if (characteristic.getUuid().toString().equals(HEART_RATE_UUID)) {
                             boolean result = mBluetoothGatt.setCharacteristicNotification(characteristic, true);
-                            Log.d("Characteristic", "Result: " + result);
-                            for(BluetoothGattDescriptor descriptor : characteristic.getDescriptors()){
-                                Log.d("Descriptor", "" + descriptor.getUuid());
-                            }
                             BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
                                     UUID.fromString(HEART_RATE_DESCRIPTOR_UUID));
                             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
@@ -283,16 +271,19 @@ public class PolarHandler {
             }
         }
 
+        /**
+         * This method receives the heartrate.
+         * @param gatt
+         * @param characteristic
+         */
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            //Log.d("Characteristic read", "" + characteristic.getUuid());
             if(characteristic.getUuid().toString().contains("2a37")){
                 int flag = characteristic.getProperties();
                 int format = -1;
                 if ((flag & 0x01) == 0) {
                     format = BluetoothGattCharacteristic.FORMAT_UINT8;
                     final int heartRate = characteristic.getIntValue(format, 1);
-                    //Log.d("Receive", String.format("Received heart rate: %d", heartRate));
                     if (mActivity != null){
                         mActivity.runOnUiThread(new Runnable() {
                             @Override
@@ -303,9 +294,8 @@ public class PolarHandler {
                         });
                     }
                     mHeartRate = heartRate;
-                    //Log.d("Polar", "Received Heartrate: " + mHeartRate);
 
-                }//else Log.d("Receive", "Unsupported format.");
+                }
             }
         }
     };

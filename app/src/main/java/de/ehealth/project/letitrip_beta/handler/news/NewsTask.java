@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * This asynctask downloads news from our server with given branche.
+ */
 public class NewsTask extends AsyncTask<Void, Void, String> {
 
     private String mBranche = "";
@@ -45,7 +48,6 @@ public class NewsTask extends AsyncTask<Void, Void, String> {
             in.close();
 
             responseJson = response.toString();
-            Log.d("TEST", responseJson);
 
         } catch (IOException ex) {
             ex.printStackTrace();

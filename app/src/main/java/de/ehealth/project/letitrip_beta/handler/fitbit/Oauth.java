@@ -34,11 +34,6 @@ public class Oauth {
         mRedirectUrl = redirectUrl;
         mApiClass = apiClass;
 
-        Log.d("Fitbit", "Consumer key: " + consumerKey);
-        Log.d("Fitbit", "Consumer secret: " + consumerSecret);
-        Log.d("Fitbit", "Redirect url: " + redirectUrl);
-        Log.d("Fitbit", "Token: " + mRequestToken);
-
         mOauth.buildService(mOauth.getmApiClass());
     }
 
@@ -80,7 +75,6 @@ public class Oauth {
         if (url != null && URLUtil.isValidUrl(url)) {
             String[] params = url.split("[&,?]");
             for (String param : params) {
-                Log.d("Fitbit", param);
                 if (param.contains("verifier")) {
                     String name = param.split("=")[0];
                     String value = param.split("=")[1];
@@ -89,7 +83,6 @@ public class Oauth {
                     return value;
                 }
             }
-            Log.d("Fitbit", "No value for parameter");
         }
 
         return "";

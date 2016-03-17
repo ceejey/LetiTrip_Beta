@@ -24,6 +24,13 @@ public class News extends Fragment {
 
     private FragmentChanger mListener;
 
+    /**
+     * This method shows the choosen news from the dashboard
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

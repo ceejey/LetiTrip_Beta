@@ -66,12 +66,13 @@ public class RecipeFragment extends Fragment {
         fillRecipeList();
     }
 
+    /**
+     * This method loads the recipe entrys from the database, download the image and show them in a list.
+     */
     private void fillRecipeList(){
         if (getView() != null) { //if the fragment gets changed before the task complete, the view becomes a null object reference.
-            Log.d("Recipe", "recipe started");
             RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
             List<Recipe> recipeList = recipeDb.getAllRecipes();
-            Log.d("Recipe", "" + recipeList.size());
             if(!recipeList.isEmpty()) {
                 for (Recipe recipe : recipeList) {
                     LinearLayout placeHolder = new LinearLayout(mView.findViewById(R.id.scrollViewRecipe).getContext());

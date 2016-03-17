@@ -20,6 +20,13 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 public class RecipeDetail extends Fragment {
     private FragmentChanger mListener;
 
+    /**
+     * This method shows a recipe, which was choosen in the RecipeFragment.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

@@ -57,8 +57,6 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
                 DATE + " TEXT UNIQUE, " +
                 STEPS + " TEXT)";
         sqLiteDatabase.execSQL(CREATE_USER_TABLE);
-
-        Log.d("Database", "Database created!");
     }
 
     //TODO Not implemented!!!!!!!!!!!!!!!!!!
@@ -80,9 +78,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
       else a new entry will be made and */
     public void addFitBitData(FitBitUserData fitBitUserData, String day) {
 
-        Log.d("Fitbit", "Before Insert:");
         Summary sum = fitBitUserData.getSummary();
-        Log.d("Fitbit", sum.toString());
         printTable(TABLE_USER);
 
         try {
@@ -107,7 +103,6 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
                 db.insert(TABLE_USER, // table
                         null, //nullColumnHack
                         values); // key/value -> keys = column names/ values = column values
-                Log.d("Fitbit", "After Insert:");
                 printTable(TABLE_USER);
                 db.close();
             }
@@ -116,7 +111,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
             }
             cursor.close();
         }catch(Exception ex){
-            Log.d("Fitbit", "INSERTION FAILED !");
+            ex.printStackTrace();
         }
     }
 
@@ -136,14 +131,11 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
                 new String[]{day}); //selection args
         db.close();
 
-        Log.d("Fitbit", "After Update:");
         printTable(TABLE_USER);
     }
 
     // Searches for an entry that contains the string parameter
     public Summary getFitBitData(String day){
-        Log.d("Fitbit", day);
-        Log.d("Fitbit", "Before Search:");
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor =
@@ -163,7 +155,6 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
             user.setCaloriesOut(cursor.getString(3));
             user.setSteps(cursor.getString(5));
 
-            Log.d("Fitbit","-------------------------------------------" +user.getSteps());
         } else {return null;}
         cursor.close();
         return user;

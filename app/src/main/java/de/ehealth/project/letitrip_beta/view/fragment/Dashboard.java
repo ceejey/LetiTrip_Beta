@@ -55,6 +55,15 @@ public class Dashboard extends Fragment implements WeatherCallback {
     private LinearLayout gpsPlaceHolder = null;
     private LinearLayout incompleteProfile = null;
 
+    /**
+     * This method shows the activityscore, the weather, news and a recipe suggestion on the dashboard.
+     * If a session is running, this gets shown, too.
+     * The dashboard layout is a Refreshlayout, so here is implemented what happens at a refresh, too.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -108,6 +117,12 @@ public class Dashboard extends Fragment implements WeatherCallback {
         return view;
     }
 
+    /**
+     * his method shows the activityscore, the weather, news and a recipe suggestion on the dashboard.
+     * If a session is running, this gets shown, too.
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -140,7 +155,6 @@ public class Dashboard extends Fragment implements WeatherCallback {
             txtActivityScore.setText("Activity Score: " + new DecimalFormat("0.00").format(activityScore));
             ActivityScoreSuggestion sugg = new ActivityScoreSuggestion();
             String suggStr = sugg.getSuggestion(activityScore);
-            Log.d("Suggestion", suggStr);
             txtSuggestion.setText(suggStr);
             ImageView img = (ImageView) placeHolder.findViewById(R.id.imageView2);
             img.setColorFilter(0xff757575, PorterDuff.Mode.MULTIPLY);
@@ -166,12 +180,9 @@ public class Dashboard extends Fragment implements WeatherCallback {
                 new FitBitGetJsonTask(Oauth.getmOauth(), FitBitGetJsonTask.ENDPOINT_MOVE, getActivity()).execute().get();
                 Summary sum = FitBitUserDataSQLite.getInstance(getActivity())
                         .getCurFitBitUserMovement().getSummary();
-                Log.d("Test", sum.getActivityCalories() + " " + sum.getCaloriesBMR() + " " + sum.getCaloriesOut());
 
-                Log.d("Recipe", "recipe started");
                 RecipeDatabase recipeDb = new RecipeDatabase(getActivity());
                 List<Recipe> recipeList = recipeDb.getAllRecipes();
-                Log.d("Recipe", "" + recipeList.size());
 
                 if (!recipeList.isEmpty()) {
                     boolean firstIter = true;
@@ -179,14 +190,12 @@ public class Dashboard extends Fragment implements WeatherCallback {
 
                     Integer caloriesBurned = Integer.parseInt(sum.getActivityCalories());
 
-                    Log.d("TEST", "Calories burned: " + caloriesBurned);
 
                     for (Recipe recipe : recipeList) {
                         if(firstIter) {
                             bestMatchRecipe = recipe;
                             firstIter = false;
                         }
-                        Log.d("Calories: ", "" + (Integer.parseInt(recipe.getKcal()) - caloriesBurned) + "\n" + (Integer.parseInt(bestMatchRecipe.getKcal()) - caloriesBurned));
                         Integer caloriesRecipe = Integer.parseInt(recipe.getKcal());
 
                         if(caloriesRecipe <= caloriesBurned){
@@ -325,10 +334,8 @@ public class Dashboard extends Fragment implements WeatherCallback {
         //only check weather if no weather information are in the database
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
         if (res.getCount() == 0){
-            Log.w("dashboard", "lade wetter für "+ UserSettings.getmActiveUser().getmCity()+" von yahoo");
             new WeatherService(this).execute(UserSettings.getmActiveUser().getmCity());
         } else {
-            Log.w("dashboard", "wetter schon vorhanden! lade aus DB");
             showWeather(res);
         }
         res.close();

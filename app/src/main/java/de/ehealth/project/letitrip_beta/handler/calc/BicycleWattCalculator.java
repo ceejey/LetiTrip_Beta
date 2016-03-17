@@ -6,7 +6,6 @@ package de.ehealth.project.letitrip_beta.handler.calc;
 
 class BicycleWattCalculator {
 
-    //TODO: Parameter names!
     public double calculateMechWatts(Double a, Double b, Float v, Float vl, Float gamma){
         return a * v + b * Math.pow(( v + vl * Math.cos( Math.toRadians(gamma) )),2) * v;
     }

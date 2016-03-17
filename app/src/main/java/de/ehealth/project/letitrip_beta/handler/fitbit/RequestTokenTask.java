@@ -21,11 +21,9 @@ public class RequestTokenTask extends AsyncTask<Void, Void, Void> {
         try {
             requestToken = oauth.getmService().getRequestToken();
             oauthUrl = oauth.getmService().getAuthorizationUrl(requestToken);
-            Log.d("Fitbit", "Fertig");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        Log.d("Fitbit", "Check connection");
         oauth.setmAuthUrl(oauthUrl);
         oauth.setmRequestToken(requestToken);
         return null;

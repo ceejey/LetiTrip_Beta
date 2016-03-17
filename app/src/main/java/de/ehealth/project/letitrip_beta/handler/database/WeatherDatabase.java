@@ -97,7 +97,6 @@ public class WeatherDatabase extends SQLiteOpenHelper {
                 str+=("pressure:"+res.getString(6)+"\t");
                 str+=("descr:"+res.getString(7)+"\n");
 
-                Log.w("weather", str);
             }
             res.close();
         }

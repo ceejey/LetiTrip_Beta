@@ -29,6 +29,9 @@ public class Bar extends Fragment {
     public static ImageView mImgRecipe;
     public static ImageView mImgSettings;
 
+    /**
+     * this class changes the colors of the bar items and set the clickable area for them.
+     */
     public static final class BarHandler {
         private static String selBtn = "";
 
@@ -52,6 +55,13 @@ public class Bar extends Fragment {
     }
 
 
+    /**
+     * This method shows the bar items
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -188,9 +198,6 @@ public class Bar extends Fragment {
 
                     if (BarHandler.selBtn.equals("Settings")) {
                         int width = BarHandler.getWidth(btnSettings);
-                        Log.d("TEST", "Rigth: " + (width / 2.0F + width / 2.0F * BarHandler.clickOffset));
-                        Log.d("TEST", "Left: " + (width / 2.0F - width / 2.0F * BarHandler.clickOffset));
-                        Log.d("TEST", "X: " + event.getX());
                         if (event.getX() < width / 2.0F - width / 2.0F * BarHandler.clickOffset) {
                             BarHandler.selBtn = "Recipe";
                             updateActivity(MainActivity.FragmentName.RECIPE);

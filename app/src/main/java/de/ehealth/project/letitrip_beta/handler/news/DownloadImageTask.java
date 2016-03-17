@@ -7,6 +7,9 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
+/**
+ * This async task downloads a bitmap and can downscale it if wanted.
+ */
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
     Boolean mDownsize = false;

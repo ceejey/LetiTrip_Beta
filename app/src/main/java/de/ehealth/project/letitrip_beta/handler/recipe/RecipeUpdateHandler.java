@@ -99,7 +99,6 @@ public class RecipeUpdateHandler {
                 in.close();
 
                 responseJson = response.toString();
-                Log.d("TEST", responseJson);
 
             } catch (IOException ex) {
                 mActivity.runOnUiThread(new Runnable() {

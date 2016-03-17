@@ -94,7 +94,6 @@ public class General extends Fragment {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
-                Log.d("Fitbit", "TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST");
                 UserSettings.getmActiveUser().setmClickOffsetForBarSensibility(Integer.toString(msbrTouchSensibility.getProgress()));
                 UserSettings.saveUser(getActivity());
                 Bar.setClickOffset(msbrTouchSensibility.getProgress());

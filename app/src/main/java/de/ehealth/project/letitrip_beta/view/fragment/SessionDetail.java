@@ -387,7 +387,10 @@ public class SessionDetail extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                int timePassedLastPulseShown = (int)((temp.getTime()-lastPulseShown.getTime())/1000);
+                int timePassedLastPulseShown = 0;
+                if (temp != null) {
+                    timePassedLastPulseShown = (int)((temp.getTime()-lastPulseShown.getTime())/1000);
+                }
                 if (timePassedLastPulseShown > 30){
                     mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(res.getDouble(3), res.getDouble(4)))

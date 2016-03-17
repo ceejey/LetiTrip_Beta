@@ -16,12 +16,9 @@ import java.util.List;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.database.RecipeDatabase;
-import de.ehealth.project.letitrip_beta.handler.gpshandler.GPSDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.news.DownloadImageTask;
-import de.ehealth.project.letitrip_beta.model.news.Story;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
 import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;
-import de.ehealth.project.letitrip_beta.model.weather.DescriptionMapping;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 
 public class RecipeFragment extends Fragment {

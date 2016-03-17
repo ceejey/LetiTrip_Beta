@@ -38,7 +38,6 @@ import de.ehealth.project.letitrip_beta.handler.weather.WeatherCallback;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherDatabaseHandler;
 import de.ehealth.project.letitrip_beta.handler.weather.WeatherService;
 import de.ehealth.project.letitrip_beta.model.fitbit.ActivityScoreSuggestion;
-import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
 import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
 import de.ehealth.project.letitrip_beta.model.recipe.RecipeWrapper;

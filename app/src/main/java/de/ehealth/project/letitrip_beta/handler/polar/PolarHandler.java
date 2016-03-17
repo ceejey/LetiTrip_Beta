@@ -190,7 +190,7 @@ public class PolarHandler {
             String action = intent.getAction();
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                mDevice = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (mDevice.getName().contains("Polar")) {
                     Log.d("Bluetooth Device", "Found: " + mDevice.getName());
                     mDeviceFound = true;

@@ -1,8 +1,5 @@
 package de.ehealth.project.letitrip_beta.model.fitbit;
 
-import android.util.Log;
-
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 

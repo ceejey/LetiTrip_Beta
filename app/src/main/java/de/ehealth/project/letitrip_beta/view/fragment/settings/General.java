@@ -119,7 +119,7 @@ public class General extends Fragment {
     }
 
     private void resetApp(){
-        UserSettings.deleteUser(getActivity());
+        UserSettings.getmActiveUser().deleteUser(getActivity());
         if (getActivity().deleteDatabase("LetitripDB")) Log.w("general","DB deleted");
         if (getActivity().deleteDatabase("LetitripDB2")) Log.w("general","DB deleted");
         if (getActivity().deleteDatabase("LetitripDB3")) Log.w("general","DB deleted");

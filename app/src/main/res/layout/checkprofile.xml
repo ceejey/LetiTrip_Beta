@@ -271,7 +271,21 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/spReifenTyp"
                     android:spinnerMode="dialog" />
+
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:text="Fahrrad Gewicht in kg"
+                android:id="@+id/vtxtFahrradGewicht" />
+
+            <EditText
+                android:layout_width="98dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/vtxtBikeWeight" />
 
             <View
                 android:layout_width="match_parent"

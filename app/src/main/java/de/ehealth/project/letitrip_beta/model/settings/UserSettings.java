@@ -52,6 +52,7 @@ public class UserSettings {
     private String mLastRezeptUpdateSince = "0";
     private String mActScoreResetDate = "";
     private String mClickOffsetForBarSensibility = "1";
+    private String mBikeWeight = "10"; // 10 by default
 
     public static void JsonToUserProfile(String jSon, Token accessToken) {
         // überprüft ob vorhanden wenn ja verwende diesen wenn nicht parse die Informationen
@@ -126,6 +127,7 @@ public class UserSettings {
         edit.putString("ActScoreResetDate", mActiveUser.getmActScoreResetDate());
         edit.putString("ClickOffsetForBarSensibility", mActiveUser.getmClickOffsetForBarSensibility() );
         edit.putString("PolarDeviceID", mActiveUser.getmPolarDeviceID() );
+        edit.putString("BikeWeight", mActiveUser.getmBikeWeight() );
         edit.commit();
     }
 
@@ -151,6 +153,7 @@ public class UserSettings {
         profile.mFahrradTyp = pref.getString("FahrradTyp","");
         profile.mReifenTyp = pref.getString("ReifenTyp", "");
         profile.mCity = pref.getString("City","");
+        profile.mBikeWeight = pref.getString("BikeWeight","");
         profile.mNewsSettings = pref.getStringSet("NewsSettings", null);
         profile.mLastRezeptUpdateSince = pref.getString("LastRecipeUpdate", "");
         profile.mPolarDeviceID = pref.getString("PolarDeviceID", "");
@@ -170,7 +173,7 @@ public class UserSettings {
 
     public static void deleteUser(Context context){
 
-        SharedPreferences pref = context.getSharedPreferences("userprofile", context.MODE_PRIVATE);
+
         mActiveUser.setmFitBitUserID("");
         mActiveUser.setmAccessToken(null);
         mActiveUser.setmFullname("");
@@ -186,10 +189,10 @@ public class UserSettings {
         mActiveUser.setmClickOffsetForBarSensibility("1");
         mActiveUser.setmActScoreResetDate("");
         mActiveUser.setmPolarDeviceID("");
-
-        final SharedPreferences.Editor edit = pref.edit();
-        edit.clear();
-        edit.commit();
+        mActiveUser.setmBikeWeight("10");
+        mActiveUser.setmFahrradTyp("Nichts ausgewählt");
+        mActiveUser.setmReifenTyp("Nichts ausgewählt");
+        saveUser(context);
 
     }
 
@@ -371,5 +374,13 @@ public class UserSettings {
 
     public void setmPolarDeviceID(String mPolarDeviceID) {
         this.mPolarDeviceID = mPolarDeviceID;
+    }
+
+    public String getmBikeWeight() {
+        return mBikeWeight;
+    }
+
+    public void setmBikeWeight(String mBikeWeight) {
+        this.mBikeWeight = mBikeWeight;
     }
 }

@@ -40,9 +40,11 @@ public class Profile extends Fragment {
     private EditText mVtxtHeight;
     private EditText mVtxtAge;
     private TextView mVtxtFahrradTyp;
+    private TextView mVtxtFahrradGewicht;
     private TextView mVtxtReifenTyp;
     private EditText mEtxtWeight;
     private EditText mEtxtCity;
+    private EditText mBikeWeight;
     private Button mBtnSaveUser;
     private Button mBtnImportFitbit;
     private CheckBox mCbBike;
@@ -69,7 +71,8 @@ public class Profile extends Fragment {
         mSpReifentyp = (Spinner) view.findViewById(R.id.spReifenTyp);
         mSpFahrradTyp = (Spinner) view.findViewById(R.id.spFahrradTyp);
         mEtxtCity = (EditText) view.findViewById(R.id.etxtCity);
-
+        mBikeWeight = (EditText) view.findViewById(R.id.vtxtBikeWeight);
+        mVtxtFahrradGewicht = (TextView) view.findViewById(R.id.vtxtFahrradGewicht);
 
         final List<String> typenListe = new ArrayList<String>();
 
@@ -106,6 +109,8 @@ public class Profile extends Fragment {
             mVtxtReifenTyp.setVisibility(view.INVISIBLE);
             mSpFahrradTyp.setVisibility(view.INVISIBLE);
             mSpReifentyp.setVisibility(view.INVISIBLE);
+            mBikeWeight.setVisibility(view.INVISIBLE);
+            mVtxtFahrradGewicht.setVisibility(view.INVISIBLE);
             checkbox = false;
         }
         else{
@@ -144,10 +149,12 @@ public class Profile extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!checkbox) {
+                    mBikeWeight.setVisibility(v.VISIBLE);
                     mVtxtFahrradTyp.setVisibility(v.VISIBLE);
                     mVtxtReifenTyp.setVisibility(v.VISIBLE);
                     mSpFahrradTyp.setVisibility(v.VISIBLE);
                     mSpReifentyp.setVisibility(v.VISIBLE);
+                    mVtxtFahrradGewicht.setVisibility(v.VISIBLE);
                     mSpReifentyp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -171,10 +178,12 @@ public class Profile extends Fragment {
                     });
                     checkbox = true;
                 } else {
+                    mBikeWeight.setVisibility(v.INVISIBLE);
                     mVtxtFahrradTyp.setVisibility(v.INVISIBLE);
                     mVtxtReifenTyp.setVisibility(v.INVISIBLE);
                     mSpFahrradTyp.setVisibility(v.INVISIBLE);
                     mSpReifentyp.setVisibility(v.INVISIBLE);
+                    mVtxtFahrradGewicht.setVisibility(v.INVISIBLE);
                     checkbox = false;
                 }
             }
@@ -203,6 +212,7 @@ public class Profile extends Fragment {
         mVtxtAge.setText(mUser.getmAge());
         mVtxtHeight.setText(mUser.getmHeight());
         mEtxtWeight.setText(mUser.getmWeight());
+        mBikeWeight.setText(mUser.getmBikeWeight());
         mEtxtCity.setText(UserSettings.getmActiveUser().getmCity());
 
         if (mUser.getmGender().equals("MALE"))
@@ -219,7 +229,7 @@ public class Profile extends Fragment {
         mUser.setmAge(mVtxtAge.getText().toString());
         mUser.setmHeight(mVtxtHeight.getText().toString());
         mUser.setmFullname(mVtxtFullName.getText().toString());
-
+        mUser.setmBikeWeight(mBikeWeight.getText().toString());
         if (mRbMale.isChecked()){
             mUser.setmGender("MALE");
         }

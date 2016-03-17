@@ -181,7 +181,6 @@ public class FitBitGetJsonTask extends AsyncTask<Void, Void, Void> {
             mOauth.getmService().signRequest(mOauth.getmAccessToken(), oAuthRequest);
             response = oAuthRequest.send();
             mJson = response.getBody();
-            Log.d("Fitbit","!!!!!!" + mJson);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

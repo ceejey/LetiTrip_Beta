@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -220,9 +219,8 @@ public class GPSService extends Service implements PolarCallback {
             deviceList = polar.getDeviceList();
             if (deviceList.size() != 0) {
                 //connect to the stored polar device
-                for (int i=0; i < deviceList.size();i++){ //TODO muss getestet werden
+                for (int i=0; i < deviceList.size();i++){
                     if (deviceList.get(i).getName().equals(UserSettings.getmActiveUser().getmPolarDeviceID())){
-                        Log.d("Polar", "Try to connect with device: " + deviceList.get(i).getName());
                         polar.connectToPolarDevice(deviceList.get(i));
                     }
                 }
@@ -235,7 +233,6 @@ public class GPSService extends Service implements PolarCallback {
      */
     public void polarDeviceConnected(){
         if(polar.isDeviceConnected()) {
-            Log.d("Polar", "Connected: " + polar.isDeviceConnected() + "\nTrying to receive Heartrate!");
             polar.receiveHeartRate();
 
         }
@@ -263,7 +260,6 @@ public class GPSService extends Service implements PolarCallback {
                     //only insert data when accuaracy is good enough
                     if (l.getAccuracy() < 25){
 
-                        //Log.w("gpsservice", "Accuracy: " + l.getAccuracy() + "\nSpeed: " + l.getSpeed());
                         if((l.getSpeed() >= 1f) || (firstPoint)) { //take the first point and points faster than 1 meter per second
                             firstPoint = false;
 
@@ -322,21 +318,6 @@ public class GPSService extends Service implements PolarCallback {
                             }
 
                             lastID = currentID;
-                            /*
-                            Log.w("session","used paras\n"+
-                                "weight"+weight+"\n"+
-                                "heigth"+height+"\n"+
-                                "speed(m/s)"+(float) speedMperS+"\n"+
-                                "altitudeChange"+(float) altitudeDifference+"\n"+
-                                "distSinceLastUpdate"+(float) distSinceLastUpdate +"\n"+
-                                "windspeed"+(float) (windSpeedKmH / 3.6)+"\n"+
-                                "angleToWind"+angleToWind+"\n"+
-                                "temp"+(float) temperature+"\n"+
-                                "pressure"+(float) (pressure * 100)+"\n"+
-                                "humidity"+ ((float)humidity)/100+"\n"+
-                                "watt: "+watt+"\n"+
-                                "calories:"+kcaloriesBurned+"\n"+
-                                "passedTime:"+passedTime);*/
 
                             boolean ins = GPSDatabaseHandler.getInstance().getData().addData(activeRecordingID, l.getLatitude(), l.getLongitude(), l.getAltitude(), recordingAsBicycle, PolarHandler.mHeartRate,l.getSpeed(),watt, kcaloriesBurned);
                             if (ins) { //insertion successful?
@@ -353,14 +334,11 @@ public class GPSService extends Service implements PolarCallback {
                                 startTime = new Date().getTime();
                                 sendBroadcast("GPSService", 4);
                             }
-                        } else {
-                            //Log.w("gpsservice","speed too low. probably standing");
                         }
                     } else {
-                        //Log.w("gpsservice","accuracy too low("+l.getAccuracy()+") skipping position.");
                         sendBroadcast("GPSService",3);
                     }
-                } //else Log.w("gpsservice","paused or no location");
+                }
             }
 
             public void onProviderDisabled(String provider) {}

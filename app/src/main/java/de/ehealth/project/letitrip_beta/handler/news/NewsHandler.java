@@ -24,7 +24,7 @@ import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
 /**
- * Created by eHealth on 09.12.2015.
+ * This class downloads news and show them in a given view
  */
 public class NewsHandler {
 

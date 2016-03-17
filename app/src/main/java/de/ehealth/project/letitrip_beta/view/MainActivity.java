@@ -48,6 +48,9 @@ import de.ehealth.project.letitrip_beta.view.fragment.settings.Polar;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Profile;
 import de.ehealth.project.letitrip_beta.view.fragment.settings.Settings;
 
+/**
+ * This activity manages the fragments inside it and the navigation throught them.
+ */
 public class MainActivity extends FragmentActivity implements FragmentChanger{
 
     Fragment mFragmentHeader;
@@ -114,6 +117,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         this.getApplicationContext().bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Init the GPS/Weather database, the Oauth authentication and shows the dashboard
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,12 +146,10 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                     notificationClicked = false;
                     changeFragment(FragmentName.SESSION);
                 }
-                Log.w("mainactivity", "bound to service - status:" + gps.getStatus());
             }
 
             @Override
             public void onServiceDisconnected(ComponentName arg0) {
-                Log.w("mainactivity", "unbound");
                 bound = false;
             }
         };
@@ -176,6 +181,11 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         super.onStop();
     }
 
+    /**
+     * This method gets called from the child fragment with the fragment tag which shall be showed now and
+     * save the order for back navigation.
+     * @param fn
+     */
     @Override
     public void changeFragment(FragmentName fn) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -217,27 +227,12 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 refillEntrys.add("dashboard");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                /*fragmentContent = fragmentManager.findFragmentByTag(newTag);
-
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else*/
-                    fragmentContent = new SessionOverview();
+                fragmentContent = new SessionOverview();
                 break;
             case SESSION_DETAIL: //Initializes everytime again with new session id
                 txtHeader.setText("Session Details");
                 newTag = "session_details";
 
-                /*expectedEntryCount = 2;
-                expectedEntry = "session_overview";
-                refillEntrys.add("dashboard");
-                refillEntrys.add("session_overview");
-                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
-
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    transaction.remove(fragmentContent); //REMOVE THE SESSION DETAILS AND PUT NEW EXTRAS
-                */
                 expectedEntryCount = 1;
                 expectedEntry = "dashboard";
                 refillEntrys.add("dashboard");
@@ -249,16 +244,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 txtHeader.setText("Session");
                 newTag = "session";
 
-                /*expectedEntryCount = 2;
-                expectedEntry = "session_overview";
-                refillEntrys.add("dashboard");
-                refillEntrys.add("session_overview");
-                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
-
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-                if (fragmentContent != null)
-                    alreadyAdded = true;
-                else*/
                 expectedEntryCount = 1;
                 expectedEntry = "dashboard";
                 refillEntrys.add("dashboard");
@@ -312,8 +297,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 refillEntrys.add("dashboard");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-
                 fragmentContent = new Settings();
                 break;
             case SETTINGS_GENERAL:
@@ -327,22 +310,27 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-
                 fragmentContent = new General();
                 break;
             case SETTINGS_PROFILE:
                 txtHeader.setText("Einstellungen");
                 newTag = "settings_profile";
 
-                expectedEntryCount = 2;
-                expectedEntry = "settings";
-                refillEntrys.add("dashboard");
-                refillEntrys.add("settings");
+                fragmentContent = fragmentManager.findFragmentByTag("settings");
+                if (fragmentContent != null) {
+                    expectedEntryCount = 2;
+                    expectedEntry = "setings";
+                    refillEntrys.add("dashboard");
+                    refillEntrys.add("settings");
+                    fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+                }
+                else{
+                    expectedEntryCount = 1;
+                    expectedEntry = "dashboard";
+                    refillEntrys.add("dashboard");
+                    fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
+                }
 
-                fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
-
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
 
                 fragmentContent = new Profile();
                 break;
@@ -370,7 +358,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 fragmentContent = new Help();
                 break;
             case WEB_VIEW_OAUTH:
@@ -384,8 +371,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 refillEntrys.add("settings_device");
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
-
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
 
                 fragmentContent = new WebviewOauth();
                 break;
@@ -403,8 +388,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-
                 fragmentContent = new FitBitInit();
                 break;
             case NEWS:
@@ -416,7 +399,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 refillEntrys.add("dashboard");
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
                 fragmentContent = new News();
                 break;
             case POLAR_DEVICE:
@@ -431,8 +413,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-
                 fragmentContent = new Polar();
                 break;
             case NEWS_SETTINGS:
@@ -446,8 +426,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-
                 fragmentContent = new NewsSettings();
                 break;
             case FITBIT_TRACKER_DATA:
@@ -460,8 +438,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
                 fillBackStack(fragmentManager, expectedEntryCount, expectedEntry, refillEntrys);
 
-                fragmentContent = fragmentManager.findFragmentByTag(newTag);
-
                 fragmentContent = new FitBitTrackerData();
                 break;
             default:
@@ -470,21 +446,15 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
 
         if(alreadyAdded){
             if(fragmentManager.findFragmentByTag(mOldTag) != null) {
-                Log.d("TEST", "HIDE FRAGMENT: " + mOldTag);
                 transaction.hide(fragmentManager.findFragmentByTag(mOldTag));
-                //transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
             }
-            Log.d("TEST", "SHOW FRAGMENT: " + newTag);
             transaction.show(fragmentManager.findFragmentByTag(newTag)).commit();
         }
         else {
             if(fragmentManager.findFragmentByTag(mOldTag) != null) {
-                Log.d("TEST", "HIDE FRAGMENT: " + mOldTag);
                 transaction.hide(fragmentManager.findFragmentByTag(mOldTag));
-                //transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
 
             }
-            Log.d("TEST", "INIT FRAGMENT: " + newTag);
             transaction.add(R.id.contentContainer, fragmentContent, newTag).commit();
         }
         mOldTag = newTag;
@@ -501,19 +471,15 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
      */
     private boolean fillBackStack(FragmentManager fragmentManager, int expectedEntryCount, String expectedEntry, List<String> refillEntrys){
         if(fragmentManager.getBackStackEntryCount() == expectedEntryCount && expectedEntryCount >= 1) {
-            Log.d("Test", "Expected entry count is right and > 1");
             if (fragmentManager.getBackStackEntryAt(expectedEntryCount - 1).getName().equals(expectedEntry)) {
-                Log.d("Test", "Expected entry is right");
                 //Remove back stack except the given one with flag = 0
                 return fragmentManager.popBackStackImmediate(expectedEntry, 0);
 
             } else {
-                Log.d("Test", "Expected entry is wrong, pop all");
                 //Empty the back stack and refill with the right entrys
                 fragmentManager.popBackStackImmediate(fragmentManager.getBackStackEntryAt(0).getName(),
                         FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 for(String entry : refillEntrys){
-                    Log.d("Test", "Add to back stack: " + entry);
                     fragmentManager.beginTransaction().addToBackStack(entry).commit();
                 }
             }
@@ -521,18 +487,14 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         } else if((fragmentManager.getBackStackEntryCount() > expectedEntryCount ||
                 fragmentManager.getBackStackEntryCount() < expectedEntryCount) &&
                 fragmentManager.getBackStackEntryCount() >= 1) {
-            Log.d("Test", "Back stack entry count is bigger or smaller than expected entry count but not empty, pop all");
             fragmentManager.popBackStackImmediate(fragmentManager.getBackStackEntryAt(0).getName(),
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
             for(String entry : refillEntrys){
-                Log.d("Test", "Add to back stack: " + entry);
                 fragmentManager.beginTransaction().addToBackStack(entry).commit();
             }
 
         } else {
-            Log.d("Test", "Expected entry count is empty");
             for(String entry : refillEntrys){
-                Log.d("Test", "Add to back stack: " + entry);
                 fragmentManager.beginTransaction().addToBackStack(entry).commit();
             }
             return false;
@@ -541,13 +503,14 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         return true;
     }
 
+    /**
+     * This method gets called on back pressed and shows the top view in the backstack.
+     */
     @Override
     public void onBackPressed() {
-        Log.d("Test", "Current backstack count: " + getSupportFragmentManager().getBackStackEntryCount());
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if(fragmentManager.getBackStackEntryCount() >= 1) {
-            Log.d("Test", "Remove from Backstack: " + mOldTag);
             transaction.remove(fragmentManager.findFragmentByTag(mOldTag));
             //There is no proper way to get the latest inserted fragment in the back stack
             String tag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
@@ -558,6 +521,11 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
         super.onBackPressed();
     }
 
+    /**
+     * This method gets called then the backstack gets changed and an old view gets visible.
+     * It changes the Header and Bar icon colors to the right visible view.
+     * @param tag
+     */
     private void changeHeaderOnBackPressed(String tag){
         TextView txtHeader = (TextView) mFragmentHeader.getView().findViewById(R.id.txtHeader);
         switch(tag){

@@ -13,7 +13,7 @@ import de.ehealth.project.letitrip_beta.model.recipe.Ingredient;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;
 
 /**
- * Created by eHealth on 23.02.2016.
+ * This class is the database for recipes.
  */
 
 public class RecipeDatabase extends SQLiteOpenHelper {

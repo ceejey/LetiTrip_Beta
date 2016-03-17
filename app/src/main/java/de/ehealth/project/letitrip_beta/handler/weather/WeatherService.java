@@ -47,7 +47,6 @@ public class WeatherService extends AsyncTask<String, Void, String> {
 
         //build the encoded URL
         encodedURL = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json", Uri.encode(yqlQuery));
-        //Log.w("URL:",encodedURL);
 
             try {
                 URLConnection connection = new URL(encodedURL).openConnection();

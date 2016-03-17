@@ -229,7 +229,10 @@ public class Profile extends Fragment {
         mUser.setmAge(mVtxtAge.getText().toString());
         mUser.setmHeight(mVtxtHeight.getText().toString());
         mUser.setmFullname(mVtxtFullName.getText().toString());
-        mUser.setmBikeWeight(mBikeWeight.getText().toString());
+
+        //set the bike weight to 10 by default, otherwise to the value provided by the user
+        mUser.setmBikeWeight((mBikeWeight.getText().toString().equals("")?"10":mBikeWeight.getText().toString()));
+
         if (mRbMale.isChecked()){
             mUser.setmGender("MALE");
         }

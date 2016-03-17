@@ -63,7 +63,7 @@ public class GPSService extends Service implements PolarCallback {
     private int walkDirection;
     private int altitudeDifference;
     private int lastID;
-    private float weight,height;
+    private float weight, height, bicycleWeight;
     private double watt;
 
     private IBinder mBinder = new LocalBinder();
@@ -186,6 +186,7 @@ public class GPSService extends Service implements PolarCallback {
         try {
             weight = (float)Integer.parseInt(fitbitUserProfile.getmWeight());
             height = (float)Integer.parseInt(fitbitUserProfile.getmHeight());
+            bicycleWeight = (float) Integer.parseInt(fitbitUserProfile.getmBikeWeight());
         } catch (NumberFormatException e){
             e.printStackTrace();
             Toast.makeText(GPSService.this, "Kann Profildaten nicht laden!", Toast.LENGTH_LONG).show();
@@ -283,9 +284,9 @@ public class GPSService extends Service implements PolarCallback {
                             try {
                                 //bicycle
                                 if (recordingAsBicycle == 1){
-                                    watt = wattHandler.calcWatts( //TODO fehlende parameter
+                                    watt = wattHandler.calcWatts(
                                             weight,
-                                            10F,
+                                            bicycleWeight,
                                             height,
                                             9.81F,
                                             (float) speedMperS,

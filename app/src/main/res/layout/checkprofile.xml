@@ -279,13 +279,14 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif"
-                android:text="Fahrrad Gewicht in kg"
+                android:text="Fahrradgewicht in kg"
                 android:id="@+id/vtxtFahrradGewicht" />
 
             <EditText
-                android:layout_width="98dp"
+                android:layout_width="138dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/vtxtBikeWeight" />
+                android:id="@+id/vtxtBikeWeight"
+                android:inputType="numberSigned"/>
 
             <View
                 android:layout_width="match_parent"

@@ -103,8 +103,8 @@ public class UserSettings {
         SharedPreferences.Editor edit = pref.edit();
         edit.putString("UserId",mActiveUser.getmFitBitUserID() );
         if(mActiveUser.getmAccessToken() != null) {
-            edit.putString("AccessToken", mActiveUser.getmAccessToken().getToken().toString());
-            edit.putString("Secret", mActiveUser.getmAccessToken().getSecret().toString());
+            edit.putString("AccessToken", mActiveUser.getmAccessToken().getToken());
+            edit.putString("Secret", mActiveUser.getmAccessToken().getSecret());
         }
         edit.putString("Fullname",mActiveUser.getmFullname() );
         edit.putString("DateOfBirth", mActiveUser.getmDateOfBirth() );

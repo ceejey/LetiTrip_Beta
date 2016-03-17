@@ -28,6 +28,6 @@ public class FitBitAPI extends DefaultApi10a {
     @Override
     public String getAuthorizationUrl(Token requestToken)
     {
-        return String.format(AUTHORIZE_URL +requestToken.getToken());
+        return AUTHORIZE_URL +requestToken.getToken();
     }
 }

@@ -1,8 +1,6 @@
 package de.ehealth.project.letitrip_beta.view.fragment;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,13 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
 import de.ehealth.project.letitrip_beta.R;
-import de.ehealth.project.letitrip_beta.handler.database.RecipeDatabase;
 import de.ehealth.project.letitrip_beta.handler.news.DownloadImageTask;
 import de.ehealth.project.letitrip_beta.model.recipe.Ingredient;
 import de.ehealth.project.letitrip_beta.model.recipe.Recipe;

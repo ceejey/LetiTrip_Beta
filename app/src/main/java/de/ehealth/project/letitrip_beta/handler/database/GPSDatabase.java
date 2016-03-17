@@ -216,7 +216,7 @@ public class GPSDatabase extends SQLiteOpenHelper {
      */
     public long getDuration(int ID1, int ID2){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = null;
+        Cursor res;
         if (ID2 == -1){
             res = db.rawQuery("select " + COLUMN2 + " from " + TABLE_NAME + " where " + COLUMN1 + " = " + ID1, null);
         } else {

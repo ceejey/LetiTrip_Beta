@@ -28,8 +28,8 @@ public class WeatherService extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String encodedURL = null;
-        String yqlQuery = null;
+        String encodedURL;
+        String yqlQuery;
         int count = 0;
 
         //varargs to String array

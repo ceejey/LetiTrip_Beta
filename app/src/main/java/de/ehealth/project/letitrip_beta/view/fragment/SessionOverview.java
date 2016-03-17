@@ -137,7 +137,7 @@ public class SessionOverview extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        int deletes = GPSDatabaseHandler.getInstance().getData().deleteSession(SessionHandler.getSelectedRunId());
+                        GPSDatabaseHandler.getInstance().getData().deleteSession(SessionHandler.getSelectedRunId());
                         Toast.makeText(getActivity(),"Session gelöscht.", Toast.LENGTH_SHORT).show();
                         updateList();
                         if (GPSDatabaseHandler.getInstance().getData().getLastSessionID() != 0) {

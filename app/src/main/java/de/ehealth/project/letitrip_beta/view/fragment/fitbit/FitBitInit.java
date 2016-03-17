@@ -11,7 +11,6 @@ import android.widget.Button;
 
 import de.ehealth.project.letitrip_beta.R;
 import de.ehealth.project.letitrip_beta.handler.fitbit.Oauth;
-import de.ehealth.project.letitrip_beta.model.settings.UserSettings;
 import de.ehealth.project.letitrip_beta.view.MainActivity;
 import de.ehealth.project.letitrip_beta.view.fragment.FragmentChanger;
 
@@ -25,10 +24,7 @@ public class FitBitInit extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        if (!UserSettings.getmActiveUser().getmFitBitUserID().equals("")) {
-            //updateActivity(MainActivity.);
-        }
+        
         View view = inflater.inflate(R.layout.fragment_fitbit_initial, container, false);
         Button button = (Button) view.findViewById(R.id.startOauthButton);
         button.setOnClickListener(

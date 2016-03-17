@@ -116,15 +116,18 @@ public class Device extends Fragment {
                     }
                     else {
                         UserSettings.getmActiveUser().setmFitBitUserID("");
+                        UserSettings.getmActiveUser().setmAccessToken(null);
                         itemList.remove(0);
                         UserSettings.saveUser(getActivity());
-                        //FitBitUserDataSQLite.getInstance(getActivity()).newTable();
+
                         updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                     }
                 }
                 if(mSelectedDevice == 1){
                     UserSettings.getmActiveUser().setmPolarDeviceID("");
+                    UserSettings.getmActiveUser().setmAccessToken(null);
                     itemList.remove(1);
+                    UserSettings.saveUser(getActivity());
                     updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);
                 }
                 break;

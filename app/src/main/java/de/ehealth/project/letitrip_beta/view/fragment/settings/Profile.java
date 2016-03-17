@@ -131,12 +131,15 @@ public class Profile extends Fragment {
                 }
             });
         }
-        try {
-            new FitBitGetJsonTask(mOauth, FitBitGetJsonTask.ENDPOINT_PROFILE, getActivity()).execute().get();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
 
+        if (UserSettings.getmActiveUser().getmAccessToken() != null) {
+            try {
+                new FitBitGetJsonTask(mOauth, FitBitGetJsonTask.ENDPOINT_PROFILE, getActivity()).execute().get();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        }
         mCbBike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,6 +218,7 @@ public class Profile extends Fragment {
         mUser.setmCity(mEtxtCity.getText().toString());
         mUser.setmAge(mVtxtAge.getText().toString());
         mUser.setmHeight(mVtxtHeight.getText().toString());
+        mUser.setmFullname(mVtxtFullName.getText().toString());
 
         if (mRbMale.isChecked()){
             mUser.setmGender("MALE");

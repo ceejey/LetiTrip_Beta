@@ -92,7 +92,11 @@ public class FitBitGetJsonTask extends AsyncTask<Void, Void, Void> {
     "https://dev.fitbit.com/docs". The JSon object is parsed to be a Object of the class "UserSettings"*/
     private void getProfile() {
         sendRequestUrl("https://api.fitbit.com/1/user/-/profile.json");
+        try {
         UserSettings.JsonToUserProfile(mJson, mOauth.getmAccessToken());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**This method calls up a Json object for the last two weeks, but not for today's date!
@@ -153,28 +157,34 @@ public class FitBitGetJsonTask extends AsyncTask<Void, Void, Void> {
     /**It's a method that sends a request URL with the AccessToken which allows to get a response
      from the service provider in this case FitBit. */
     public void sendRequestUrl(String url) {
-        OAuthRequest oAuthRequest;
-        Response response;
-        oAuthRequest = new OAuthRequest(Verb.GET, url);
-        mOauth.getmService().signRequest(mOauth.getmAccessToken(), oAuthRequest);
-        response = oAuthRequest.send();
-        mJson = response.getBody();
-        Log.d("Fitbit","!!!!!!" +mJson);
+        try{
+            OAuthRequest oAuthRequest;
+            Response response;
+            oAuthRequest = new OAuthRequest(Verb.GET, url);
+            mOauth.getmService().signRequest(mOauth.getmAccessToken(), oAuthRequest);
+            response = oAuthRequest.send();
+            mJson = response.getBody();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
     /** This method set's the current weight of the User from the Gui to FitBit Server*/
     public void setWeight() {
-
-        String url = "https://api.fitbit.com/1/user/" + "-" +
-                "/"+ "body/"+ "log/weight"+ ".json";
-        OAuthRequest oAuthRequest;
-        Response response;
-        oAuthRequest = new OAuthRequest(Verb.POST, url);
-        oAuthRequest.addBodyParameter("weight", Integer.toString(mNewWeight));
-        oAuthRequest.addBodyParameter("date","today");
-        mOauth.getmService().signRequest(mOauth.getmAccessToken(), oAuthRequest);
-        response = oAuthRequest.send();
-        mJson = response.getBody();
-        Log.d("Fitbit","!!!!!!" + mJson);
+        try{
+            String url = "https://api.fitbit.com/1/user/" + "-" +
+                    "/"+ "body/"+ "log/weight"+ ".json";
+            OAuthRequest oAuthRequest;
+            Response response;
+            oAuthRequest = new OAuthRequest(Verb.POST, url);
+            oAuthRequest.addBodyParameter("weight", Integer.toString(mNewWeight));
+            oAuthRequest.addBodyParameter("date","today");
+            mOauth.getmService().signRequest(mOauth.getmAccessToken(), oAuthRequest);
+            response = oAuthRequest.send();
+            mJson = response.getBody();
+            Log.d("Fitbit","!!!!!!" + mJson);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

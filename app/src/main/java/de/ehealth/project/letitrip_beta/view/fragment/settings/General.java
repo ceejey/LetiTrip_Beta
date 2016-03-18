@@ -73,13 +73,11 @@ public class General extends Fragment {
                         .setMessage("Sind Sie sicher ?")
                         .setPositiveButton(getString(R.string.accept), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // TODO
                                 resetApp();
                             }
                         })
                         .setNegativeButton(getString(R.string.decline), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // TODO
                                 dialog.dismiss();
                             }
                         });
@@ -93,7 +91,6 @@ public class General extends Fragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
                 UserSettings.getmActiveUser().setmClickOffsetForBarSensibility(Integer.toString(msbrTouchSensibility.getProgress()));
                 UserSettings.saveUser(getActivity());
                 Bar.setClickOffset(msbrTouchSensibility.getProgress());
@@ -101,12 +98,10 @@ public class General extends Fragment {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // TODO Auto-generated method stub
             }
         });
         return view;

@@ -14,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class PolarHandler {
     private Context mContext; //if its started via the service
     private TextView mTxtHeartRate; //Which Textview shall show the heartrate?
     public static int mHeartRate = 0;
-    private TextView mTxtStatus; //TODO
+    private TextView mTxtStatus;
 
     public PolarHandler(Activity activity, TextView txtHeartRate, TextView txtStatus){
         mActivity = activity;

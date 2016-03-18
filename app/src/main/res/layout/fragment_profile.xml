@@ -5,6 +5,4 @@
     tools:context="de.ehealth.project.letitrip.view.fragment.configuration.Profile"
     android:background="#ffffff">
 
-    <!-- TODO: Update blank fragment layout -->
-
 </FrameLayout>

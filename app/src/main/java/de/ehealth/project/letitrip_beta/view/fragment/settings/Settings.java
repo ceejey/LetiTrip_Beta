@@ -54,22 +54,6 @@ public class Settings extends Fragment {
                 }
                 if (row.getCustomItem().equals("Profil")) {
                     updateActivity(MainActivity.FragmentName.SETTINGS_PROFILE);
-                    /*
-                    if (!) {
-                        updateActivity(MainActivity.FragmentName.SETTINGS_PROFILE);
-                    }
-                    else{
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder //
-                                .setMessage("Bitte verbinden Sie sich mit einem Fitbitracker unter Einstellungen -> Geräte")
-                                        .setNegativeButton(getString(R.string.decline), new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                // TODO
-                                                dialog.dismiss();
-                                            }
-                                        });
-                        builder.show();
-                    } */
                 }
                 if (row.getCustomItem().equals("Geräte")) {
                     updateActivity(MainActivity.FragmentName.SETTINGS_DEVICE);

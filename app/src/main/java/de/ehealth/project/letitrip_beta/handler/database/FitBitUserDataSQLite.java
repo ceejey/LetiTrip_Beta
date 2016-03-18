@@ -59,20 +59,6 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_USER_TABLE);
     }
 
-    //TODO Not implemented!!!!!!!!!!!!!!!!!!
-    public  void newTable(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        String CREATE_USER_TABLE = "CREATE TABLE "+ TABLE_USER +
-                " ( " + ID + " INTEGER PRIMARY KEY , " +
-                ACTIVITY_CALORIES + " TEXT , " +
-                CALORIES_BMR + " TEXT, " +
-                CALORIES_Out + " TEXT, " +
-                DATE + " TEXT UNIQUE, " +
-                STEPS + " TEXT)";
-        db.execSQL(CREATE_USER_TABLE);
-       // sInstance = null;
-    }
     /* At first this Method searches for a entry which contains the parameter string "day" if an entry
     * has been found it will be only updated "updateFitBitData()" because DATE is a unique field
       else a new entry will be made and */

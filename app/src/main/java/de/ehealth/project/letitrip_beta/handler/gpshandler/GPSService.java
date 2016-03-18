@@ -165,21 +165,31 @@ public class GPSService extends Service implements PolarCallback {
         lastID = -1;
         firstPoint = true;
         Cursor res = WeatherDatabaseHandler.getInstance().getData().getLatestWeather();
-        res.moveToFirst();
-        if (res.getCount() == 1){
-            temperature = res.getInt(2);
-            windSpeedKmH = res.getInt(3);
-            windDirection = res.getInt(4);
-            humidity = res.getInt(5);
-            pressure = res.getInt(6);
-        } else {
+
+        if (res != null){ //check if its not null seperarated
+            if (res.getCount() == 1){
+                res.moveToFirst();
+                temperature = res.getInt(2);
+                windSpeedKmH = res.getInt(3);
+                windDirection = res.getInt(4);
+                humidity = res.getInt(5);
+                pressure = res.getInt(6);
+                res.close();
+            } else {
+                temperature = -300;
+                windSpeedKmH = -1;
+                windDirection = -1;
+                humidity = -1;
+                pressure = -1;
+            }
+        } else{
             temperature = -300;
             windSpeedKmH = -1;
             windDirection = -1;
             humidity = -1;
             pressure = -1;
         }
-        res.close();
+
 
         UserSettings fitbitUserProfile = UserSettings.getmActiveUser();
 
@@ -325,7 +335,7 @@ public class GPSService extends Service implements PolarCallback {
                                 sendBroadcast("GPSService", 5);
                                 totalDistance = (int) GPSDatabaseHandler.getInstance().getData().getWalkDistance(activeRecordingID,-1);
                             } else {
-                                Toast.makeText(GPSService.this, "Error inserting data", Toast.LENGTH_LONG).show();
+                                Toast.makeText(GPSService.this, "Fehler beim Einfügen der Daten", Toast.LENGTH_LONG).show();
                             }
 
                             //check this part after first data set is inserted to create an table entry at the SessionOverview fragment

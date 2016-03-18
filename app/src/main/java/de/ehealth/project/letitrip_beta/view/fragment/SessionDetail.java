@@ -424,7 +424,7 @@ public class SessionDetail extends Fragment {
             )) {
             res.moveToLast();
             mMap.addMarker(new MarkerOptions()
-                    .title("End")
+                    .title("Ende")
                     .position(new LatLng(res.getDouble(3), res.getDouble(4))
                     ));
         } else { //add a pulse marker immediately

@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -606,19 +605,6 @@ public class MainActivity extends FragmentActivity implements FragmentChanger{
                 break;
             default:
                 break;
-        }
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        processIntent(intent);
-    }
-
-    private void processIntent(Intent intent){
-        if(intent.hasExtra("notification")){
-            Log.w("main", "got:" + intent.getExtras().getInt("notification"));
-        } else {
-            Log.w("main","no extra");
         }
     }
 }

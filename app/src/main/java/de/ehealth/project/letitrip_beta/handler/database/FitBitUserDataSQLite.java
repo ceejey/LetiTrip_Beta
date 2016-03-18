@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import de.ehealth.project.letitrip_beta.model.fitbit.FitBitUserData;
 import de.ehealth.project.letitrip_beta.model.fitbit.Summary;
@@ -157,8 +156,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         Cursor dbCursor = db.query(tablename, null, null, null, null, null, null);
         String[] columnNames = dbCursor.getColumnNames();
-        for(String name : columnNames)
-            Log.d("Name", name);
+
         if (cursor.moveToFirst()) {
             // +++ Tabellenkopf +++
             String columnSeperator = " | ";
@@ -168,11 +166,6 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
             for (String name : cursor.getColumnNames()) {
                 row = row + name + columnSeperator;
             }
-
-            // Ausgabe
-            Log.d("Fitbit", rowSeperator);
-            Log.d("Fitbit", row);
-            Log.d("Fitbit", rowSeperator);
 
             // ueber den Cursor iterieren
             do {
@@ -194,9 +187,7 @@ public class FitBitUserDataSQLite extends SQLiteOpenHelper {
                     // Trennzeichen
                     row = row + columnSeperator;
                 }
-                Log.d("Fitbit", row);
             } while (cursor.moveToNext());
-            Log.d("Fitbit", rowSeperator);
         }
         cursor.close();
         dbCursor.close();
